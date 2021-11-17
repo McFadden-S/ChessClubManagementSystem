@@ -9,7 +9,7 @@ class SignUpForm(forms.ModelForm):
         fields = ['first_name','last_name','email','bio','chess_experience','personal_statement']
         widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()}
 
-    newpassword = forms.CharField(
+    new_password = forms.CharField(
         label='Password',
         widget=forms.PasswordInput(),
         validators=[RegexValidator(
@@ -17,4 +17,4 @@ class SignUpForm(forms.ModelForm):
             message='password contain upper, lower and number'
         )]
     )
-    passwordConfirmation = forms.CharField(label='password confirmation',widget=forms.PasswordInput())
+    password_confirmation = forms.CharField(label='Password confirmation',widget=forms.PasswordInput())
