@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class User(AbstractUser):
-
+    # username = None
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank = False)
@@ -23,3 +23,5 @@ class User(AbstractUser):
         choices=CHESS_EXPERIENCE_CHOICES,
         default=BEGINNER
     )
+
+    personal_statement = models.CharField(max_length=100, blank=False)
