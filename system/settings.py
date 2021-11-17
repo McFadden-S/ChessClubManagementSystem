@@ -125,5 +125,5 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# The user model for authentication 
+# The user model for authentication
 AUTH_USER_MODEL = 'clubs.User'

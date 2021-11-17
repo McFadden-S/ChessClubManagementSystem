@@ -24,4 +24,6 @@ class User(AbstractUser):
         default=BEGINNER
     )
 
-    personal_statement = models.CharField(max_length=100, blank=False)
+    personal_statement = models.CharField(max_length=100, blank=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['first_name','last_name','bio','chess_experience','personal_statement']
