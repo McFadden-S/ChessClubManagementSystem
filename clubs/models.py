@@ -11,7 +11,7 @@ class UserManager(BaseUserManager):
             email=self.normalize_email(email),
             first_name=first_name,
             last_name=last_name,
-            bio=first_name,
+            bio=bio,
             chess_experience=chess_experience,
             personal_statement=personal_statement,
         )
@@ -46,4 +46,4 @@ class User(AbstractUser):
     personal_statement = models.CharField(max_length=100, blank=True)
     objects = UserManager()
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name','last_name','bio','chess_experience','personal_statement']
+    REQUIRED_FIELDS = ['first_name','last_name','chess_experience']
