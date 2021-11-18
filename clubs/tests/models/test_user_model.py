@@ -5,13 +5,13 @@ from clubs.models import User
 class UserModelTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            email='johndoe@example.com',
-            first_name = 'John',
-            last_name = 'Doe',
+            email='bobsmith@example.com',
+            first_name = 'Bob',
+            last_name = 'Smith',
             bio='Hi',
             chess_experience='AV',
-            personal_statement = 'I am John Doe',
-            password="Password123"
+            personal_statement = 'I am Orangutan',
+            password="Orangutan123"
         )
 
     def test_valid_user(self):
@@ -28,7 +28,7 @@ class UserModelTestCase(TestCase):
         self.assert_user_is_invalid()
 
     def test_email_must_have_at_symbol(self):
-        self.user.email = 'johndoeexample.com'
+        self.user.email = 'bobsmithexample.com'
         self.assert_user_is_invalid()
 
     def test_email_is_unique(self):
@@ -37,11 +37,11 @@ class UserModelTestCase(TestCase):
         self.assert_user_is_invalid()
 
     def test_email_must_include_domain_name(self):
-        self.user.email = 'johndoe@.com'
+        self.user.email = 'bobsmith@.com'
         self.assert_user_is_invalid()
 
     def test_email_must_include_domain(self):
-        self.user.email = 'johndoe@example'
+        self.user.email = 'bobsmith@example'
         self.assert_user_is_invalid()
 
 
@@ -110,12 +110,12 @@ class UserModelTestCase(TestCase):
 
     def create_second_person(self):
         second_person = User.objects.create_user(
-            email='janedoe@example.com',
-            first_name='Jane',
-            last_name='Doe',
+            email='secondguy@example.com',
+            first_name='Second',
+            last_name='Guy',
             bio='Hi',
             chess_experience='BG',
-            personal_statement='I am Jane Doe',
-            password="Password123"
+            personal_statement='I am second guy',
+            password="Orangutan123"
         )
         return second_person
