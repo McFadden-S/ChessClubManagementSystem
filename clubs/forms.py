@@ -18,3 +18,7 @@ class SignUpForm(forms.ModelForm):
         )]
     )
     password_confirmation = forms.CharField(label='Password confirmation',widget=forms.PasswordInput())
+
+class LogInForm(forms.Form):
+    email = forms.EmailField(label='Email')
+    password = forms.CharField(label='Password', widget=forms.PasswordInput())
