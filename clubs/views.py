@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .forms import SignUpForm, userUpdateForm, userChangePasswordForm
+from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm
 # Create your views here.
 def home(request):
     return render(request,'home.html')
