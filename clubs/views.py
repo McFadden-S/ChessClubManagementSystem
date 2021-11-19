@@ -6,7 +6,6 @@ from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
 from .models import User, Club
 from django.contrib.auth.hashers import check_password
 
-
 # Create your views here.
 def home(request):
     return render(request,'home.html')
@@ -71,7 +70,7 @@ def log_out(request):
     return redirect('home')
 
 def members_list(request):
-    applicants = Club.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
+    applicants = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
     members = User.objects.exclude(id__in=applicants)
     return render(request, 'members_list.html', {'members': members})
 
