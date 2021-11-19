@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect,render
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
+from .models import User, Club
 
 
 # Create your views here.
@@ -63,3 +64,20 @@ def log_in(request):
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
+
+
+def members_list(request):
+    applicants = Club.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
+    members = User.objects.exclude(id__in=applicants)
+    return render(request, 'members_list.html', {'members': members})
+
+def show_member(request, member_id):
+    try:
+        member = User.objects.get(id=member_id)
+        auth = (Club.objects.get(user=member)).authorization
+    except ObjectDoesNotExist:
+        return redirect('member_list')
+    else:
+        return render(request, 'show_member.html',
+            {'member': member, 'auth' : auth}
+        )

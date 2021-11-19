@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Members List</title>
+  </head>
+
+  <body>
+    <h1>Members List</h1>
+    <table>
+      {% for member in members %}
+        <tr>
+          <td>
+            <a href="{% url 'show_member' member.id %}">
+              {{ member.first_name }} {{member.last_name }}
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+  </body>
+</html>
