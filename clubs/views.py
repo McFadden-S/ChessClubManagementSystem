@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect,render
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
@@ -65,6 +65,10 @@ def log_in(request):
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
+
+def log_out(request):
+    logout(request)
+    return redirect('home')
 
 def members_list(request):
     applicants = Club.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
