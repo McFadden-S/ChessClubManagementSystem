@@ -1,10 +1,9 @@
-rom django import forms
 from django.test import TestCase
 from clubs.models import User
-from clubs.forms import UserUpdateForm, SignUpForm
+from clubs.forms import UserChangePasswordForm
 
 # Used this from clucker project with some modifications
-class userUpdateViewTestCase(TestCase):
+class userChangePasswordViewTestCase(TestCase):
     def setUp(self):
         self.valid_form_input = {
             'email': 'bobsmith@example.org',
