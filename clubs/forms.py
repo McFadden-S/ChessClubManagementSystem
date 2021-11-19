@@ -18,6 +18,26 @@ class SignUpForm(forms.ModelForm):
         )]
     )
     password_confirmation = forms.CharField(label='Password confirmation',widget=forms.PasswordInput())
+    def clean(self):
+        super().clean()
+        new_password = self.cleaned_data.get('new_password')
+        password_confirmation = self.cleaned_data.get('password_confirmation')
+
+        if new_password != password_confirmation:
+            self.add_error('password_confirmation','confirmation no match password')
+
+    def save(self):
+        super().save(commit=False)
+        user = User.objects.create_user(
+            email=self.cleaned_data.get('email'),
+            first_name=self.cleaned_data.get('first_name'),
+            last_name=self.cleaned_data.get('last_name'),
+            bio=self.cleaned_data.get('bio'),
+            personal_statement=self.cleaned_data.get('personal_statement'),
+            chess_experience=self.cleaned_data.get('chess_experience'),
+            password=self.cleaned_data.get('new_password'),
+        )
+        return user
 
 # Used this from clucker project with some modifications
 class UserUpdateForm(forms.ModelForm):
@@ -51,4 +71,3 @@ class UserChangePasswordForm(forms.Form):
 class LogInForm(forms.Form):
     email = forms.EmailField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput())
-
