@@ -1,0 +1,15 @@
+[
+  {
+    "model": "clubs.user",
+    "pk": 1,
+    "fields": {
+      "first_name": "Bob",
+      "last_name": "Smith",
+      "email": "bobsmith@example.org",
+      "bio": "Hi",
+      "chess_experience": "BG",
+      "personal_statement": "I am Orangutan",
+      "password": "pbkdf2_sha256$260000$sR8atw6tAGBlZBQLB0FnHP$d3eMuhprS8+3FUHAigrt2oQHFufoLLkhgQz33bPpEWk="
+    }
+  }
+]
