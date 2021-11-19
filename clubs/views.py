@@ -59,7 +59,7 @@ def log_in(request):
             user = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
-                redirect_url = 'home'
+                redirect_url = 'members_list'
                 return redirect(redirect_url)
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
     form = LogInForm()
