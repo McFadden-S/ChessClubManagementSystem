@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect,render
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
 
@@ -7,8 +7,17 @@ def home(request):
     return render(request,'home.html')
 
 def sign_up(request):
-    form = SignUpForm()
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            return redirect('waiting_list')
+    else:
+        form = SignUpForm()
     return render(request,'sign_up.html',{'form': form})
+
+def waiting_list(request):
+    return render(request,'waiting_list.html')
 
 @login_required
 def update_user(request):
@@ -40,4 +49,3 @@ def change_password(request):
 def log_in(request):
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
-
