@@ -4,6 +4,7 @@ from django.shortcuts import redirect,render
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
 from .models import User, Club
+from django.contrib.auth.hashers import check_password
 
 
 # Create your views here.
@@ -68,7 +69,6 @@ def log_in(request):
 def log_out(request):
     logout(request)
     return redirect('home')
-
 
 def members_list(request):
     applicants = Club.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
