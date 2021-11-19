@@ -1,7 +1,10 @@
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect,render
 from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
 from .models import User, Club
+
 
 # Create your views here.
 def home(request):
@@ -48,6 +51,17 @@ def change_password(request):
     return render(request, 'change_password.html', {'form': form})
 
 def log_in(request):
+    if request.method == 'POST':
+        form = LogInForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(email=email, password=password)
+            if user is not None:
+                login(request, user)
+                redirect_url = 'home'
+                return redirect(redirect_url)
+        messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
 
