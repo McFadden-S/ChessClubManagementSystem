@@ -47,3 +47,8 @@ class UserChangePasswordForm(forms.Form):
 
         if new_password != new_password_confirmation:
             self.add_error('new_password_confirmation', 'Confirmation does not match password.')
+
+class LogInForm(forms.Form):
+    email = forms.EmailField(label='Email')
+    password = forms.CharField(label='Password', widget=forms.PasswordInput())
+

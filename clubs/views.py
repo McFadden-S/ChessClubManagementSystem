@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm
+from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
 
 # Create your views here.
 def home(request):
@@ -36,3 +36,8 @@ def change_password(request):
                 messages.add_message(request, messages.SUCCESS, "Password updated!")
     form = UserChangePasswordForm()
     return render(request, 'change_password.html', {'form': form})
+
+def log_in(request):
+    form = LogInForm()
+    return render(request, 'log_in.html', {'form': form})
+
