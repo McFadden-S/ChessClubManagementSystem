@@ -26,5 +26,5 @@ urlpatterns = [
     path('log_in/', views.log_in, name='log_in'),
     path('members_list/', views.members_list, name='members_list'),
     path('show_member/<int:member_id>', views.show_member, name='show_member'),
-
+    path('waiting_list/',views.waiting_list, name='waiting_list')
 ]
