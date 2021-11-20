@@ -75,6 +75,17 @@ def members_list(request):
     members = User.objects.exclude(id__in=applicants)
     return render(request, 'members_list.html', {'members': members})
 
+def applicants_list(request):
+    applicants_list = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
+    applicants = User.objects.filter(id__in=applicants_list)
+    return render(request, 'applicants_list.html', {'applicants':applicants})
+
+def approve_applicant(request, applicant_id):
+    applicant = User.objects.get(id=applicant_id)
+    Club.objects.filter(user=applicant).update(authorization="ME")
+    return redirect('applicants_list')
+
+
 def show_member(request, member_id):
     try:
         member = User.objects.get(id=member_id)

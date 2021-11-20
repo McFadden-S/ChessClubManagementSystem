@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Applicant List</title>
+  </head>
+
+  <body>
+    <h1>Applicant List</h1>
+    <table>
+      {% for applicant in applicants %}
+        <tr>
+          <td>
+              {{ applicant.first_name }} {{applicant.last_name }}
+          </td>
+          <td>
+              <a href="{%url 'approve_applicant' applicant.id%}">Approve applicant</a>
+          </td>
+        </tr>
+
+      {% endfor %}
+  </body>
+</html>
