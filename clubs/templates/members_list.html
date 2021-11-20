@@ -6,6 +6,11 @@
 
   <body>
     <h1>Members List</h1>
+    <form action="{% url 'members_list' %}" method="post">
+      {% csrf_token %}
+      <input type="search" placeholder="Search member" name="searched_letters">
+      <button type="submit">Search</button>
+    </form>
     <table>
       {% for member in members %}
         <tr>
