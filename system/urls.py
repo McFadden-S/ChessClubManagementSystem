@@ -27,6 +27,7 @@ urlpatterns = [
     path('log_out/', views.log_out, name='log_out'),
     path('members_list/', views.members_list, name='members_list'),
     path('applicants_list/', views.applicants_list, name='applicants_list'),
+    path('show_applicant/<int:applicant_id>', views.show_applicant, name='show_applicant'),
     path('approve_applicant/<int:applicant_id>', views.approve_applicant, name='approve_applicant'),
     path('show_member/<int:member_id>', views.show_member, name='show_member'),
     path('waiting_list/',views.waiting_list, name='waiting_list'),

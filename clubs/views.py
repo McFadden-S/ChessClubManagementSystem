@@ -100,6 +100,15 @@ def approve_applicant(request, applicant_id):
     Club.objects.filter(user=applicant).update(authorization="ME")
     return redirect('applicants_list')
 
+def show_applicant(request, applicant_id):
+    try:
+        applicant = User.objects.get(id=applicant_id)
+    except ObjectDoesNotExist:
+        return redirect('applicants_list')
+    else:
+        return render(request, 'show_applicant.html',
+            {'applicant': applicant}
+        )
 
 def show_member(request, member_id):
     try:
