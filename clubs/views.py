@@ -76,7 +76,12 @@ def members_list(request):
     members = User.objects.filter(id__in=member_list)
     officer_list = Club.objects.filter(authorization='OF').values_list('user__id', flat=True)
     officers = User.objects.filter(id__in=officer_list)
-    return render(request, 'members_list.html', {'members': members, 'officers': officers})
+    current_user = request.user
+    cu_auth = (Club.objects.get(user=current_user)).authorization
+    is_owner = False
+    if cu_auth == 'OW':
+        is_owner = True
+    return render(request, 'members_list.html', {'members': members, 'officers': officers, 'is_owner': is_owner})
 
 def show_member(request, member_id):
     try:

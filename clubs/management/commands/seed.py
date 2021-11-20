@@ -20,7 +20,6 @@ class Command(BaseCommand):
             bio=self.faker.sentence()
             personal_statement=self.faker.sentence()
             chess_experience= numpy.random.choice(self.CHESS_EXPERIENCE_CHOICES)
-            password='Password123'
             randUser = User.objects.create_user(
                 first_name=first_name,
                 last_name=last_name,
@@ -28,6 +27,7 @@ class Command(BaseCommand):
                 bio=bio,
                 personal_statement=personal_statement,
                 chess_experience= chess_experience,
+                password = 'Password123',
             )
             Club.objects.create(
                 user=randUser,
