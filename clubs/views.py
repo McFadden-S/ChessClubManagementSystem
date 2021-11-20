@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
 from .models import User, Club
 from django.contrib.auth.hashers import check_password
-
+from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 def home(request):
     return render(request,'home.html')
@@ -77,12 +77,17 @@ def members_list(request):
 
 def only_officer(view_func):
     def modified_view_func(request):
+        try:
+            Club.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            return redirect('members_list')
         if (Club.objects.get(user=request.user)).authorization != 'OF':
-            return redirect('home')
+            return redirect('members_list')
         else:
             return view_func(request)
     return modified_view_func
 
+@login_required
 @only_officer
 def applicants_list(request):
     applicants_list = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
