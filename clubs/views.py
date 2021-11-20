@@ -78,7 +78,11 @@ def members_list(request):
 def applicants_list(request):
     applicants_list = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
     applicants = User.objects.filter(id__in=applicants_list)
-    return render(request, 'applicants_list.html', {'applicants':applicants})
+
+    if (Club.objects.get(user=request.user)).authorization == 'OF':
+        return render(request, 'applicants_list.html', {'applicants':applicants})
+    # ADD MESSAGE NOT OFFICER
+    return redirect('home')
 
 def approve_applicant(request, applicant_id):
     applicant = User.objects.get(id=applicant_id)
