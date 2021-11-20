@@ -28,4 +28,5 @@ urlpatterns = [
     path('members_list/', views.members_list, name='members_list'),
     path('show_member/<int:member_id>', views.show_member, name='show_member'),
     path('waiting_list/',views.waiting_list, name='waiting_list'),
+    path('promote_member/<int:member_id>',views.promote_member, name='promote_member'),
 ]

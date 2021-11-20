@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import redirect,render
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import redirect,render
 from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
 from .models import User, Club
-from django.contrib.auth.hashers import check_password
 
 # Create your views here.
 def home(request):
@@ -71,9 +72,11 @@ def log_out(request):
     return redirect('home')
 
 def members_list(request):
-    applicants = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
-    members = User.objects.exclude(id__in=applicants)
-    return render(request, 'members_list.html', {'members': members})
+    member_list = Club.objects.filter(authorization='ME').values_list('user__id', flat=True)
+    members = User.objects.filter(id__in=member_list)
+    officer_list = Club.objects.filter(authorization='OF').values_list('user__id', flat=True)
+    officers = User.objects.filter(id__in=officer_list)
+    return render(request, 'members_list.html', {'members': members, 'officers': officers})
 
 def show_member(request, member_id):
     try:
@@ -83,5 +86,16 @@ def show_member(request, member_id):
         return redirect('member_list')
     else:
         return render(request, 'show_member.html',
+            {'member': member, 'auth' : auth}
+        )
+
+def promote_member(request, member_id):
+    member = User.objects.get(id=member_id)
+    auth = (Club.objects.get(user=member)).authorization
+    if auth == 'ME':
+        Club.objects.filter(user=member).update(authorization="OF")
+        return redirect(members_list)
+    else:
+        return render(request, 'member_list.html',
             {'member': member, 'auth' : auth}
         )
