@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Applicant</title>
+  </head>
+
+  <body>
+    <h1>Applicant Info:</h1>
+    <table>
+        <tr>
+          <td>
+              Name: {{applicant.first_name }} {{applicant.last_name }}
+          </td>
+        </tr>
+        <tr>
+          <td>
+              Bio: {{ applicant.bio }}
+          </td>
+        </tr>
+        <tr>
+          <td>
+              Chess experience: {{ applicant.chess_experience }}
+          </td>
+        </tr>
+        <tr>
+          <td>
+              Personal statement: {{ applicant.personal_statement }}
+          </td>
+        </tr>
+      </table>
+      <td>
+          <a href="{%url 'approve_applicant' applicant.id%}">Approve applicant</a>
+      </td>
+      
+  </body>
+</html>

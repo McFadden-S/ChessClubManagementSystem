@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
 from .models import User, Club
 from django.contrib.auth.hashers import check_password
-
+from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 def home(request):
     return render(request,'home.html')
@@ -74,6 +74,41 @@ def members_list(request):
     applicants = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
     members = User.objects.exclude(id__in=applicants)
     return render(request, 'members_list.html', {'members': members})
+
+def only_officer(view_func):
+    def modified_view_func(request):
+        try:
+            Club.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            return redirect('members_list')
+        if (Club.objects.get(user=request.user)).authorization != 'OF':
+            return redirect('members_list')
+        else:
+            return view_func(request)
+    return modified_view_func
+
+@login_required
+@only_officer
+def applicants_list(request):
+    applicants_list = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
+    applicants = User.objects.filter(id__in=applicants_list)
+    return render(request, 'applicants_list.html', {'applicants':applicants})
+
+
+def approve_applicant(request, applicant_id):
+    applicant = User.objects.get(id=applicant_id)
+    Club.objects.filter(user=applicant).update(authorization="ME")
+    return redirect('applicants_list')
+
+def show_applicant(request, applicant_id):
+    try:
+        applicant = User.objects.get(id=applicant_id)
+    except ObjectDoesNotExist:
+        return redirect('applicants_list')
+    else:
+        return render(request, 'show_applicant.html',
+            {'applicant': applicant}
+        )
 
 def show_member(request, member_id):
     try:
