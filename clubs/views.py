@@ -15,6 +15,7 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
+            Club.objects.create(user=user)
             return redirect('waiting_list')
     else:
         form = SignUpForm()
