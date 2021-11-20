@@ -5,7 +5,10 @@ from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
 from .models import User, Club
 from django.contrib.auth.hashers import check_password
+from django.db.models.functions import Concat
+from django.db.models import Value
 from django.core.exceptions import ObjectDoesNotExist
+
 # Create your views here.
 def home(request):
     return render(request,'home.html')
@@ -70,9 +73,17 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
+"""The idea of filter members with full name is from https://stackoverflow.com/questions/17932152/auth-filter-full-name"""
 def members_list(request):
     applicants = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
     members = User.objects.exclude(id__in=applicants)
+    if request.method == 'POST':
+        searched_letters = request.POST['searched_letters']
+        if searched_letters:
+            searched_members = User.objects.annotate(
+                full_name=Concat('first_name', Value(' '), 'last_name')
+            ).filter(full_name__icontains = searched_letters)
+            members = members.filter(id__in=searched_members)
     return render(request, 'members_list.html', {'members': members})
 
 def only_officer(view_func):
@@ -120,3 +131,8 @@ def show_member(request, member_id):
         return render(request, 'show_member.html',
             {'member': member, 'auth' : auth}
         )
+
+def getAllMembersExceptApplicants():
+    applicants = Club.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
+    members = User.objects.exclude(id__in=applicants)
+    return members
