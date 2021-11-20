@@ -6,7 +6,7 @@
 
   <body>
     <h1>Applicant List</h1>
-    <b>CLICK ON APPLICANT TO SEE MORE</b>
+    
     <table>
       {% for applicant in applicants %}
         <tr>
@@ -17,7 +17,8 @@
           </td>
 
         </tr>
-
+      {% empty %}
+       EMPTY
       {% endfor %}
   </body>
 </html>
