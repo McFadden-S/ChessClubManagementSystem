@@ -28,6 +28,9 @@
           </td>
         </tr>
       </table>
-      <a href="{% url 'applicants_list'  %}">Back to applicant list </a>
+      <td>
+          <a href="{%url 'approve_applicant' applicant.id%}">Approve applicant</a>
+      </td>
+      
   </body>
 </html>

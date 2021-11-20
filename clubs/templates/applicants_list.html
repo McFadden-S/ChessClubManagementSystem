@@ -6,6 +6,7 @@
 
   <body>
     <h1>Applicant List</h1>
+    <b>CLICK ON APPLICANT TO SEE MORE</b>
     <table>
       {% for applicant in applicants %}
         <tr>
@@ -14,9 +15,7 @@
                 {{ applicant.first_name }} {{applicant.last_name }}
               </a>
           </td>
-          <td>
-              <a href="{%url 'approve_applicant' applicant.id%}">Approve applicant</a>
-          </td>
+
         </tr>
 
       {% endfor %}
