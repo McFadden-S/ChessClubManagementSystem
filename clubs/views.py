@@ -109,6 +109,8 @@ def members_list(request):
     officer_list = Club.objects.filter(authorization='OF').values_list('user__id', flat=True)
     officers = User.objects.filter(id__in=officer_list)
     is_owner = False
+    current_user = request.user
+    cu_auth = (Club.objects.get(user=current_user)).authorization
     if cu_auth == 'OW':
         is_owner = True
     if request.method == 'POST':
@@ -118,6 +120,7 @@ def members_list(request):
                 full_name=Concat('first_name', Value(' '), 'last_name')
             ).filter(full_name__icontains = searched_letters)
             members = members.filter(id__in=searched_members)
+            officers = officers.filter(id__in=searched_members)
     return render(request, 'members_list.html', {'members': members, 'officers': officers, 'is_owner': is_owner})
 
 @login_required
