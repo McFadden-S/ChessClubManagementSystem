@@ -73,19 +73,6 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
-"""The idea of filter members with full name is from https://stackoverflow.com/questions/17932152/auth-filter-full-name"""
-def members_list(request):
-    applicants = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
-    members = User.objects.exclude(id__in=applicants)
-    if request.method == 'POST':
-        searched_letters = request.POST['searched_letters']
-        if searched_letters:
-            searched_members = User.objects.annotate(
-                full_name=Concat('first_name', Value(' '), 'last_name')
-            ).filter(full_name__icontains = searched_letters)
-            members = members.filter(id__in=searched_members)
-    return render(request, 'members_list.html', {'members': members})
-
 def only_officer(view_func):
     def modified_view_func(request):
         try:
@@ -97,6 +84,34 @@ def only_officer(view_func):
         else:
             return view_func(request)
     return modified_view_func
+
+def only_members(view_func):
+    def modified_view_func(request):
+        try:
+            Club.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            return redirect('log_in')
+        authorization = (Club.objects.get(user=request.user)).authorization
+        if authorization != 'ME' or authorization != 'OF' or authorization != 'OW':
+            return redirect('home')
+        else:
+            return view_func(request)
+    return modified_view_func
+
+"""The idea of filter members with full name is from https://stackoverflow.com/questions/17932152/auth-filter-full-name"""
+@login_required
+#@only_members TODO: LOG IN NEEDS TO REDIRECT SOMEWHERE ELSE FOR THIS TO BE UNCOMMENTED
+def members_list(request):
+    applicants = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
+    members = User.objects.exclude(id__in=applicants)
+    if request.method == 'POST':
+        searched_letters = request.POST['searched_letters']
+        if searched_letters:
+            searched_members = User.objects.annotate(
+                full_name=Concat('first_name', Value(' '), 'last_name')
+            ).filter(full_name__icontains = searched_letters)
+            members = members.filter(id__in=searched_members)
+    return render(request, 'members_list.html', {'members': members})
 
 @login_required
 @only_officer
@@ -121,12 +136,14 @@ def show_applicant(request, applicant_id):
             {'applicant': applicant}
         )
 
+@login_required
+#@only_members TODO change when log in redirects to general landing page
 def show_member(request, member_id):
     try:
         member = User.objects.get(id=member_id)
         auth = (Club.objects.get(user=member)).authorization
     except ObjectDoesNotExist:
-        return redirect('member_list')
+        return redirect('members_list')
     else:
         return render(request, 'show_member.html',
             {'member': member, 'auth' : auth}
