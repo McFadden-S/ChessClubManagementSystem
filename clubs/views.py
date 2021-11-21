@@ -126,12 +126,22 @@ def approve_applicant(request, applicant_id):
     Club.objects.filter(user=applicant).update(authorization="ME")
     return redirect('applicants_list')
 
+@login_required
 def show_applicant(request, applicant_id):
+    try:
+        Club.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        return redirect('members_list')
+    if (Club.objects.get(user=request.user)).authorization != 'OF':
+        return redirect('members_list')
     try:
         applicant = User.objects.get(id=applicant_id)
     except ObjectDoesNotExist:
         return redirect('applicants_list')
     else:
+        # THE APPLICANT HAS ALREADY BEEN APPROVED CASE
+        if (Club.objects.get(user=applicant)).authorization != 'AP':
+            return redirect('applicants_list')
         return render(request, 'show_applicant.html',
             {'applicant': applicant}
         )
