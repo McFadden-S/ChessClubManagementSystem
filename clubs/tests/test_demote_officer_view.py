@@ -1,4 +1,4 @@
-"""Tests of the promote member view."""
+"""Tests of the demote officer view."""
 from django.test import TestCase
 from django.urls import reverse
 from clubs.models import User, Club
@@ -6,7 +6,7 @@ from .helpers import LogInTester
 
 
 class DemoteOfficerViewTestCase(TestCase, LogInTester):
-    """Tests of the promote member view."""
+    """Tests of the demote officer view."""
 
     def setUp(self):
         self.owner = User.objects.create_user(
