@@ -95,11 +95,17 @@ def show_member(request, member_id):
         )
 
 def promote_member(request, member_id):
+    current_user = request.user
+    cu_auth = (Club.objects.get(user=current_user)).authorization
     member = User.objects.get(id=member_id)
     auth = (Club.objects.get(user=member)).authorization
-    if auth == 'ME':
-        Club.objects.filter(user=member).update(authorization="OF")
-        return redirect(members_list)
+    is_owner = False
+    if cu_auth == 'OW':
+        is_owner = True
+    if is_owner:
+        if auth == 'ME':
+            Club.objects.filter(user=member).update(authorization="OF")
+            return redirect(members_list)
     else:
         return render(request, 'member_list.html',
             {'member': member, 'auth' : auth}

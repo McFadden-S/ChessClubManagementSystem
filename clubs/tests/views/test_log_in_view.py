@@ -3,19 +3,23 @@ from django.contrib import messages
 from django.urls import reverse
 from django.test import TestCase
 from clubs.forms import LogInForm
-from clubs.models import User
+from clubs.models import Club, User
 
 class LogInViewTestCase(TestCase):
     """Unit tests of the log in view"""
     def setUp(self):
         self.url = reverse('log_in')
-        User.objects.create_user(email='orangutan@example.org',
+        self.user = User.objects.create_user(email='orangutan@example.org',
             first_name='orang',
             last_name='utan',
             bio='I am a smart orangutan',
             chess_experience='Beginner',
             personal_statement='I would love to learn how to play chess',
             password='CorrectPassword123'
+        )
+        Club.objects.create(
+            user=self.user,
+            authorization='ME'
         )
 
     def test_log_in_url(self):
