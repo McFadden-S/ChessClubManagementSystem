@@ -31,4 +31,5 @@ urlpatterns = [
     path('approve_applicant/<int:applicant_id>', views.approve_applicant, name='approve_applicant'),
     path('show_member/<int:member_id>', views.show_member, name='show_member'),
     path('waiting_list/',views.waiting_list, name='waiting_list'),
+    path('promote_member/<int:member_id>',views.promote_member, name='promote_member'),
 ]

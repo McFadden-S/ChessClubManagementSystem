@@ -14,14 +14,20 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         for i in range(0, 100):
+            first_name=self.faker.first_name()
+            last_name=self.faker.last_name()
+            email = f'{first_name.lower()}{last_name.lower()}@example.org'
+            bio=self.faker.sentence()
+            personal_statement=self.faker.sentence()
+            chess_experience= numpy.random.choice(self.CHESS_EXPERIENCE_CHOICES)
             randUser = User.objects.create_user(
-                first_name=self.faker.first_name(),
-                last_name=self.faker.last_name(),
-                email=self.faker.email(),
-                bio=self.faker.sentence(),
-                personal_statement=self.faker.sentence(),
-                chess_experience= numpy.random.choice(self.CHESS_EXPERIENCE_CHOICES),
-                password=self.faker.password(),
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                bio=bio,
+                personal_statement=personal_statement,
+                chess_experience= chess_experience,
+                password = 'Password123',
             )
             Club.objects.create(
                 user=randUser,
