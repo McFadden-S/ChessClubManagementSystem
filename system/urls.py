@@ -32,4 +32,5 @@ urlpatterns = [
     path('show_member/<int:member_id>', views.show_member, name='show_member'),
     path('waiting_list/',views.waiting_list, name='waiting_list'),
     path('promote_member/<int:member_id>',views.promote_member, name='promote_member'),
+    path('demote_officer/<int:member_id>',views.demote_officer, name='demote_officer'),
 ]
