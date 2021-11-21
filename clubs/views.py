@@ -63,10 +63,14 @@ def log_in(request):
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
             user = authenticate(email=email, password=password)
-            if user is not None:
+            user_authorization = _getAuthorization(user)
+            if user_authorization == 'AP':
+                return redirect('waiting_list')
+            elif user is not None:
                 login(request, user)
                 redirect_url = 'members_list'
                 return redirect(redirect_url)
+
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
@@ -101,8 +105,8 @@ def only_members(view_func):
     return modified_view_func
 
 """The idea of filter members with full name is from https://stackoverflow.com/questions/17932152/auth-filter-full-name"""
-@login_required
 #@only_members TODO: LOG IN NEEDS TO REDIRECT SOMEWHERE ELSE FOR THIS TO BE UNCOMMENTED
+@login_required
 def members_list(request):
     member_list = Club.objects.filter(authorization='ME').values_list('user__id', flat=True)
     members = User.objects.filter(id__in=member_list)
@@ -110,6 +114,7 @@ def members_list(request):
     officers = User.objects.filter(id__in=officer_list)
     is_owner = False
     current_user = request.user
+    #PLEASE ADD THIS IN A TRY BLOCK OR USE _getAuthorization()
     cu_auth = (Club.objects.get(user=current_user)).authorization
     if cu_auth == 'OW':
         is_owner = True
@@ -225,3 +230,10 @@ def getAllMembersExceptApplicants():
     applicants = Club.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
     members = User.objects.exclude(id__in=applicants)
     return members
+
+def _getAuthorization(user):
+    try:
+        authorization = (Club.objects.get(user=user)).authorization
+    except ObjectDoesNotExist:
+        return None
+    return authorization
