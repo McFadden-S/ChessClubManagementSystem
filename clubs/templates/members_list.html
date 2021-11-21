@@ -41,6 +41,9 @@
         <td>
           <a href="{% url 'demote_officer' officer.id%}">Demote to member</a>
         </td>
+        <td>
+          <a href="{% url 'transfer_ownership' officer.id%}">Transfer ownership</a>
+        </td>
         {% endif %}
       </tr>
       {% endfor %}
