@@ -21,6 +21,18 @@ class LogInViewTestCase(TestCase):
             user=self.user,
             authorization='ME'
         )
+        self.applicant = User.objects.create_user(email='monkey@example.org',
+            first_name='Monkey',
+            last_name='Smart',
+            bio='I am a smart monkey',
+            chess_experience='Beginner',
+            personal_statement='I would love to learn how to play chess',
+            password='CorrectPassword123'
+        )
+        Club.objects.create(
+            user=self.applicant,
+            authorization='AP'
+        )
 
     def test_log_in_url(self):
         self.assertEqual(self.url, '/log_in/')
@@ -48,7 +60,16 @@ class LogInViewTestCase(TestCase):
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
-    def test_successful_log_in(self):
+    def test_successful_applicant_log_in(self):
+        form_input = {'email': 'monkey@example.org', 'password': 'CorrectPassword123'}
+        response = self.client.post(self.url, form_input, follow=True)
+        response_url = reverse('waiting_list')
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
+        self.assertTemplateUsed(response, 'waiting_list.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
+
+    def test_successful_non_applicant_log_in(self):
         form_input = {'email': 'orangutan@example.org', 'password': 'CorrectPassword123'}
         response = self.client.post(self.url, form_input, follow=True)
         self.assertTrue(self._is_logged_in())
@@ -57,6 +78,8 @@ class LogInViewTestCase(TestCase):
         self.assertTemplateUsed(response, 'members_list.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
+
+
 
     def _is_logged_in(self):
         return '_auth_user_id' in self.client.session.keys()
