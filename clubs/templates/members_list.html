@@ -37,6 +37,11 @@
             {{ officer.first_name }} {{officer.last_name }}
           </a>
         </td>
+        {% if is_owner %}
+        <td>
+          <a href="{% url 'demote_officer' officer.id%}">Demote to member</a>
+        </td>
+        {% endif %}
       </tr>
       {% endfor %}
     </table>
