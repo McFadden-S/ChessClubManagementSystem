@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Applicant List</title>
+  </head>
+
+  <body>
+    <h1>Applicant List</h1>
+
+    <table>
+      {% for applicant in applicants %}
+        <tr>
+          <td>
+              <a href="{% url 'show_applicant' applicant.id %}">
+                {{ applicant.first_name }} {{applicant.last_name }}
+              </a>
+          </td>
+
+        </tr>
+      {% empty %}
+       EMPTY
+      {% endfor %}
+  </body>
+</html>
