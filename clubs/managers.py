@@ -1,4 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager
+import clubs.models
 
 class UserManager(BaseUserManager):
 
@@ -24,4 +25,7 @@ class UserManager(BaseUserManager):
             raise ValueError(_('Superuser must have is_staff=True.'))
         if other_fields.get('is_superuser') is not True:
             raise ValueError(_('Superuser must have is_superuser=True.'))
-        return self.create_user(email, password, **other_fields)
+
+        user = self.create_user(email, password, **other_fields)
+        clubs.models.Club.objects.create(user=user, authorization='OW')
+        return user
