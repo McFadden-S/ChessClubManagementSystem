@@ -1,22 +1,17 @@
-{% extends 'partials/base.html' %}
-{% block body %}
-<div class="container container-fluid vh-100">
-  <div class="row justify-content-center h-50">
-    <div class="col-6 my-auto">
-      <div class="card cover-card bg-dark text-white">
-        <div class="card-header">
-          <h1 class="card-title">Sign Up</h1>
-        </div>
-        <div class="card-body">
-            <form class="novalidate" action="{% url 'sign_up'%}" method="post">
-              {% csrf_token %}
-              {% include 'partials/form.html' with form=form %}
-              <!-- {{ form.as_p }} -->
-              <input type="submit" value="Sign Up" class="btn btn-outline-light text-white">
-            </form>
-        </div>
-      </div>
-    </div>
+{% extends 'partials/small_dark_card.html' %}
+{% block contents %}
+  <div class="card-header">
+    <h1 class="card-title">Sign Up</h1>
   </div>
-</div>
+  <div class="card-body">
+      <form class="novalidate" action="{% url 'sign_up'%}" method="post">
+        {% csrf_token %}
+        <ul class="list-group list-group-flush">
+          {% include 'partials/form.html' with form=form %}
+          <li class="list-group-item bg-dark text-white">
+            <input type="submit" value="Sign Up" class="btn btn-outline-light text-white">
+          </li>
+        </ul>
+      </form>
+  </div>
 {% endblock %}
