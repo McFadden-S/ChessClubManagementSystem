@@ -133,6 +133,13 @@ def members_list(request):
 def applicants_list(request):
     applicants_list = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
     applicants = User.objects.filter(id__in=applicants_list)
+    if request.method == 'POST':
+        searched_letters = request.POST['searched_letters']
+        if searched_letters:
+            searched_members = User.objects.annotate(
+                full_name=Concat('first_name', Value(' '), 'last_name')
+            ).filter(full_name__icontains = searched_letters)
+            applicants = applicants.filter(id__in=searched_members)
     return render(request, 'applicants_list.html', {'applicants':applicants})
 
 
