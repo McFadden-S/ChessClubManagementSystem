@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Member</title>
-  </head>
-
-  <body>
-    <h1>Member Info:</h1>
-    <table>
-        <tr>
-          <td>
-              Name: {{ member.first_name }} {{member.last_name }}
-          </td>
+{% extends 'partials/dark_card.html' %}
+{% block contents %}
+  <div class="card-header">
+    <h1 class="card-title">Member Info</h1>
+  </div>
+  <div class="card-body">
+    <table class="table table-dark table-striped">
+      <thead class="table-dark">
+        <h2>{{ member.first_name }} {{member.last_name }}</h2>
+      </thead>
+      <tbody>
         </tr>
         <tr>
           <td>
@@ -22,5 +20,7 @@
               Role: {{ auth }}
           </td>
         </tr>
-  </body>
-</html>
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

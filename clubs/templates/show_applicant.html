@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Applicant</title>
-  </head>
-
-  <body>
-    <h1>Applicant Info:</h1>
-    <table>
-        <tr>
-          <td>
-              Name: {{applicant.first_name }} {{applicant.last_name }}
-          </td>
+{% extends 'partials/dark_card.html' %}
+{% block contents %}
+  <div class="card-header">
+    <h1 class="card-title">Application</h1>
+  </div>
+  <div class="card-body">
+    <table class="table table-dark table-striped">
+      <thead class="table-dark">
+        <h2>{{ applicant.first_name }} {{applicant.last_name }}</h2>
+      </thead>
+      <tbody>
         </tr>
         <tr>
           <td>
@@ -27,10 +25,12 @@
               Personal statement: {{ applicant.personal_statement }}
           </td>
         </tr>
-      </table>
-      <td>
-          <a href="{%url 'approve_applicant' applicant.id%}">Approve applicant</a>
-      </td>
-      
-  </body>
-</html>
+        <tr>
+          <td>
+              <a href="{%url 'approve_applicant' applicant.id%}" class="btn btn-outline-light text-white">Approve Application</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>  
+  </div>
+{% endblock %}

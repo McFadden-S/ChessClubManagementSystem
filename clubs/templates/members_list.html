@@ -1,52 +1,76 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Members List</title>
-  </head>
+{% extends 'partials/wide_dark_card.html' %}
+{% block contents %}
 
-  <body>
-    <h1>[Club Name Here]</h1>
-    <form action="{% url 'members_list' %}" method="post">
-      {% csrf_token %}
-      <input type="search" placeholder="Search member" name="searched_letters">
-      <button type="submit">Search</button>
-    </form>
-    <h2>Members</h2>
-    <table>
-      {% for member in members %}
-      <tr>
-        <td>
-          <a href="{% url 'show_member' member.id %}">
-            {{ member.first_name }} {{member.last_name }}
-          </a>
-        </td>
-        {% if is_owner %}
-        <td>
-          <a href="{% url 'promote_member' member.id%}">Promote to officer</a>
-        </td>
-        {% endif %}
-        </tr>
-      {% endfor %}
-    </table>
-    <h2>Officers</h2>
-    <table>
-      {% for officer in officers %}
-      <tr>
-        <td>
-          <a href="{% url 'show_member' officer.id %}">
-            {{ officer.first_name }} {{officer.last_name }}
-          </a>
-        </td>
-        {% if is_owner %}
-        <td>
-          <a href="{% url 'demote_officer' officer.id%}">Demote to member</a>
-        </td>
-        <td>
-          <a href="{% url 'transfer_ownership' officer.id%}">Transfer ownership</a>
-        </td>
-        {% endif %}
-      </tr>
-      {% endfor %}
-    </table>
-  </body>
-</html>
+<div class="card-header">
+  <h1 class="card-title">Members List</h1>
+</div>
+
+<div class="card-body">
+
+  <div class="row justify-content-end">
+    <div class="col"></div>
+    <div class="col-auto">
+      <form action="{% url 'members_list' %}" method="post">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="search" placeholder="Search member" name="searched_letters">
+          <button type="submit" class="btn btn-outline-light text-white">Search</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-6">
+      <table class="table table-dark table-striped">
+        <thead class="table-dark">
+          <h2>Members</h2>
+        </thead>
+        <tbody>
+          {% for member in members %}
+            <tr>
+              <td>
+                <a href="{% url 'show_member' member.id %}">
+                  {{ member.first_name }} {{member.last_name }}
+                </a>
+              </td>
+              {% if is_owner %}
+                <td>
+                  <a href="{% url 'promote_member' member.id%}" class="btn btn-outline-light text-white">Promote to officer</a>
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-6">
+      <table class="table table-dark table-striped">
+        <thead class="table-dark">
+          <h2>Officers</h2>
+        </thead>
+        <tbody>
+          {% for officer in officers %}
+            <tr>
+              <td>
+                <a href="{% url 'show_member' officer.id %}">
+                  {{ officer.first_name }} {{officer.last_name }}
+                </a>
+              </td>
+              {% if is_owner %}
+                <td>
+                  <a href="{% url 'demote_officer' officer.id%}" class="btn btn-outline-light text-white">Demote to member</a>
+                </td>
+                <td>
+                  <a href="{% url 'transfer_ownership' officer.id%}" class="btn btn-outline-light text-white">Transfer ownership</a>
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+</div>
+{% endblock %}
