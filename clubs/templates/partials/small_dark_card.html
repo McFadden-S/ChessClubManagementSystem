@@ -1,11 +1,13 @@
 {% extends 'partials/base.html' %}
 {% block body %}
-  <div class="container container-fluid vh-100">
-    <div class="row justify-content-center h-50">
-      <div class="col-6 my-auto">
-        <div class="card cover-card bg-dark text-white">
-          {% block contents %}
-          {% endblock %}
+  <div id="cover-image">
+    <div class="container container-fluid vh-100">
+      <div class="row justify-content-center h-50">
+        <div class="col-6 my-auto">
+          <div class="card cover-card bg-dark text-white">
+            {% block contents %}
+            {% endblock %}
+          </div>
         </div>
       </div>
     </div>
