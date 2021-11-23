@@ -26,6 +26,7 @@ class User(AbstractUser):
     )
 
     personal_statement = models.CharField(max_length=100, blank=True)
+
     objects = UserManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name','last_name']
@@ -39,7 +40,6 @@ class User(AbstractUser):
     def mini_gravatar(self):
         """Return a URL to a smaller version of user's gravatar."""
         return self.gravatar(size=60)
-
 
 class Club_Member(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)

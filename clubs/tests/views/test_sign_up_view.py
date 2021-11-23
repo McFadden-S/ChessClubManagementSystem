@@ -5,16 +5,10 @@ from django.urls import reverse
 from django.contrib.auth.hashers import check_password
 
 class SignUpViewTestCase(TestCase):
+    fixtures = ['clubs/tests/fixtures/default_user.json']
+
     def setUp(self):
-        self.user = User.objects.create_user(
-            email='bobsmith@example.com',
-            first_name = 'Bob',
-            last_name = 'Smith',
-            bio='Hi',
-            chess_experience='AV',
-            personal_statement = 'I am Orangutan',
-            password="Orangutan123"
-        )
+        self.user = User.objects.get(email='bobsmith@example.org')
         self.valid_form_input = {
             'email': 'bellasmith@example.org',
             'first_name': 'Bella',
@@ -70,12 +64,12 @@ class SignUpViewTestCase(TestCase):
          self.assertTemplateUsed(response, 'waiting_list.html')
 
          #test 4 - IN DB SEE NEW USER
-         user = User.objects.get(email='bobsmith@example.com')
+         user = User.objects.get(email='bobsmith@example.org')
          self.assertEqual(user.first_name, 'Bob')
          self.assertEqual(user.last_name, 'Smith')
          self.assertEqual(user.bio, 'Hi')
          # from django.contrib.auth.hashers import check_password
-         is_password_correct = check_password('Orangutan123', user.password)
+         is_password_correct = check_password('Password123', user.password)
          self.assertTrue(is_password_correct)
          # self.assertTrue(self._is_logged_in())
 
