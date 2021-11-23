@@ -13,13 +13,12 @@ class ApplicantListViewTestCase(TestCase):
     ]
 
     def setUp(self):
-        self.user = User.objects.get(email='bobsmith@example.org')
-        # self.officer =
-        # self.owner =
+        # this is the officer
+        self.officer = User.objects.get(email='bobsmith@example.org')
         self.secondary_user = User.objects.get(email='bethsmith@example.org')
         self.tertiary_user = User.objects.get(email='johnsmith@example.org')
         self.club = Club_Member.objects.create(
-            user=self.user, authorization='OF'
+            user=self.officer, authorization='OF'
         )
         Club_Member.objects.create(
             user=self.secondary_user, authorization='AP'
@@ -27,13 +26,24 @@ class ApplicantListViewTestCase(TestCase):
         Club_Member.objects.create(
             user=self.tertiary_user, authorization='AP'
         )
+        self.owner = User.objects.get(email='harrysmith@example.org')
+        Club_Member.objects.create(
+            user=self.owner, authorization='OW'
+        )
         self.url = reverse('applicants_list')
 
     def test_applicants_list_url(self):
         self.assertEqual(self.url, '/applicants_list/')
 
-    def test_get_applicants_list(self):
-        self.client.login(email=self.user.email, password='Password123')
+    def test_get_applicants_list_by_officer(self):
+        self.client.login(email=self.officer.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        # self.assertContains()
+        self.assertTemplateUsed(response, 'applicants_list.html')
+
+    def test_get_applicants_list_by_owner(self):
+        self.client.login(email=self.owner.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         # self.assertContains()
@@ -64,7 +74,7 @@ class ApplicantListViewTestCase(TestCase):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_search_bar_to_filter_list(self):
-        self.client.login(email=self.user.email, password='Password123')
+        self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'applicants_list.html')
@@ -78,7 +88,7 @@ class ApplicantListViewTestCase(TestCase):
         self.assertNotContains(response, 'John Smith')
 
     def test_empty_search_bar(self):
-        self.client.login(email=self.user.email, password='Password123')
+        self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'applicants_list.html')
