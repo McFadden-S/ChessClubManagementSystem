@@ -132,8 +132,13 @@ def only_members(view_func):
 def members_list(request):
     member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
     members = User.objects.filter(id__in=member_list)
+
     officer_list = Club_Member.objects.filter(authorization='OF').values_list('user__id', flat=True)
     officers = User.objects.filter(id__in=officer_list)
+
+    owners_list = Club_Member.objects.filter(authorization='OW').values_list('user__id', flat=True)
+    owners = User.objects.filter(id__in=owners_list)
+
     if request.method == 'POST':
         searched_letters = request.POST['searched_letters']
         if searched_letters:
@@ -142,7 +147,7 @@ def members_list(request):
             ).filter(full_name__icontains = searched_letters)
             members = members.filter(id__in=searched_members)
             officers = officers.filter(id__in=searched_members)
-    return render(request, 'members_list.html', {'members': members, 'officers': officers})
+    return render(request, 'members_list.html', {'members': members, 'officers': officers, 'owners': owners})
 
 @login_required
 @only_officer_and_owner
