@@ -24,5 +24,18 @@
       "personal_statement": "I am Orangutan too",
       "password": "pbkdf2_sha256$260000$sR8atw6tAGBlZBQLB0FnHP$d3eMuhprS8+3FUHAigrt2oQHFufoLLkhgQz33bPpEWk="
     }
+  },
+  {
+    "model": "clubs.user",
+    "pk": 4,
+    "fields": {
+      "first_name": "Harry",
+      "last_name": "Smith",
+      "email": "harrysmith@example.org",
+      "bio": "Hiya",
+      "chess_experience": "IM",
+      "personal_statement": "I am Orangutan too",
+      "password": "pbkdf2_sha256$260000$sR8atw6tAGBlZBQLB0FnHP$d3eMuhprS8+3FUHAigrt2oQHFufoLLkhgQz33bPpEWk="
+    }
   }
 ]
