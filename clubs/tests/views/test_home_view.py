@@ -23,7 +23,6 @@ class HomeViewTestCase(TestCase):
         self.assertEqual(self.url,'/')
 
     def test_get_home_redirects_when_logged_in(self):
-        club = Club_Member.objects.create(user=self.user)
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('members_list')

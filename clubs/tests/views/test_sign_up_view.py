@@ -1,5 +1,5 @@
 from django.test import TestCase
-from clubs.models import User,Club_Member
+from clubs.models import User, Club_Member
 from clubs.forms import SignUpForm
 from django.urls import reverse
 from django.contrib.auth.hashers import check_password
@@ -9,6 +9,7 @@ class SignUpViewTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(email='bobsmith@example.org')
+
         self.valid_form_input = {
             'email': 'bellasmith@example.org',
             'first_name': 'Bella',
@@ -22,15 +23,14 @@ class SignUpViewTestCase(TestCase):
         self.url = reverse('sign_up')
 
     def test_get_the_signup_will_redirect_when_user_logged_in(self):
-        club = Club_Member.objects.create(user=self.user)
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url, follow=True)
         url_redirect_after = reverse('members_list')
+        self.assertEqual(response, url_redirect_after)
         self.assertRedirects(response, url_redirect_after, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'members_list.html')
 
     def test_post_signup_redirects_when_logged_in(self):
-        club = Club_Member.objects.create(user=self.user)
         self.client.login(email=self.user.email, password="Password123")
         before_count = User.objects.count()
         response = self.client.post(self.url, self.valid_form_input, follow=True)
