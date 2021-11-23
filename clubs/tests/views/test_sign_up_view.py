@@ -73,22 +73,4 @@ class SignUpViewTestCase(TestCase):
          self.assertTrue(is_password_correct)
          # self.assertTrue(self._is_logged_in())
 
-    def test_get_the_signup_will_redirect_when_user_logged_in(self):
-        club = Club_Member.objects.create(user=self.user)
-        self.client.login(email=self.user.email, password="Orangutan123")
-        response = self.client.get(self.url, follow=True)
-        url_redirect_after = reverse('members_list')
-        self.assertRedirects(response, url_redirect_after, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'members_list.html')
-
-    def test_post_signup_redirects_when_logged_in(self):
-        club = Club_Member.objects.create(user=self.user)
-        self.client.login(email=self.user.email, password="Orangutan123")
-        before_count = User.objects.count()
-        response = self.client.post(self.url, self.valid_form_input, follow=True)
-        after_count = User.objects.count()
-        self.assertEqual(after_count, before_count)
-
-        redirect_url = reverse('members_list')
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'members_list.html')
+    
