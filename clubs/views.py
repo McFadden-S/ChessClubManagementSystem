@@ -94,6 +94,24 @@ def only_officer(view_func):
             return view_func(request,appId)
     return modified_view_func
 
+def only_officer_and_owner(view_func):
+    def modified_view_func(request, **kwargs):
+        try:
+            Club.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            return redirect('members_list')
+        authorization = (Club.objects.get(user=request.user)).authorization
+        if authorization == 'AP':
+            return redirect('waiting_list')
+        if authorization == 'ME':
+            return redirect('members_list')
+        else:
+            appId = 0;
+            for (key, value) in kwargs.items():
+                appId = value
+            return view_func(request,appId)
+    return modified_view_func
+
 def only_members(view_func):
     def modified_view_func(request):
         try:
@@ -132,7 +150,7 @@ def members_list(request):
     return render(request, 'members_list.html', {'members': members, 'officers': officers, 'is_owner': is_owner})
 
 @login_required
-@only_officer
+@only_officer_and_owner
 def applicants_list(request, *args):
     applicants_list = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
     applicants = User.objects.filter(id__in=applicants_list)
@@ -146,14 +164,14 @@ def applicants_list(request, *args):
     return render(request, 'applicants_list.html', {'applicants':applicants})
 
 @login_required
-@only_officer
+@only_officer_and_owner
 def approve_applicant(request, applicant_id):
     applicant = User.objects.get(id=applicant_id)
     Club.objects.filter(user=applicant).update(authorization="ME")
     return redirect('applicants_list')
 
 @login_required
-@only_officer
+@only_officer_and_owner
 def show_applicant(request, applicant_id):
     try:
         Club.objects.get(user=request.user)
