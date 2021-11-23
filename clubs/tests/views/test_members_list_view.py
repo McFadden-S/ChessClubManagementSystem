@@ -4,9 +4,9 @@ from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
 
+
 # Used this from clucker project with some modifications
 class membersListViewTestCase(TestCase):
-
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json'
@@ -26,6 +26,11 @@ class membersListViewTestCase(TestCase):
             user=self.tertiary_user, authorization='ME'
         )
         self.url = reverse('members_list')
+
+    def create_ordered_list_by(self, order_by_var):
+        member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)#.order_by('member.first_name')
+        sorted_list = User.objects.filter(id__in=member_list).order_by(order_by_var)
+        return sorted_list
 
     def test_members_list_url(self):
         self.assertEqual(self.url, '/members_list/')
@@ -54,7 +59,7 @@ class membersListViewTestCase(TestCase):
         self.assertContains(response, 'John Smith')
         self.assertContains(response, 'Beth Smith')
         search_bar = 'Beth'
-        response = self.client.post(self.url, {'searched_letters': search_bar})
+        response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'members_list.html')
         self.assertContains(response, 'Beth Smith')
@@ -68,14 +73,41 @@ class membersListViewTestCase(TestCase):
         self.assertContains(response, 'John Smith')
         self.assertContains(response, 'Beth Smith')
         search_bar = ''
-        response = self.client.post(self.url, {'searched_letters': search_bar})
+        response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'members_list.html')
         self.assertContains(response, 'Beth Smith')
         self.assertContains(response, 'John Smith')
 
+    def test_sorted_list_first_name(self):
+        sort_table = 'first_name'
+        second_list = list(self.create_ordered_list_by(sort_table))
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'members_list.html')
+        response = self.client.post(self.url, {'sort_table': sort_table})
+        member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
+        members = list(User.objects.filter(id__in=member_list))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'members_list.html')
+        self.assertListEqual(members, second_list)
 
-    #TODO Once Log In redirects to another view members only decorator and this test can be UNCOMMENTED
+    def test_sorted_list_last_name(self):
+        sort_table = 'last_name'
+        second_list = list(self.create_ordered_list_by(sort_table))
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'members_list.html')
+        response = self.client.post(self.url, {'sort_table': sort_table})
+        member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
+        members = list(User.objects.filter(id__in=member_list))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'members_list.html')
+        self.assertListEqual(members, second_list)
+
+    # TODO Once Log In redirects to another view members only decorator and this test can be UNCOMMENTED
     # def test_get_members_list_redirects_when_applicant(self):
     #     self.client.login(email=self.user.email, password='Password123')
     #     self.club.authorization='AP'

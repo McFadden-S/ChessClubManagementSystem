@@ -112,12 +112,20 @@ def members_list(request):
     officers = get_officers()
     owners = get_owners()
 
-    if request.method == 'POST':
-        searched_letters = request.POST['searched_letters']
-        if searched_letters:
-            members = get_members_search(searched_letters)
-            officers = get_officers_search(searched_letters)
-            owners = get_owners_search(searched_letters)
+    if 'search_btn' in request.POST:
+        if request.method == 'POST':
+            searched_letters = request.POST['searched_letters']
+            if searched_letters:
+                members = get_members_search(searched_letters)
+                officers = get_officers_search(searched_letters)
+                owners = get_owners_search(searched_letters)
+
+    if 'sort_table' in request.POST:
+        if request.method == 'POST':
+            sort_table = request.POST['sort_table']
+            members = members.order_by(sort_table)
+            officers = officers.order_by(sort_table)
+            owners = owners.order_by(sort_table)
 
     return render(request, 'members_list.html', {'members': members, 'officers': officers, 'owners': owners})
 
@@ -139,15 +147,19 @@ def show_member(request, member_id):
 @login_required
 @only_officers
 def applicants_list(request, *args):
-
     applicants = get_applicants()
+    if 'search_btn' in request.POST:
+        if request.method == 'POST':
+            searched_letters = request.POST['searched_letters']
+            if searched_letters:
+                applicants = get_applicants_search(searched_letters)
 
-    if request.method == 'POST':
-        searched_letters = request.POST['searched_letters']
-        if searched_letters:
-            applicants = get_applicants_search(searched_letters)
+    if 'sort_table' in request.POST:
+        if request.method == 'POST':
+            sort_table = request.POST['sort_table']
+            applicants = applicants.order_by(sort_table)
 
-    return render(request, 'applicants_list.html', {'applicants':applicants})
+    return render(request, 'applicants_list.html', {'applicants': applicants})
 
 @login_required
 @only_officers
