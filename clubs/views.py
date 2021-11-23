@@ -65,6 +65,7 @@ def log_in(request):
             user = authenticate(email=email, password=password)
             user_authorization = _getAuthorization(user)
             if user_authorization == 'AP':
+                login(request, user)
                 return redirect('waiting_list')
             elif user is not None:
                 login(request, user)
