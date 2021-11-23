@@ -134,12 +134,6 @@ def members_list(request):
     members = User.objects.filter(id__in=member_list)
     officer_list = Club_Member.objects.filter(authorization='OF').values_list('user__id', flat=True)
     officers = User.objects.filter(id__in=officer_list)
-    is_owner = False
-    current_user = request.user
-    #PLEASE ADD THIS IN A TRY BLOCK OR USE _getAuthorization()
-    cu_auth = (Club_Member.objects.get(user=current_user)).authorization
-    if cu_auth == 'OW':
-        is_owner = True
     if request.method == 'POST':
         searched_letters = request.POST['searched_letters']
         if searched_letters:
@@ -148,7 +142,7 @@ def members_list(request):
             ).filter(full_name__icontains = searched_letters)
             members = members.filter(id__in=searched_members)
             officers = officers.filter(id__in=searched_members)
-    return render(request, 'members_list.html', {'members': members, 'officers': officers, 'is_owner': is_owner})
+    return render(request, 'members_list.html', {'members': members, 'officers': officers})
 
 @login_required
 @only_officer_and_owner
@@ -195,12 +189,24 @@ def show_applicant(request, applicant_id):
 def show_member(request, member_id):
     try:
         member = User.objects.get(id=member_id)
-        auth = (Club_Member.objects.get(user=member)).get_authorization_display()
+        authorizationText = (Club_Member.objects.get(user=member)).get_authorization_display()
+        request_from_owner = False
+        request_from_officer = False
+        current_user = request.user
+        #PLEASE ADD THIS IN A TRY BLOCK OR USE _getAuthorization()
+        cu_auth = (Club_Member.objects.get(user=current_user)).authorization
+        if cu_auth == 'OW':
+            request_from_owner = True
+        elif cu_auth == 'OF':
+            request_from_officer = True
     except ObjectDoesNotExist:
         return redirect('members_list')
     else:
         return render(request, 'show_member.html',
-            {'member': member, 'auth' : auth}
+            {'member': member,
+            'authorizationText' : authorizationText,
+            'request_from_owner' : request_from_owner,
+            'request_from_officer' : request_from_officer}
         )
 
 def promote_member(request, member_id):
