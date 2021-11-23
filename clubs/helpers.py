@@ -64,6 +64,9 @@ def get_authorization_text(user):
         return None
     return authorization_text
 
+def set_authorization(user, authorization):
+    Club_Member.objects.filter(user=user).update(authorization=authorization)
+
 def is_owner(user):
     if get_authorization(user) == 'OW':
         return True
@@ -71,6 +74,11 @@ def is_owner(user):
 
 def is_officer(user):
     if get_authorization(user) == 'OF':
+        return True
+    return False
+
+def is_member(user):
+    if get_authorization(user) == 'ME':
         return True
     return False
 

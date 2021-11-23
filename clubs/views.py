@@ -170,56 +170,32 @@ def approve_applicant(request, applicant_id):
 @only_owners
 def promote_member(request, member_id):
     current_user = request.user
-    cu_auth = (Club_Member.objects.get(user=current_user)).authorization
-    member = User.objects.get(id=member_id)
-    auth = (Club_Member.objects.get(user=member)).authorization
-    is_owner = False
-    if cu_auth == 'OW':
-        is_owner = True
-    if is_owner:
-        if auth == 'ME':
-            Club_Member.objects.filter(user=member).update(authorization="OF")
-            return redirect(members_list)
-    else:
-        return render(request, 'members_list.html',
-            {'member': member, 'auth' : auth}
-        )
+    member = get_user(member_id)
+    if is_owner(current_user) and is_member(member):
+        set_authorization(member, "OF")
+        return redirect(members_list)
+    return render(request, 'members_list.html',
+        {'member': member, 'auth' : get_authorization(current_user)})
 
 @login_required
 @only_owners
 def demote_officer(request, member_id):
     current_user = request.user
-    cu_auth = (Club_Member.objects.get(user=current_user)).authorization
-    member = User.objects.get(id=member_id)
-    auth = (Club_Member.objects.get(user=member)).authorization
-    is_owner = False
-    if cu_auth == 'OW':
-        is_owner = True
-    if is_owner:
-        if auth == 'OF':
-            Club_Member.objects.filter(user=member).update(authorization="ME")
-            return redirect(members_list)
-    else:
-        return render(request, 'members_list.html',
-            {'member': member, 'auth' : auth}
-        )
+    member = get_user(member_id)
+    if is_owner(current_user) and is_officer(member):
+        set_authorization(member, "ME")
+        return redirect(members_list)
+    return render(request, 'members_list.html',
+        {'member': member, 'auth' : get_authorization(current_user)})
 
 @login_required
 @only_owners
 def transfer_ownership(request, member_id):
     current_user = request.user
-    cu_auth = (Club_Member.objects.get(user=current_user)).authorization
-    member = User.objects.get(id=member_id)
-    auth = (Club_Member.objects.get(user=member)).authorization
-    is_owner = False
-    if cu_auth == 'OW':
-        is_owner = True
-    if is_owner:
-        if auth == 'OF':
-            Club_Member.objects.filter(user=member).update(authorization="OW")
-            Club_Member.objects.filter(user=current_user).update(authorization="OF")
-            return redirect(members_list)
-    else:
-        return render(request, 'members_list.html',
-            {'member': member, 'auth' : auth}
-        )
+    member = get_user(member_id)
+    if is_owner(current_user) and is_officer(member):
+        set_authorization(member, "OW")
+        set_authorization(current_user, "OF")
+        return redirect(members_list)
+    return render(request, 'members_list.html',
+        {'member': member, 'auth' : get_authorization(current_user)})
