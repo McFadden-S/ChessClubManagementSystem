@@ -10,11 +10,23 @@ from django.contrib.auth.hashers import check_password
 from django.db.models.functions import Concat
 from django.db.models import Value
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
+
+def login_prohibited(view_function):
+    def modified_view_function(request):
+        if request.user.is_authenticated:
+            return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)
+        else:
+            return view_function(request)
+    return modified_view_function
+
 
 # Create your views here.
+@login_prohibited
 def home(request):
     return render(request,'home.html')
 
+@login_prohibited
 def sign_up(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -56,6 +68,7 @@ def change_password(request):
     form = UserChangePasswordForm()
     return render(request, 'change_password.html', {'form': form})
 
+@login_prohibited
 def log_in(request):
     if request.method == 'POST':
         form = LogInForm(request.POST)
