@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser,BaseUserManager
 from .managers import UserManager
+from libgravatar import Gravatar
 
 # Create your models here.
 class User(AbstractUser):
@@ -8,7 +9,6 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank = False)
-    # gravatar =
     bio = models.CharField(max_length=100, blank=True)
 
     BEGINNER = 'BG'
@@ -29,6 +29,17 @@ class User(AbstractUser):
     objects = UserManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name','last_name']
+
+    def gravatar(self, size=100):
+        """Return a URL to the user's gravatar."""
+        gravatar_object = Gravatar(self.email)
+        gravatar_url = gravatar_object.get_image(size=size, default='mp')
+        return gravatar_url
+
+    def mini_gravatar(self):
+        """Return a URL to a smaller version of user's gravatar."""
+        return self.gravatar(size=60)
+
 
 class Club_Member(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
