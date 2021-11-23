@@ -1,6 +1,5 @@
 {% extends 'partials/wide_dark_card.html' %}
 {% block contents %}
-
 <div class="card-header">
   <h1 class="card-title">Members List</h1>
 </div>
@@ -10,18 +9,28 @@
   <div class="row justify-content-end">
     <div class="col"></div>
     <div class="col-auto">
-      <form action="{% url 'members_list' %}" method="post">
+        <div>
+      <form action="{% url 'members_list' %}" method="post" id="form_bar">
         {% csrf_token %}
         <div class="input-group mb-3">
           <input type="search" placeholder="Search member" name="searched_letters">
-          <button type="submit" class="btn btn-outline-light text-white">Search</button>
+          <button type="submit" name ="search_btn" class="btn btn-outline-light text-white">Search</button>
         </div>
       </form>
+        </div>
     </div>
   </div>
-
   <div class="row">
     <div class="col-12">
+    <form action="{% url 'members_list' %}" method="post" id="form_sort">
+        {% csrf_token %}
+    <select name="sort_table" class="btn btn-outline-light text-black" onchange="this.form.submit()">
+        <option disabled="true" selected>--Sort By--</option>
+        <option value="first_name">First Name</option>
+        <option value="last_name">Last name</option>
+    </select>
+    </form>
+
       <table class="table table-dark table-striped">
         <thead class="table-dark">
           <h2>Owner</h2>
@@ -87,6 +96,7 @@
         </tbody>
       </table>
     </div>
-
 </div>
 {% endblock %}
+</div>
+</div>

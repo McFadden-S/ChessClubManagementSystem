@@ -73,6 +73,39 @@ class ApplicantListViewTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
+    def create_ordered_list_by(self, order_by_var):
+        applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
+        sorted_list = User.objects.filter(id__in=applicants_list).order_by(order_by_var)
+        return sorted_list
+
+    def test_sorted_list_first_name(self):
+        sort_table = 'first_name'
+        second_list = list(self.create_ordered_list_by(sort_table))
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'applicants_list.html')
+        response = self.client.post(self.url, {'sort_table': sort_table})
+        applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
+        applicants = list(User.objects.filter(id__in=applicants_list))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'applicants_list.html')
+        self.assertListEqual(applicants, second_list)
+
+    def test_sorted_list_last_name(self):
+        sort_table = 'last_name'
+        second_list = list(self.create_ordered_list_by(sort_table))
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'applicants_list.html')
+        response = self.client.post(self.url, {'sort_table': sort_table})
+        applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
+        applicants = list(User.objects.filter(id__in=applicants_list))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'applicants_list.html')
+        self.assertListEqual(applicants, second_list)
+
     def test_search_bar_to_filter_list(self):
         self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url)
