@@ -6,8 +6,6 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect,render
 from django.urls import reverse
-from django.db.models.functions import Concat
-from django.db.models import Value
 from django.conf import settings
 from django.views.generic.edit import FormView, UpdateView
 
@@ -36,9 +34,6 @@ class SignUpView(LoginProhibitedMixin, FormView):
     def get_success_url(self):
         return reverse('waiting_list')
 
-def waiting_list(request):
-    return render(request,'waiting_list.html')
-
 class UpdateUserView(LoginRequiredMixin, UpdateView):
     """View to update logged-in user's profile."""
 
@@ -64,32 +59,24 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         current_user = self.request.user
         password = form.cleaned_data.get('password')
+
         if check_password(password, current_user.password):
             new_password = form.cleaned_data.get('new_password')
             current_user.set_password(new_password)
             current_user.save()
             login(self.request, current_user)
-            messages.add_message(self.request, messages.SUCCESS, "Password Changed!")
             return super().form_valid(form)
-        return super().form_invalid(form)
+
+        else:
+            return super().form_invalid(form)
 
     def get_success_url(self):
         return reverse('members_list')
 
-# @login_required
-# def change_password(request):
-#     current_user = request.user
-#     if request.method == 'POST':
-#         form = UserChangePasswordForm(data=request.POST)
-#         if form.is_valid():
-#             password = form.cleaned_data.get('password')
-#             if check_password(password, current_user.password):
-#                 new_password = form.cleaned_data.get('new_password')
-#                 current_user.set_password(new_password)
-#                 current_user.save()
-#                 messages.add_message(request, messages.SUCCESS, "Password updated!")
-#     form = UserChangePasswordForm()
-#     return render(request, 'change_password.html', {'form': form})
+@login_required
+@only_applicants
+def waiting_list(request):
+    return render(request,'waiting_list.html')
 
 @login_prohibited
 def log_in(request):
@@ -117,7 +104,6 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
-"""The idea of filter members with full name is from https://stackoverflow.com/questions/17932152/auth-filter-full-name"""
 @login_required
 @only_members
 def members_list(request):
@@ -129,26 +115,49 @@ def members_list(request):
     if request.method == 'POST':
         searched_letters = request.POST['searched_letters']
         if searched_letters:
-            searched_members = User.objects.annotate(
-                full_name=Concat('first_name', Value(' '), 'last_name')
-            ).filter(full_name__icontains = searched_letters)
-            members = members.filter(id__in=searched_members)
-            officers = officers.filter(id__in=searched_members)
+            members = get_members_search(searched_letters)
+            officers = get_officers_search(searched_letters)
+
     return render(request, 'members_list.html', {'members': members, 'officers': officers, 'owners': owners})
+
+@login_required
+@only_members
+def show_member(request, member_id):
+    member = get_user(member_id)
+    authorizationText = get_authorization_text(member)
+
+    if member == None or authorizationText == None:
+        return redirect('members_list')
+
+    return render(request, 'show_member.html',
+        {'member': member,
+        'authorizationText' : authorizationText,
+        'request_from_owner' : is_owner(request.user),
+        'request_from_officer' : is_officer(request.user)})
 
 @login_required
 @only_officers
 def applicants_list(request, *args):
-    applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
-    applicants = User.objects.filter(id__in=applicants_list)
+
+    applicants = get_applicants()
+
     if request.method == 'POST':
         searched_letters = request.POST['searched_letters']
         if searched_letters:
-            searched_members = User.objects.annotate(
-                full_name=Concat('first_name', Value(' '), 'last_name')
-            ).filter(full_name__icontains = searched_letters)
-            applicants = applicants.filter(id__in=searched_members)
+            applicants = get_applicants_search(searched_letters)
+
     return render(request, 'applicants_list.html', {'applicants':applicants})
+
+@login_required
+@only_officers
+def show_applicant(request, applicant_id):
+    applicant = get_user(applicant_id)
+
+    if applicant == None or not is_applicant(applicant):
+        return redirect('applicants_list')
+
+    return render(request, 'show_applicant.html',
+        {'applicant': applicant})
 
 @login_required
 @only_officers
@@ -158,49 +167,7 @@ def approve_applicant(request, applicant_id):
     return redirect('applicants_list')
 
 @login_required
-@only_officers
-def show_applicant(request, applicant_id):
-    try:
-        Club_Member.objects.get(user=request.user)
-    except ObjectDoesNotExist:
-        return redirect('members_list')
-    try:
-        applicant = User.objects.get(id=applicant_id)
-    except ObjectDoesNotExist:
-        return redirect('applicants_list')
-    else:
-        # THE APPLICANT HAS ALREADY BEEN APPROVED CASE
-        if (Club_Member.objects.get(user=applicant)).authorization != 'AP':
-            return redirect('applicants_list')
-        return render(request, 'show_applicant.html',
-            {'applicant': applicant}
-        )
-
-@login_required
-@only_members
-def show_member(request, member_id):
-    try:
-        member = User.objects.get(id=member_id)
-        authorizationText = (Club_Member.objects.get(user=member)).get_authorization_display()
-
-        request_from_owner = False
-        request_from_officer = False
-        cu_auth = get_authorization(request.user)
-        if cu_auth == 'OW':
-            request_from_owner = True
-        elif cu_auth == 'OF':
-            request_from_officer = True
-
-    except ObjectDoesNotExist:
-        return redirect('members_list')
-    else:
-        return render(request, 'show_member.html',
-            {'member': member,
-            'authorizationText' : authorizationText,
-            'request_from_owner' : request_from_owner,
-            'request_from_officer' : request_from_officer}
-        )
-
+@only_owners
 def promote_member(request, member_id):
     current_user = request.user
     cu_auth = (Club_Member.objects.get(user=current_user)).authorization
@@ -218,6 +185,8 @@ def promote_member(request, member_id):
             {'member': member, 'auth' : auth}
         )
 
+@login_required
+@only_owners
 def demote_officer(request, member_id):
     current_user = request.user
     cu_auth = (Club_Member.objects.get(user=current_user)).authorization
@@ -235,6 +204,8 @@ def demote_officer(request, member_id):
             {'member': member, 'auth' : auth}
         )
 
+@login_required
+@only_owners
 def transfer_ownership(request, member_id):
     current_user = request.user
     cu_auth = (Club_Member.objects.get(user=current_user)).authorization
