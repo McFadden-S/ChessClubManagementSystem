@@ -81,7 +81,7 @@ class ApplicantListViewTestCase(TestCase):
     def test_sorted_list_first_name(self):
         sort_table = 'first_name'
         second_list = list(self.create_ordered_list_by(sort_table))
-        self.client.login(email=self.user.email, password='Password123')
+        self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'applicants_list.html')
@@ -95,7 +95,7 @@ class ApplicantListViewTestCase(TestCase):
     def test_sorted_list_last_name(self):
         sort_table = 'last_name'
         second_list = list(self.create_ordered_list_by(sort_table))
-        self.client.login(email=self.user.email, password='Password123')
+        self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'applicants_list.html')
@@ -114,7 +114,7 @@ class ApplicantListViewTestCase(TestCase):
         self.assertContains(response, 'John Smith')
         self.assertContains(response, 'Beth Smith')
         search_bar = 'Beth'
-        response = self.client.post(self.url, {'searched_letters': search_bar})
+        response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'applicants_list.html')
         self.assertContains(response, 'Beth Smith')
