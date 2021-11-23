@@ -1,5 +1,5 @@
 from django.test import TestCase
-from clubs.models import User,Club
+from clubs.models import User,Club_Member
 from clubs.forms import SignUpForm
 from django.urls import reverse
 from django.contrib.auth.hashers import check_password
@@ -53,13 +53,13 @@ class SignUpViewTestCase(TestCase):
     def test_succesful_sign_up(self):
          # SAVE TO USER DB
          before_count = User.objects.count()
-         before_count_club = Club.objects.count()
+         before_count_club = Club_Member.objects.count()
          response = self.client.post(self.url, self.valid_form_input, follow=True)
          after_count = User.objects.count()
          self.assertEqual(after_count, before_count+1)
 
          # SAVE TO CLUB DB
-         after_count_club = Club.objects.count()
+         after_count_club = Club_Member.objects.count()
          self.assertEqual(after_count_club, before_count_club+1)
 
          # TEST 2 - REDIRECT SUCCESSFUL MUST MAKE FOLLOWS IN RESPONSE TRUE

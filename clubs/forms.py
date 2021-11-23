@@ -1,5 +1,5 @@
 from django import forms
-from .models import User, Club
+from .models import User, Club_Member
 from django.core.validators import RegexValidator
 
 # Used this from clucker project with some modifications
