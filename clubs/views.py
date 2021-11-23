@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect,render
 from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
-from .models import User, Club
+from .models import User, Club_Member
 from django.contrib.auth.hashers import check_password
 from django.db.models.functions import Concat
 from django.db.models import Value
@@ -20,7 +20,7 @@ def sign_up(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            Club.objects.create(user=user)
+            Club_Member.objects.create(user=user)
             return redirect('waiting_list')
     else:
         form = SignUpForm()
@@ -82,10 +82,28 @@ def log_out(request):
 def only_officer(view_func):
     def modified_view_func(request, **kwargs):
         try:
-            Club.objects.get(user=request.user)
+            Club_Member.objects.get(user=request.user)
         except ObjectDoesNotExist:
             return redirect('members_list')
-        if (Club.objects.get(user=request.user)).authorization != 'OF':
+        if (Club_Member.objects.get(user=request.user)).authorization != 'OF':
+            return redirect('members_list')
+        else:
+            appId = 0;
+            for (key, value) in kwargs.items():
+                appId = value
+            return view_func(request,appId)
+    return modified_view_func
+
+def only_officer_and_owner(view_func):
+    def modified_view_func(request, **kwargs):
+        try:
+            Club_Member.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            return redirect('members_list')
+        authorization = (Club_Member.objects.get(user=request.user)).authorization
+        if authorization == 'AP':
+            return redirect('waiting_list')
+        if authorization == 'ME':
             return redirect('members_list')
         else:
             appId = 0;
@@ -97,10 +115,10 @@ def only_officer(view_func):
 def only_members(view_func):
     def modified_view_func(request):
         try:
-            Club.objects.get(user=request.user)
+            Club_Member.objects.get(user=request.user)
         except ObjectDoesNotExist:
             return redirect('log_in')
-        authorization = (Club.objects.get(user=request.user)).authorization
+        authorization = (Club_Member.objects.get(user=request.user)).authorization
         if authorization != 'ME' or authorization != 'OF' or authorization != 'OW':
             return redirect('home')
         else:
@@ -111,14 +129,14 @@ def only_members(view_func):
 #@only_members TODO: LOG IN NEEDS TO REDIRECT SOMEWHERE ELSE FOR THIS TO BE UNCOMMENTED
 @login_required
 def members_list(request):
-    member_list = Club.objects.filter(authorization='ME').values_list('user__id', flat=True)
+    member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
     members = User.objects.filter(id__in=member_list)
-    officer_list = Club.objects.filter(authorization='OF').values_list('user__id', flat=True)
+    officer_list = Club_Member.objects.filter(authorization='OF').values_list('user__id', flat=True)
     officers = User.objects.filter(id__in=officer_list)
     is_owner = False
     current_user = request.user
     #PLEASE ADD THIS IN A TRY BLOCK OR USE _getAuthorization()
-    cu_auth = (Club.objects.get(user=current_user)).authorization
+    cu_auth = (Club_Member.objects.get(user=current_user)).authorization
     if cu_auth == 'OW':
         is_owner = True
     if request.method == 'POST':
@@ -132,9 +150,9 @@ def members_list(request):
     return render(request, 'members_list.html', {'members': members, 'officers': officers, 'is_owner': is_owner})
 
 @login_required
-@only_officer
+@only_officer_and_owner
 def applicants_list(request, *args):
-    applicants_list = Club.objects.filter(authorization='AP').values_list('user__id', flat=True)
+    applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
     applicants = User.objects.filter(id__in=applicants_list)
     if request.method == 'POST':
         searched_letters = request.POST['searched_letters']
@@ -146,17 +164,17 @@ def applicants_list(request, *args):
     return render(request, 'applicants_list.html', {'applicants':applicants})
 
 @login_required
-@only_officer
+@only_officer_and_owner
 def approve_applicant(request, applicant_id):
     applicant = User.objects.get(id=applicant_id)
-    Club.objects.filter(user=applicant).update(authorization="ME")
+    Club_Member.objects.filter(user=applicant).update(authorization="ME")
     return redirect('applicants_list')
 
 @login_required
-@only_officer
+@only_officer_and_owner
 def show_applicant(request, applicant_id):
     try:
-        Club.objects.get(user=request.user)
+        Club_Member.objects.get(user=request.user)
     except ObjectDoesNotExist:
         return redirect('members_list')
     try:
@@ -165,7 +183,7 @@ def show_applicant(request, applicant_id):
         return redirect('applicants_list')
     else:
         # THE APPLICANT HAS ALREADY BEEN APPROVED CASE
-        if (Club.objects.get(user=applicant)).authorization != 'AP':
+        if (Club_Member.objects.get(user=applicant)).authorization != 'AP':
             return redirect('applicants_list')
         return render(request, 'show_applicant.html',
             {'applicant': applicant}
@@ -176,7 +194,7 @@ def show_applicant(request, applicant_id):
 def show_member(request, member_id):
     try:
         member = User.objects.get(id=member_id)
-        auth = (Club.objects.get(user=member)).authorization
+        auth = (Club_Member.objects.get(user=member)).authorization
     except ObjectDoesNotExist:
         return redirect('members_list')
     else:
@@ -186,64 +204,64 @@ def show_member(request, member_id):
 
 def promote_member(request, member_id):
     current_user = request.user
-    cu_auth = (Club.objects.get(user=current_user)).authorization
+    cu_auth = (Club_Member.objects.get(user=current_user)).authorization
     member = User.objects.get(id=member_id)
-    auth = (Club.objects.get(user=member)).authorization
+    auth = (Club_Member.objects.get(user=member)).authorization
     is_owner = False
     if cu_auth == 'OW':
         is_owner = True
     if is_owner:
         if auth == 'ME':
-            Club.objects.filter(user=member).update(authorization="OF")
+            Club_Member.objects.filter(user=member).update(authorization="OF")
             return redirect(members_list)
     else:
-        return render(request, 'member_list.html',
+        return render(request, 'members_list.html',
             {'member': member, 'auth' : auth}
         )
 
 def demote_officer(request, member_id):
     current_user = request.user
-    cu_auth = (Club.objects.get(user=current_user)).authorization
+    cu_auth = (Club_Member.objects.get(user=current_user)).authorization
     member = User.objects.get(id=member_id)
-    auth = (Club.objects.get(user=member)).authorization
+    auth = (Club_Member.objects.get(user=member)).authorization
     is_owner = False
     if cu_auth == 'OW':
         is_owner = True
     if is_owner:
         if auth == 'OF':
-            Club.objects.filter(user=member).update(authorization="ME")
+            Club_Member.objects.filter(user=member).update(authorization="ME")
             return redirect(members_list)
     else:
-        return render(request, 'member_list.html',
+        return render(request, 'members_list.html',
             {'member': member, 'auth' : auth}
         )
 
 def transfer_ownership(request, member_id):
     current_user = request.user
-    cu_auth = (Club.objects.get(user=current_user)).authorization
+    cu_auth = (Club_Member.objects.get(user=current_user)).authorization
     member = User.objects.get(id=member_id)
-    auth = (Club.objects.get(user=member)).authorization
+    auth = (Club_Member.objects.get(user=member)).authorization
     is_owner = False
     if cu_auth == 'OW':
         is_owner = True
     if is_owner:
         if auth == 'OF':
-            Club.objects.filter(user=member).update(authorization="OW")
-            Club.objects.filter(user=current_user).update(authorization="OF")
+            Club_Member.objects.filter(user=member).update(authorization="OW")
+            Club_Member.objects.filter(user=current_user).update(authorization="OF")
             return redirect(members_list)
     else:
-        return render(request, 'member_list.html',
+        return render(request, 'members_list.html',
             {'member': member, 'auth' : auth}
         )
 
 def getAllMembersExceptApplicants():
-    applicants = Club.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
+    applicants = Club_Member.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
     members = User.objects.exclude(id__in=applicants)
     return members
 
 def _getAuthorization(user):
     try:
-        authorization = (Club.objects.get(user=user)).authorization
+        authorization = (Club_Member.objects.get(user=user)).authorization
     except ObjectDoesNotExist:
         return None
     return authorization

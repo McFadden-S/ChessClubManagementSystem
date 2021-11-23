@@ -40,7 +40,8 @@ class User(AbstractUser):
         """Return a URL to a smaller version of user's gravatar."""
         return self.gravatar(size=60)
 
-class Club(models.Model):
+
+class Club_Member(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
     club_name = models.CharField(max_length=50, default="club", blank=False)
 

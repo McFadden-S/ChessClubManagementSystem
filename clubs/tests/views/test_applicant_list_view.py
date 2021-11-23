@@ -1,5 +1,5 @@
 from django.test import TestCase
-from clubs.models import User, Club
+from clubs.models import User, Club_Member
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
@@ -13,7 +13,7 @@ class ApplicantListViewTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(email='bobsmith@example.org')
-        self.club = Club.objects.create(
+        self.club = Club_Member.objects.create(
             user=self.user, authorization='OF'
         )
         self.url = reverse('applicants_list')
@@ -30,7 +30,7 @@ class ApplicantListViewTestCase(TestCase):
 
     def test_get_applicants_list_redirects_member_list_when_authorization_is_member(self):
         user1 = User.objects.create_user(email="a@example.com",first_name="a",last_name="a",chess_experience="BG",password='Password123')
-        club1 = Club.objects.create(user=user1, authorization='ME')
+        club1 = Club_Member.objects.create(user=user1, authorization='ME')
         self.client.login(email=user1.email, password='Password123')
         response = self.client.get(self.url)
         redirect_url=reverse('members_list')
@@ -40,7 +40,7 @@ class ApplicantListViewTestCase(TestCase):
     # WHEN LOGIN IS FIXED FOR APPLICANT
     # def test_get_applicants_list_redirects_member_list_when_authorization_is_APPLICANT(self):
     #     user1 = User.objects.create_user(email="a@example.com",first_name="a",last_name="a",chess_experience="BG",password='Password123')
-    #     club1 = Club.objects.create(user=user1, authorization='ME')
+    #     club1 = Club_Member.objects.create(user=user1, authorization='ME')
     #     self.client.login(email=user1.email, password='Password123')
     #     response = self.client.get(self.url)
     #     redirect_url=reverse('members_list')

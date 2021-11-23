@@ -1,5 +1,5 @@
 from django.test import TestCase
-from clubs.models import User,Club
+from clubs.models import User,Club_Member
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 
@@ -12,11 +12,11 @@ class ShowApplicantViewTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(email='bobsmith@example.org')
-        self.club = Club.objects.create(
+        self.club = Club_Member.objects.create(
             user=self.user
         )
         self.officer = User.objects.get(email='bethsmith@example.org')
-        self.officer_club = Club.objects.create(
+        self.officer_club = Club_Member.objects.create(
             user=self.officer, authorization="OF"
         )
         self.target_user = User.objects.get(email='bobsmith@example.org')
@@ -43,7 +43,7 @@ class ShowApplicantViewTestCase(TestCase):
     def test_get_show_applicant_redirects_having_been_already_approved(self):
         self.client.login(username=self.officer.email, password='Password123')
         user1 = User.objects.create_user(email="a@example.com",first_name="a",last_name="a",chess_experience="BG",password='Password123')
-        club1 = Club.objects.create(user=user1, authorization='ME')
+        club1 = Club_Member.objects.create(user=user1, authorization='ME')
         target_user1 = User.objects.get(email='a@example.com')
         url1 = reverse('show_applicant', kwargs={'applicant_id': target_user1.id})
         response = self.client.get(url1, follow=True)

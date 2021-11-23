@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.test import TestCase
 from clubs.forms import LogInForm
-from clubs.models import Club, User
+from clubs.models import Club_Member, User
 
 class LogInViewTestCase(TestCase):
     """Unit tests of the log in view"""
@@ -17,7 +17,7 @@ class LogInViewTestCase(TestCase):
             personal_statement='I would love to learn how to play chess',
             password='CorrectPassword123'
         )
-        Club.objects.create(
+        Club_Member.objects.create(
             user=self.user,
             authorization='ME'
         )
@@ -29,7 +29,7 @@ class LogInViewTestCase(TestCase):
             personal_statement='I would love to learn how to play chess',
             password='CorrectPassword123'
         )
-        Club.objects.create(
+        Club_Member.objects.create(
             user=self.applicant,
             authorization='AP'
         )
