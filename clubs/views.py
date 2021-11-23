@@ -117,6 +117,7 @@ def members_list(request):
         if searched_letters:
             members = get_members_search(searched_letters)
             officers = get_officers_search(searched_letters)
+            owners = get_owners_search(searched_letters)
 
     return render(request, 'members_list.html', {'members': members, 'officers': officers, 'owners': owners})
 
