@@ -12,6 +12,7 @@ from django.db.models import Value
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 
+#loginprohibited
 def login_prohibited(view_function):
     def modified_view_function(request):
         if request.user.is_authenticated:
