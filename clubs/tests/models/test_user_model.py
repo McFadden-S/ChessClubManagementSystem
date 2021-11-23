@@ -3,16 +3,13 @@ from django.test import TestCase
 from clubs.models import User
 
 class UserModelTestCase(TestCase):
+    fixtures = [
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/other_users.json'
+    ]
+
     def setUp(self):
-        self.user = User.objects.create_user(
-            email='bobsmith@example.com',
-            first_name = 'Bob',
-            last_name = 'Smith',
-            bio='Hi',
-            chess_experience='AV',
-            personal_statement = 'I am Orangutan',
-            password="Orangutan123"
-        )
+        self.user = User.objects.get(email='bobsmith@example.org')
 
     def test_valid_user(self):
         self.assert_user_is_valid()
@@ -24,20 +21,20 @@ class UserModelTestCase(TestCase):
         self.assert_user_is_invalid()
 
     def test_email_must_have_before_at_symbol(self):
-        self.user.email = '@example.com'
+        self.user.email = '@example.org'
         self.assert_user_is_invalid()
 
     def test_email_must_have_at_symbol(self):
-        self.user.email = 'bobsmithexample.com'
+        self.user.email = 'bobsmithexample.org'
         self.assert_user_is_invalid()
 
     def test_email_is_unique(self):
-        second_person = self.create_second_person()
+        second_person = User.objects.get(email='bethsmith@example.org')
         self.user.email = second_person.email
         self.assert_user_is_invalid()
 
     def test_email_must_include_domain_name(self):
-        self.user.email = 'bobsmith@.com'
+        self.user.email = 'bobsmith@.org'
         self.assert_user_is_invalid()
 
     def test_email_must_include_domain(self):
@@ -86,7 +83,7 @@ class UserModelTestCase(TestCase):
         self.assert_user_is_invalid();
 
     def test_chess_experience_does_not_have_to_be_unique(self):
-        second_user = self.create_second_person()
+        second_user = User.objects.get(email='bethsmith@example.org')
         self.user.chess_experience = second_user.chess_experience
         self.assert_user_is_valid();
 
@@ -107,15 +104,3 @@ class UserModelTestCase(TestCase):
     def assert_user_is_invalid(self):
         with self.assertRaises(ValidationError):
             self.user.full_clean()
-
-    def create_second_person(self):
-        second_person = User.objects.create_user(
-            email='secondguy@example.com',
-            first_name='Second',
-            last_name='Guy',
-            bio='Hi',
-            chess_experience='BG',
-            personal_statement='I am second guy',
-            password="Orangutan123"
-        )
-        return second_person
