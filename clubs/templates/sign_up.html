@@ -4,14 +4,15 @@
     <h1 class="card-title">Sign Up</h1>
   </div>
   <div class="card-body">
-      <form class="novalidate" action="{% url 'sign_up'%}" method="post">
-        {% csrf_token %}
-        <ul class="list-group list-group-flush">
-          {% include 'partials/form.html' with form=form %}
-          <li class="list-group-item bg-dark text-white">
-            <input type="submit" value="Sign Up" class="btn btn-outline-light text-white">
-          </li>
-        </ul>
-      </form>
+    <p>To have a profile photo, sign up with a gravatar associated email or set up a gravatar <a href="https://en.gravatar.com/">here</a>.</p>
+    <form class="novalidate" action="{% url 'sign_up'%}" method="post">
+      {% csrf_token %}
+      <ul class="list-group list-group-flush">
+        {% include 'partials/form.html' with form=form %}
+        <li class="list-group-item bg-dark text-white">
+          <input type="submit" value="Sign Up" class="btn btn-outline-light text-white">
+        </li>
+      </ul>
+    </form>
   </div>
 {% endblock %}

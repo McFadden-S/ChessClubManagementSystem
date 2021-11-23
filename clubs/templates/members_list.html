@@ -30,6 +30,9 @@
           {% for member in members %}
             <tr>
               <td>
+                <img src="{{ member.mini_gravatar }}" alt="Gravatar of {{ member.first_name }} {{member.last_name }}">
+              </td>
+              <td>
                 <a href="{% url 'show_member' member.id %}">
                   {{ member.first_name }} {{member.last_name }}
                 </a>
@@ -53,6 +56,9 @@
         <tbody>
           {% for officer in officers %}
             <tr>
+              <td>
+                <img src="{{ officer.mini_gravatar }}" alt="Gravatar of {{ officer.first_name }} {{officer.last_name }}">
+              </td>
               <td>
                 <a href="{% url 'show_member' officer.id %}">
                   {{ officer.first_name }} {{officer.last_name }}

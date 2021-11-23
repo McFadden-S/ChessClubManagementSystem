@@ -30,6 +30,9 @@
           {% for applicant in applicants %}
             <tr>
               <td>
+                <img src="{{ applicant.mini_gravatar }}" alt="Gravatar of {{ applicant.first_name }} {{applicant.last_name }}">
+              </td>
+              <td>
                 <a href="{% url 'show_applicant' applicant.id %}">
                   {{ applicant.first_name }} {{applicant.last_name }}
                 </a>
