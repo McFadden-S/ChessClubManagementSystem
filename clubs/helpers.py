@@ -29,6 +29,9 @@ def get_officers_search(searched_letters):
 def get_owners():
     return get_users('OW')
 
+def get_owners_search(searched_letters):
+    return get_users_search('OW', searched_letters)
+
 def get_users(search_authorization):
     authorizationFilter = (Club_Member.objects
         .filter(authorization=search_authorization)
