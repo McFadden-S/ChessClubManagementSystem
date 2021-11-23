@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from faker import Faker
 import numpy
-from clubs.models import User, Club
+from clubs.models import User, Club_Member
 
 class Command(BaseCommand):
     """The database seeder."""
@@ -29,7 +29,7 @@ class Command(BaseCommand):
                 chess_experience= chess_experience,
                 password = 'Password123',
             )
-            Club.objects.create(
+            Club_Member.objects.create(
                 user=randUser,
                 authorization=numpy.random.choice(self.AUTHORIZATION_CHOICES)
             )

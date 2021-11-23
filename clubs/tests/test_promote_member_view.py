@@ -1,7 +1,7 @@
 """Tests of the promote member view."""
 from django.test import TestCase
 from django.urls import reverse
-from clubs.models import User, Club
+from clubs.models import User, Club_Member
 from .helpers import LogInTester
 
 
@@ -25,11 +25,11 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
             password='Password123',
             is_active=True,
         )
-        self.club_owner = Club.objects.create(
+        self.club_owner = Club_Member.objects.create(
             user=self.owner,
             authorization='OW'
         )
-        self.club_member = Club.objects.create(
+        self.club_member = Club_Member.objects.create(
             user=self.member,
             authorization='ME'
         )
@@ -46,7 +46,7 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         response = self.client.get(self.url)
         url = reverse('members_list')
         self.assertRedirects(response, url, status_code=302, target_status_code=200)
-        auth = Club.objects.get(user=self.member).authorization
+        auth = Club_Member.objects.get(user=self.member).authorization
         self.assertEqual(auth, 'OF')
     
     def test_get_promote_invalid_member(self):

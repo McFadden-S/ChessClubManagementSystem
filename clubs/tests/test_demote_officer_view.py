@@ -1,7 +1,7 @@
 """Tests of the demote officer view."""
 from django.test import TestCase
 from django.urls import reverse
-from clubs.models import User, Club
+from clubs.models import User, Club_Member
 from .helpers import LogInTester
 
 
@@ -25,11 +25,11 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
             password='Password123',
             is_active=True,
         )
-        self.club_owner = Club.objects.create(
+        self.club_owner = Club_Member.objects.create(
             user=self.owner,
             authorization='OW'
         )
-        self.club_officer = Club.objects.create(
+        self.club_officer = Club_Member.objects.create(
             user=self.officer,
             authorization='OF'
         )
@@ -46,7 +46,7 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         response = self.client.get(self.url)
         url = reverse('members_list')
         self.assertRedirects(response, url, status_code=302, target_status_code=200)
-        auth = Club.objects.get(user=self.officer).authorization
+        auth = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(auth, 'ME')
     
     def test_get_demote_invalid_officer(self):

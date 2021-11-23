@@ -1,14 +1,14 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from clubs.models import Club, User
+from clubs.models import Club_Member, User
 
-class ClubTest(TestCase):
+class ClubMemberTest(TestCase):
 
     fixtures = ['clubs/tests/fixtures/default_user.json']
 
     def setUp(self):
         self.user = User.objects.get(email='bobsmith@example.org')
-        self.club = Club.objects.create(
+        self.club = Club_Member.objects.create(
             user=self.user
         )
 
@@ -44,6 +44,6 @@ class ClubTest(TestCase):
             self.club.full_clean()
 
     def test_unique_surrogate_key(self):
-        club2 = Club(user=self.user, authorization='OW')
+        club2 = Club_Member(user=self.user, authorization='OW')
         with self.assertRaises(ValidationError):
             club2.full_clean()
