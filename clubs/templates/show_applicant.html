@@ -9,6 +9,10 @@
         <h2>{{ applicant.first_name }} {{applicant.last_name }}</h2>
       </thead>
       <tbody>
+        <tr>
+          <td>
+            <img src="{{ applicant.gravatar }}" alt="Gravatar of {{ applicant.first_name }} {{applicant.last_name }}">
+          </td>
         </tr>
         <tr>
           <td>
@@ -31,6 +35,6 @@
           </td>
         </tr>
       </tbody>
-    </table>  
+    </table>
   </div>
 {% endblock %}
