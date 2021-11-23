@@ -26,6 +26,7 @@ class User(AbstractUser):
     )
 
     personal_statement = models.CharField(max_length=100, blank=True)
+    
     objects = UserManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name','last_name']

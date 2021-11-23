@@ -1,29 +1,32 @@
 {% extends 'partials/dark_card.html' %}
 {% block contents %}
+
   <div class="card-header">
     <h1 class="card-title">Member Info</h1>
   </div>
+
   <div class="card-body">
     <table class="table table-dark table-striped">
+
       <thead class="table-dark">
         <h2>{{ member.first_name }} {{member.last_name }}</h2>
+        <p class="mb-2 text-muted">{{ auth }}</p>
       </thead>
+      
       <tbody>
+
         <tr>
           <td>
             <img src="{{ member.gravatar }}" alt="Gravatar of {{ member.first_name }} {{member.last_name }}">
           </td>
         </tr>
+
         <tr>
           <td>
               Bio: {{ member.bio }}
           </td>
         </tr>
-        <tr>
-          <td>
-              Role: {{ auth }}
-          </td>
-        </tr>
+
       </tbody>
     </table>
   </div>

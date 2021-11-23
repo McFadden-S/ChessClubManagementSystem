@@ -194,7 +194,7 @@ def show_applicant(request, applicant_id):
 def show_member(request, member_id):
     try:
         member = User.objects.get(id=member_id)
-        auth = (Club_Member.objects.get(user=member)).authorization
+        auth = (Club_Member.objects.get(user=member)).get_authorization_display()
     except ObjectDoesNotExist:
         return redirect('members_list')
     else:
