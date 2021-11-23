@@ -197,7 +197,7 @@ def promote_member(request, member_id):
             Club.objects.filter(user=member).update(authorization="OF")
             return redirect(members_list)
     else:
-        return render(request, 'member_list.html',
+        return render(request, 'members_list.html',
             {'member': member, 'auth' : auth}
         )
 
@@ -214,7 +214,7 @@ def demote_officer(request, member_id):
             Club.objects.filter(user=member).update(authorization="ME")
             return redirect(members_list)
     else:
-        return render(request, 'member_list.html',
+        return render(request, 'members_list.html',
             {'member': member, 'auth' : auth}
         )
 
@@ -232,7 +232,7 @@ def transfer_ownership(request, member_id):
             Club.objects.filter(user=current_user).update(authorization="OF")
             return redirect(members_list)
     else:
-        return render(request, 'member_list.html',
+        return render(request, 'members_list.html',
             {'member': member, 'auth' : auth}
         )
 
