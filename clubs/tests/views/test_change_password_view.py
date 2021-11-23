@@ -38,11 +38,7 @@ class userChangePasswordViewTestCase(TestCase):
 
     def test_succesful_password_change(self):
         self.client.login(email=self.user.email, password='Password123')
-        response = self.client.post(self.url, self.form_input, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'change_password.html')
-        form = response.context['form']
-        self.assertTrue(isinstance(form, UserChangePasswordForm))
+        response = self.client.post(self.url, self.form_input)
         self.user.refresh_from_db()
         is_password_correct = check_password('NewPassword123', self.user.password)
         self.assertTrue(is_password_correct)

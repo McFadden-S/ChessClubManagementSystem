@@ -49,11 +49,8 @@ class userUpdateViewTestCase(TestCase):
 
     def test_succesful_user_update(self):
         self.client.login(email=self.user.email, password='Password123')
-        response = self.client.post(self.url, self.form_input, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'user_update.html')
-        form = response.context['form']
-        self.assertTrue(isinstance(form, UserUpdateForm))
+        response = self.client.post(self.url, self.form_input)
+        self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
         self.assertTrue(self.user.first_name, self.form_input['first_name'])
         self.assertTrue(self.user.last_name, self.form_input['last_name'])
