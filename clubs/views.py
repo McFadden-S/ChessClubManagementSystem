@@ -97,10 +97,10 @@ def only_officer(view_func):
 def only_officer_and_owner(view_func):
     def modified_view_func(request, **kwargs):
         try:
-            Club.objects.get(user=request.user)
+            Club_Member.objects.get(user=request.user)
         except ObjectDoesNotExist:
             return redirect('members_list')
-        authorization = (Club.objects.get(user=request.user)).authorization
+        authorization = (Club_Member.objects.get(user=request.user)).authorization
         if authorization == 'AP':
             return redirect('waiting_list')
         if authorization == 'ME':
@@ -118,7 +118,7 @@ def only_members(view_func):
             Club_Member.objects.get(user=request.user)
         except ObjectDoesNotExist:
             return redirect('log_in')
-        authorization = (Club.objects.get(user=request.user)).authorization
+        authorization = (Club_Member.objects.get(user=request.user)).authorization
         if authorization != 'ME' or authorization != 'OF' or authorization != 'OW':
             return redirect('home')
         else:
