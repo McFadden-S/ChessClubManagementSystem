@@ -28,6 +28,7 @@ class SignUpForm(forms.ModelForm):
 
     def save(self):
         super().save(commit=False)
+
         user = User.objects.create_user(
             email=self.cleaned_data.get('email'),
             first_name=self.cleaned_data.get('first_name'),
@@ -37,6 +38,9 @@ class SignUpForm(forms.ModelForm):
             chess_experience=self.cleaned_data.get('chess_experience'),
             password=self.cleaned_data.get('new_password'),
         )
+
+        Club_Member.objects.create(user=user)
+
         return user
 
 # Used this from clucker project with some modifications

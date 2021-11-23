@@ -1,72 +1,95 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect,render
-from .forms import SignUpForm, UserUpdateForm, UserChangePasswordForm, LogInForm
-from .models import User, Club_Member
-from django.contrib.auth.hashers import check_password
+from django.urls import reverse
 from django.db.models.functions import Concat
 from django.db.models import Value
-from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
+from django.views.generic.edit import FormView, UpdateView
 
-def login_prohibited(view_function):
-    def modified_view_function(request):
-        if request.user.is_authenticated:
-            return redirect(settings.REDIRECT_URL_WHEN_LOGGED_IN)
-        else:
-            return view_function(request)
-    return modified_view_function
-
+from .forms import *
+from .models import *
+from .helpers import *
+from .decorators import *
+from .mixins import *
 
 # Create your views here.
 @login_prohibited
 def home(request):
     return render(request,'home.html')
 
-@login_prohibited
-def sign_up(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            Club_Member.objects.create(user=user)
-            return redirect('waiting_list')
-    else:
-        form = SignUpForm()
-    return render(request,'sign_up.html',{'form': form})
+class SignUpView(LoginProhibitedMixin, FormView):
+    """View that signs up user."""
+
+    form_class = SignUpForm
+    template_name = "sign_up.html"
+
+    def form_valid(self, form):
+        self.object = form.save()
+        login(self.request, self.object)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('waiting_list')
 
 def waiting_list(request):
     return render(request,'waiting_list.html')
 
-@login_required
-def update_user(request):
-    current_user = request.user
-    if request.method == 'POST':
-        form = UserUpdateForm(instance=current_user, data=request.POST)
-        if form.is_valid():
-            messages.add_message(request, messages.SUCCESS, "User Information updated!")
-            form.save()
-    else:
-        form = UserUpdateForm(instance=current_user)
-    return render(request, 'user_update.html', {'form': form})
+class UpdateUserView(LoginRequiredMixin, UpdateView):
+    """View to update logged-in user's profile."""
 
-@login_required
-def change_password(request):
-    current_user = request.user
-    if request.method == 'POST':
-        form = UserChangePasswordForm(data=request.POST)
-        if form.is_valid():
-            password = form.cleaned_data.get('password')
-            if check_password(password, current_user.password):
-                new_password = form.cleaned_data.get('new_password')
-                current_user.set_password(new_password)
-                current_user.save()
-                messages.add_message(request, messages.SUCCESS, "Password updated!")
-    form = UserChangePasswordForm()
-    return render(request, 'change_password.html', {'form': form})
+    model = UserUpdateForm
+    template_name = "user_update.html"
+    form_class = UserUpdateForm
+
+    def get_object(self):
+        """Return the object (user) to be updated."""
+        user = self.request.user
+        return user
+
+    def get_success_url(self):
+        """Return redirect URL after successful update."""
+        return reverse('members_list')
+
+class ChangePasswordView(LoginRequiredMixin, FormView):
+    """View to change logged-in user's password."""
+
+    template_name = "change_password.html"
+    form_class = UserChangePasswordForm
+
+    def form_valid(self, form):
+        current_user = self.request.user
+        password = form.cleaned_data.get('password')
+        if check_password(password, current_user.password):
+            new_password = form.cleaned_data.get('new_password')
+            current_user.set_password(new_password)
+            current_user.save()
+            login(self.request, current_user)
+            messages.add_message(self.request, messages.SUCCESS, "Password Changed!")
+            return super().form_valid(form)
+        return super().form_invalid(form)
+
+    def get_success_url(self):
+        return reverse('members_list')
+
+# @login_required
+# def change_password(request):
+#     current_user = request.user
+#     if request.method == 'POST':
+#         form = UserChangePasswordForm(data=request.POST)
+#         if form.is_valid():
+#             password = form.cleaned_data.get('password')
+#             if check_password(password, current_user.password):
+#                 new_password = form.cleaned_data.get('new_password')
+#                 current_user.set_password(new_password)
+#                 current_user.save()
+#                 messages.add_message(request, messages.SUCCESS, "Password updated!")
+#     form = UserChangePasswordForm()
+#     return render(request, 'change_password.html', {'form': form})
 
 @login_prohibited
 def log_in(request):
@@ -76,7 +99,7 @@ def log_in(request):
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
             user = authenticate(email=email, password=password)
-            user_authorization = _getAuthorization(user)
+            user_authorization = get_authorization(user)
             if user_authorization == 'AP':
                 login(request, user)
                 return redirect('waiting_list')
@@ -89,68 +112,19 @@ def log_in(request):
     form = LogInForm()
     return render(request, 'log_in.html', {'form': form})
 
+@login_required
 def log_out(request):
     logout(request)
     return redirect('home')
 
-def only_officer(view_func):
-    def modified_view_func(request, **kwargs):
-        try:
-            Club_Member.objects.get(user=request.user)
-        except ObjectDoesNotExist:
-            return redirect('members_list')
-        if (Club_Member.objects.get(user=request.user)).authorization != 'OF':
-            return redirect('members_list')
-        else:
-            appId = 0;
-            for (key, value) in kwargs.items():
-                appId = value
-            return view_func(request,appId)
-    return modified_view_func
-
-def only_officer_and_owner(view_func):
-    def modified_view_func(request, **kwargs):
-        try:
-            Club_Member.objects.get(user=request.user)
-        except ObjectDoesNotExist:
-            return redirect('members_list')
-        authorization = (Club_Member.objects.get(user=request.user)).authorization
-        if authorization == 'AP':
-            return redirect('waiting_list')
-        if authorization == 'ME':
-            return redirect('members_list')
-        else:
-            appId = 0;
-            for (key, value) in kwargs.items():
-                appId = value
-            return view_func(request,appId)
-    return modified_view_func
-
-def only_members(view_func):
-    def modified_view_func(request):
-        try:
-            Club_Member.objects.get(user=request.user)
-        except ObjectDoesNotExist:
-            return redirect('log_in')
-        authorization = (Club_Member.objects.get(user=request.user)).authorization
-        if authorization != 'ME' or authorization != 'OF' or authorization != 'OW':
-            return redirect('home')
-        else:
-            return view_func(request)
-    return modified_view_func
-
 """The idea of filter members with full name is from https://stackoverflow.com/questions/17932152/auth-filter-full-name"""
-#@only_members TODO: LOG IN NEEDS TO REDIRECT SOMEWHERE ELSE FOR THIS TO BE UNCOMMENTED
 @login_required
+@only_members
 def members_list(request):
-    member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
-    members = User.objects.filter(id__in=member_list)
 
-    officer_list = Club_Member.objects.filter(authorization='OF').values_list('user__id', flat=True)
-    officers = User.objects.filter(id__in=officer_list)
-
-    owners_list = Club_Member.objects.filter(authorization='OW').values_list('user__id', flat=True)
-    owners = User.objects.filter(id__in=owners_list)
+    members = get_members()
+    officers = get_officers()
+    owners = get_owners()
 
     if request.method == 'POST':
         searched_letters = request.POST['searched_letters']
@@ -163,7 +137,7 @@ def members_list(request):
     return render(request, 'members_list.html', {'members': members, 'officers': officers, 'owners': owners})
 
 @login_required
-@only_officer_and_owner
+@only_officers
 def applicants_list(request, *args):
     applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
     applicants = User.objects.filter(id__in=applicants_list)
@@ -177,14 +151,14 @@ def applicants_list(request, *args):
     return render(request, 'applicants_list.html', {'applicants':applicants})
 
 @login_required
-@only_officer_and_owner
+@only_officers
 def approve_applicant(request, applicant_id):
     applicant = User.objects.get(id=applicant_id)
     Club_Member.objects.filter(user=applicant).update(authorization="ME")
     return redirect('applicants_list')
 
 @login_required
-@only_officer_and_owner
+@only_officers
 def show_applicant(request, applicant_id):
     try:
         Club_Member.objects.get(user=request.user)
@@ -203,20 +177,20 @@ def show_applicant(request, applicant_id):
         )
 
 @login_required
-#@only_members TODO change when log in redirects to general landing page
+@only_members
 def show_member(request, member_id):
     try:
         member = User.objects.get(id=member_id)
         authorizationText = (Club_Member.objects.get(user=member)).get_authorization_display()
+
         request_from_owner = False
         request_from_officer = False
-        current_user = request.user
-        #PLEASE ADD THIS IN A TRY BLOCK OR USE _getAuthorization()
-        cu_auth = (Club_Member.objects.get(user=current_user)).authorization
+        cu_auth = get_authorization(request.user)
         if cu_auth == 'OW':
             request_from_owner = True
         elif cu_auth == 'OF':
             request_from_officer = True
+
     except ObjectDoesNotExist:
         return redirect('members_list')
     else:
@@ -278,15 +252,3 @@ def transfer_ownership(request, member_id):
         return render(request, 'members_list.html',
             {'member': member, 'auth' : auth}
         )
-
-def getAllMembersExceptApplicants():
-    applicants = Club_Member.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
-    members = User.objects.exclude(id__in=applicants)
-    return members
-
-def _getAuthorization(user):
-    try:
-        authorization = (Club_Member.objects.get(user=user)).authorization
-    except ObjectDoesNotExist:
-        return None
-    return authorization
