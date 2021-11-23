@@ -10,7 +10,7 @@ class userUpdateViewTestCase(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/secondary_user.json'
+        'clubs/tests/fixtures/other_users.json'
     ]
 
     def setUp(self):
