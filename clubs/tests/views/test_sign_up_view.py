@@ -11,7 +11,7 @@ class SignUpViewTestCase(TestCase):
     def setUp(self):
         self.applicant = User.objects.get(email='bobsmith@example.org')
         self.club = Club_Member.objects.create(
-            user=self.applicant, authorization='ME'
+            user=self.applicant, authorization='AP'
         )
         self.valid_form_input = {
             'email': 'bellasmith@example.org',
@@ -28,9 +28,9 @@ class SignUpViewTestCase(TestCase):
     def test_get_SIGN_UP_redirects_when_logged_in(self):
         self.client.login(email=self.applicant.email, password="Password123")
         response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('members_list')
+        redirect_url = reverse('waiting_list')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'members_list.html')
+        self.assertTemplateUsed(response, 'waiting_list.html')
 
     def test_post_signup_redirects_when_logged_in(self):
         self.client.login(email=self.applicant.email, password="Password123")
@@ -39,9 +39,9 @@ class SignUpViewTestCase(TestCase):
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
 
-        redirect_url = reverse('members_list')
+        redirect_url = reverse('waiting_list')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'members_list.html')
+        self.assertTemplateUsed(response, 'waiting_list.html')
 
     def test_get_sign_up(self):
         response = self.client.get(self.url)
