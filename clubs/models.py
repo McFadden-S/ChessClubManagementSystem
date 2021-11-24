@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser,BaseUserManager
 from .managers import UserManager
 from libgravatar import Gravatar
+from location_field.models.plain import PlainLocationField
 
 # Create your models here.
 class User(AbstractUser):
@@ -64,3 +65,8 @@ class Club_Member(models.Model):
 
     class Meta:
         unique_together = (("user", "club_name"),)
+
+class Club(models.Model):
+    name = models.CharField(max_length=50, blank=False)
+    location = PlainLocationField(based_fields=['city'], zoom=7)
+    description = models.CharField(max_length=500, blank=False)
