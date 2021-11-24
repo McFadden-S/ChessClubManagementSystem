@@ -1,0 +1,17 @@
+{% extends 'partials/base.html' %}
+{% block body %}
+{% include 'partials/navbar.html' %}
+{% include 'partials/messages.html' %}
+  <div id="cover-image">
+    <div class="container container-fluid vh-100">
+      <div class="row justify-content-center h-50">
+        <div class="col-10 my-auto">
+          <div class="card cover-card bg-dark text-white scrollable">
+            {% block contents %}
+            {% endblock %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

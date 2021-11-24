@@ -1,0 +1,6 @@
+{% for field in form %}
+  <li class="list-group-item bg-dark text-white">
+    <p class="lead">{{ field.label_tag }}</p>
+    <p>{{ field}}</p>
+  </li>
+{% endfor %}
