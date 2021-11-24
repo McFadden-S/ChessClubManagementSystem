@@ -29,6 +29,7 @@ class SignUpView(LoginProhibitedMixin, FormView):
     def form_valid(self, form):
         self.object = form.save()
         login(self.request, self.object)
+        messages.success(self.request, f"Account created successfully")
         return super().form_valid(form)
 
     def get_success_url(self):
