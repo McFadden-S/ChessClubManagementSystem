@@ -3,14 +3,15 @@ from clubs.models import User, Club_Member
 from clubs.forms import SignUpForm
 from django.urls import reverse
 from django.contrib.auth.hashers import check_password
+from django.contrib import messages
 
 class SignUpViewTestCase(TestCase):
     fixtures = ['clubs/tests/fixtures/default_user.json']
 
     def setUp(self):
-        self.user = User.objects.get(email='bobsmith@example.org')
+        self.applicant = User.objects.get(email='bobsmith@example.org')
         self.club = Club_Member.objects.create(
-            user=self.user, authorization='ME'
+            user=self.applicant, authorization='ME'
         )
         self.valid_form_input = {
             'email': 'bellasmith@example.org',
@@ -25,14 +26,14 @@ class SignUpViewTestCase(TestCase):
         self.url = reverse('sign_up')
 
     def test_get_SIGN_UP_redirects_when_logged_in(self):
-        self.client.login(email=self.user.email, password="Password123")
+        self.client.login(email=self.applicant.email, password="Password123")
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('members_list')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'members_list.html')
 
     def test_post_signup_redirects_when_logged_in(self):
-        self.client.login(email=self.user.email, password="Password123")
+        self.client.login(email=self.applicant.email, password="Password123")
         before_count = User.objects.count()
         response = self.client.post(self.url, self.valid_form_input, follow=True)
         after_count = User.objects.count()
@@ -49,6 +50,8 @@ class SignUpViewTestCase(TestCase):
         self.assertEqual(form.is_bound, False)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'sign_up.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
 
     def test_unsuccesful_sign_up(self):
         self.valid_form_input['email'] = '@yahoo.com'
@@ -93,3 +96,5 @@ class SignUpViewTestCase(TestCase):
          is_password_correct = check_password('Password123', user.password)
          self.assertTrue(is_password_correct)
          # self.assertTrue(self._is_logged_in())
+         messages_list = list(response.context['messages'])
+         self.assertEqual(len(messages_list), 1)

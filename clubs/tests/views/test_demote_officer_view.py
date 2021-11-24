@@ -36,6 +36,9 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, url, status_code=302, target_status_code=200)
         auth = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(auth, 'ME')
+        response1 = self.client.get(self.url)
+        messages_list = list(response1.context['messages'])
+        self.assertEqual(len(messages_list), 0)
 
     def test_get_demote_invalid_officer(self):
         self.client.login(email='bobsmith@example.org', password='Password123')
