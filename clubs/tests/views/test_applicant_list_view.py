@@ -3,6 +3,7 @@ from clubs.models import User, Club_Member
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
+from django.contrib import messages
 
 # Used this from clucker project with some modifications
 class ApplicantListViewTestCase(TestCase):
@@ -41,6 +42,8 @@ class ApplicantListViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         # self.assertContains()
         self.assertTemplateUsed(response, 'applicants_list.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
 
     def test_get_applicants_list_by_owner(self):
         self.client.login(email=self.owner.email, password='Password123')
@@ -48,6 +51,9 @@ class ApplicantListViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         # self.assertContains()
         self.assertTemplateUsed(response, 'applicants_list.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
+
 
     def test_get_applicants_list_redirects_member_list_when_authorization_is_member(self):
         user1 = User.objects.create_user(email="a@example.com",first_name="a",last_name="a",chess_experience="BG",password='Password123')
@@ -55,7 +61,6 @@ class ApplicantListViewTestCase(TestCase):
         self.client.login(email=user1.email, password='Password123')
         response = self.client.get(self.url)
         redirect_url=reverse('members_list')
-        # ERROR MESSAGE
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     # WHEN LOGIN IS FIXED FOR APPLICANT

@@ -2,6 +2,7 @@ from django.test import TestCase
 from clubs.models import User,Club_Member
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
+from django.contrib import messages
 
 class ShowApplicantViewTestCase(TestCase):
 
@@ -11,9 +12,9 @@ class ShowApplicantViewTestCase(TestCase):
     ]
 
     def setUp(self):
-        self.user = User.objects.get(email='bobsmith@example.org')
+        self.applicant = User.objects.get(email='bobsmith@example.org')
         self.club = Club_Member.objects.create(
-            user=self.user
+            user=self.applicant
         )
         self.officer = User.objects.get(email='bethsmith@example.org')
         self.officer_club = Club_Member.objects.create(
@@ -34,6 +35,9 @@ class ShowApplicantViewTestCase(TestCase):
         self.assertContains(response, "Hi")
         self.assertContains(response, "BG")
         self.assertContains(response, "I am Orangutan")
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
+
 
     def test_get_show_applicant_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
@@ -61,7 +65,7 @@ class ShowApplicantViewTestCase(TestCase):
 
     def test_get_show_applicant_with_invalid_id(self):
         self.client.login(username=self.officer.email, password='Password123')
-        url = reverse('show_applicant', kwargs={'applicant_id': self.user.id+9999})
+        url = reverse('show_applicant', kwargs={'applicant_id': self.applicant.id+9999})
         response = self.client.get(url, follow=True)
         response_url = reverse('applicants_list')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
