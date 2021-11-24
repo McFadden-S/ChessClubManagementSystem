@@ -29,6 +29,7 @@ class SignUpView(LoginProhibitedMixin, FormView):
     def form_valid(self, form):
         self.object = form.save()
         login(self.request, self.object)
+        messages.success(self.request, f"Your account was created successfully")
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -64,6 +65,7 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
             new_password = form.cleaned_data.get('new_password')
             current_user.set_password(new_password)
             current_user.save()
+            messages.success(self.request, f"Your password was changed successfully")
             login(self.request, current_user)
             return super().form_valid(form)
 
