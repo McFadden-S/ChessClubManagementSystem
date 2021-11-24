@@ -19,18 +19,23 @@
       </form>
     </div>
   </div>
-<div>
-    <form action="{% url 'applicants_list' %}" method="post" id="form_sort">
-        {% csrf_token %}
-    <select name="sort_table" class="btn btn-outline-light text-black" onchange="this.form.submit()">
-        <option disabled="true" selected>--Sort By--</option>
-        <option value="first_name">First Name</option>
-        <option value="last_name">Last name</option>
-    </select>
-    </form>
-</div>
+
+  <div class="row justify-content-end">
+    <div class="col"></div>
+    <div class="col-auto">
+      <form action="{% url 'applicants_list' %}" method="post" id="form_sort">
+          {% csrf_token %}
+        <select name="sort_table" class="btn btn-outline-light text-white" onchange="this.form.submit()">
+            <option disabled="true" selected>--Sort By--</option>
+            <option value="first_name">First Name</option>
+            <option value="last_name">Last name</option>
+        </select>
+      </form>
+    </div>
+  </div>
+
   <div class="row">
-    <div class="col">
+    <div class="col-12">
       <table class="table table-dark table-striped">
         <thead class="table-dark">
           <h2>Applicants</h2>
