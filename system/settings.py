@@ -40,7 +40,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'clubs',
+    'location_field.apps.DefaultConfig',
 ]
+
+LOCATION_FIELD = {
+    # 'map.provider': 'google',
+    # 'search.provider': 'google',
+    # 'provider.google.api': '//maps.google.com/maps/api/js?sensor=false',
+    # 'provider.google.api_key': '',
+    # 'provider.google.api_libraries': '',
+    # 'provider.google.map.type': 'ROADMAP',
+    'provider.openstreetmap.max_zoom': 18,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
