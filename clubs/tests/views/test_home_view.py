@@ -13,7 +13,7 @@ class HomeViewTestCase(TestCase):
         self.url = reverse('home')
         self.user = User.objects.get(email='bobsmith@example.org')
         self.club = Club_Member.objects.create(
-            user=self.user, authorization='OW'
+            user=self.user, authorization='AP'
         )
 
 
@@ -29,6 +29,6 @@ class HomeViewTestCase(TestCase):
     def test_get_home_redirects_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('members_list')
+        redirect_url = reverse('waiting_list')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'members_list.html')
+        self.assertTemplateUsed(response, 'waiting_list.html')
