@@ -9,7 +9,9 @@ class SignUpViewTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(email='bobsmith@example.org')
-
+        self.club = Club_Member.objects.create(
+            user=self.user, authorization='ME'
+        )
         self.valid_form_input = {
             'email': 'bellasmith@example.org',
             'first_name': 'Bella',
@@ -22,12 +24,11 @@ class SignUpViewTestCase(TestCase):
         }
         self.url = reverse('sign_up')
 
-    def test_get_the_signup_will_redirect_when_user_logged_in(self):
+    def test_get_SIGN_UP_redirects_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url, follow=True)
-        url_redirect_after = reverse('members_list')
-        self.assertEqual(response, url_redirect_after)
-        self.assertRedirects(response, url_redirect_after, status_code=302, target_status_code=200)
+        redirect_url = reverse('members_list')
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'members_list.html')
 
     def test_post_signup_redirects_when_logged_in(self):

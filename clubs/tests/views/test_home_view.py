@@ -12,6 +12,10 @@ class HomeViewTestCase(TestCase):
     def setUp(self):
         self.url = reverse('home')
         self.user = User.objects.get(email='bobsmith@example.org')
+        self.club = Club_Member.objects.create(
+            user=self.user, authorization='OW'
+        )
+
 
 
     def test_get_home_page(self):
