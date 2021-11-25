@@ -95,7 +95,6 @@ def get_all_clubs():
 
 def get_my_clubs(user):
     try:
-        pass
         my_clubs_names = Club_Member.objects.filter(user=user).values_list('club_name', flat=True)
         my_clubs = []
         for club_name in my_clubs_names:
@@ -103,4 +102,11 @@ def get_my_clubs(user):
     except ObjectDoesNotExist:
         return None
     return my_clubs
+
+def get_other_clubs(user):
+    try:
+        my_clubs = get_my_clubs(user)
+    except ObjectDoesNotExist:
+        return None
+    return [item for item in list(get_all_clubs()) if item not in my_clubs]
 

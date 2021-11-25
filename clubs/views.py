@@ -234,5 +234,5 @@ def create_club(request):
 def dashboard(request):
     current_user = request.user
     my_clubs = get_my_clubs(current_user)
-    other_clubs = [item for item in list(get_all_clubs()) if item not in my_clubs]
+    other_clubs = get_other_clubs(current_user)
     return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs})
