@@ -80,5 +80,5 @@ class CreateClubForm(forms.ModelForm):
     class Meta:
         model = Club
         fields = ['name','address','city','postal_code','country','description']
+        # validators=
         # widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()}
-    

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'clubs',
     'location_field.apps.DefaultConfig',
     'django_countries',
+    'widget_tweaks'
 ]
 
 LOCATION_FIELD = {
