@@ -41,16 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'clubs',
     'location_field.apps.DefaultConfig',
+    'django_countries',
 ]
 
 LOCATION_FIELD = {
-    # 'map.provider': 'google',
-    # 'search.provider': 'google',
-    # 'provider.google.api': '//maps.google.com/maps/api/js?sensor=false',
-    # 'provider.google.api_key': '',
-    # 'provider.google.api_libraries': '',
-    # 'provider.google.map.type': 'ROADMAP',
-    'provider.openstreetmap.max_zoom': 18,
+    "map.provider": "openstreetmap",
+    "search.provider": "nominatim",
 }
 
 MIDDLEWARE = [
