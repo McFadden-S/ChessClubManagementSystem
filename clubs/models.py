@@ -43,9 +43,19 @@ class User(AbstractUser):
         """Return a URL to a smaller version of user's gravatar."""
         return self.gravatar(size=60)
 
+class Club(models.Model):
+    name = models.CharField(max_length=50, unique=True, blank=False)
+    address = models.CharField(max_length=100)
+    city = models.CharField(max_length=50)
+    postal_code = models.CharField(max_length=20)
+    country = CountryField(blank_label='(select country)')
+    location = PlainLocationField(based_fields=['address', 'city', 'postal_code', 'country'], zoom=7, blank=True)
+    description = models.CharField(max_length=500, blank=False)
+
 class Club_Member(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
-    club_name = models.CharField(max_length=50, default="club", blank=False)
+    #club_name = models.CharField(max_length=50, default="club", blank=False)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, blank=False)
 
     APPLICANT = 'AP'
     MEMBER = 'ME'
@@ -65,13 +75,4 @@ class Club_Member(models.Model):
     )
 
     class Meta:
-        unique_together = (("user", "club_name"),)
-
-class Club(models.Model):
-    name = models.CharField(max_length=50, unique=True, blank=False)
-    address = models.CharField(max_length=100)
-    city = models.CharField(max_length=50)
-    postal_code = models.CharField(max_length=20)
-    country = CountryField(blank_label='(select country)')
-    location = PlainLocationField(based_fields=['address', 'city', 'postal_code', 'country'], zoom=7, blank=True)
-    description = models.CharField(max_length=500, blank=False)
+        unique_together = (("user", "club"),)
