@@ -27,5 +27,5 @@ class UserManager(BaseUserManager):
             raise ValueError(_('Superuser must have is_superuser=True.'))
 
         user = self.create_user(email, password, **other_fields)
-        clubs.models.Club.objects.create(user=user, authorization='OW')
+        clubs.models.Club_Member.objects.create(user=user, authorization='OW')
         return user

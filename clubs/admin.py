@@ -18,10 +18,4 @@ class ClubMemberAdmin(admin.ModelAdmin):
         'user', 'club_name', 'authorization',
     ]
 
-@admin.register(Club)
-class ClubAdmin(admin.ModelAdmin):
-    """Configuration of the admin interface for clubs."""
-
-    list_display = [
-        'name', 'location', 'description',
-    ]
+admin.site.register(Club)

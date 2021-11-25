@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser,BaseUserManager
 from .managers import UserManager
 from libgravatar import Gravatar
 from location_field.models.plain import PlainLocationField
+from django_countries.fields import CountryField
 
 # Create your models here.
 class User(AbstractUser):
@@ -67,6 +68,10 @@ class Club_Member(models.Model):
         unique_together = (("user", "club_name"),)
 
 class Club(models.Model):
-    name = models.CharField(max_length=50, blank=False)
-    location = PlainLocationField(based_fields=['city'], zoom=7)
+    name = models.CharField(max_length=50, unique=True, blank=False)
+    address = models.CharField(max_length=100)
+    city = models.CharField(max_length=50)
+    postal_code = models.CharField(max_length=20)
+    country = CountryField(blank_label='(select country)')
+    location = PlainLocationField(based_fields=['address', 'city', 'postal_code', 'country'], zoom=7, blank=True)
     description = models.CharField(max_length=500, blank=False)
