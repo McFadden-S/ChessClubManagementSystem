@@ -244,6 +244,9 @@ def clubs_list(request, *args):
             if searched_letters:
                 clubs = get_clubs_search(searched_letters)
 
-    
+    if 'sort_table' in request.POST:
+        if request.method == 'POST':
+            sort_table = request.POST['sort_table']
+            clubs = clubs.order_by(sort_table)
 
     return render(request, 'clubs_list.html', {'clubs': clubs})
