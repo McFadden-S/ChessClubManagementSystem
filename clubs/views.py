@@ -233,3 +233,20 @@ def create_club(request):
     else:
         form = CreateClubForm()
     return render(request, 'create_club.html', {'form': form})
+
+@login_required
+@only_members
+def clubs_list(request, *args):
+    clubs = get_all_clubs()
+    if 'search_btn' in request.POST:
+        if request.method == 'POST':
+            searched_letters = request.POST['searched_letters']
+            if searched_letters:
+                clubs = get_clubs_search(searched_letters)
+
+    if 'sort_table' in request.POST:
+        if request.method == 'POST':
+            sort_table = request.POST['sort_table']
+            clubs = clubs.order_by(sort_table)
+
+    return render(request, 'clubs_list.html', {'clubs': clubs})
