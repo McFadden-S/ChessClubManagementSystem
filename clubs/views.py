@@ -233,3 +233,10 @@ def create_club(request):
     else:
         form = CreateClubForm()
     return render(request, 'create_club.html', {'form': form})
+
+@login_required
+@only_members
+def clubs_list(request, *args):
+    clubs = get_all_clubs()
+
+    return render(request, 'clubs_list.html', {'clubs': clubs})

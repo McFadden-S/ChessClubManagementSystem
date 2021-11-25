@@ -1,13 +1,17 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.functions import Concat
 from django.db.models import Value
-from .models import Club_Member, User
+from .models import Club_Member, User, Club
 from django.core.exceptions import MultipleObjectsReturned
 
 def get_all_users_except_applicants():
     applicants = Club_Member.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
     members = User.objects.exclude(id__in=applicants)
     return members
+
+def get_all_clubs():
+    clubs = Club.objects.values_list('name', flat=True)
+    return clubs
 
 def get_applicants():
     return get_users('AP')
