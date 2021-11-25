@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.functions import Concat
 from django.db.models import Value
-from .models import Club_Member, User
+from .models import Club, Club_Member, User
 
 def get_all_users_except_applicants():
     applicants = Club_Member.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
@@ -89,3 +89,18 @@ def is_applicant(user):
     if get_authorization(user) == 'AP':
         return True
     return False
+
+def get_all_clubs():
+    return Club.objects.all()
+
+def get_my_clubs(user):
+    try:
+        pass
+        my_clubs_names = Club_Member.objects.filter(user=user).values_list('club_name', flat=True)
+        my_clubs = []
+        for club_name in my_clubs_names:
+            my_clubs += [Club.objects.get(name=club_name)]
+    except ObjectDoesNotExist:
+        return None
+    return my_clubs
+
