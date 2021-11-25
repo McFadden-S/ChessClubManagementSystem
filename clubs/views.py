@@ -219,10 +219,17 @@ def transfer_ownership(request, member_id):
 @only_members
 def create_club(request):
     if request.method == 'POST':
+        current_user = request.user
         form = CreateClubForm(request.POST)
         if form.is_valid():
             form.save()
             # redirect link needs to change
+            Club_Member.objects.create(
+                user=current_user,
+                club_name=form.cleaned_data.get('name'),
+                # MAY NEED TO HAVE AN UPDATE FIELD TO IF THEY WANT TO CHANGE THEIR AUTHO
+                authorization='AP'
+            )
             return redirect('members_list')
     else:
         form = CreateClubForm()
