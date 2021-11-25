@@ -12,8 +12,8 @@ class Command(BaseCommand):
         self.AUTHORIZATION_CHOICES = ['AP', 'ME', 'OF']
 
     def seedRandomUser(self):
-        first_name=self.faker.first_name()
-        last_name=self.faker.last_name()
+        first_name=self.faker.unique.first_name()
+        last_name=self.faker.unique.last_name()
         email = f'{first_name.lower()}{last_name.lower()}@example.org'
         bio=self.faker.sentence()
         personal_statement=self.faker.sentence()
