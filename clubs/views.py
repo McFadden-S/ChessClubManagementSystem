@@ -214,3 +214,16 @@ def transfer_ownership(request, member_id):
         return redirect(members_list)
     return render(request, 'members_list.html',
         {'member': member, 'auth' : get_authorization(current_user)})
+
+@login_required
+# Any user in the system can create their own club
+def create_club(request):
+    if request.method == 'POST':
+        form = CreateClubForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # redirect link needs to change
+            return redirect('members_list')
+    else:
+        form = CreateClubForm()
+    return render(request, 'create_club.html', {'form': form})
