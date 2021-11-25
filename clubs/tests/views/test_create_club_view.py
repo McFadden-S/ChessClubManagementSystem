@@ -51,6 +51,7 @@ class CreateClubViewTestCase(TestCase):
          # SAVE TO CLUB DB
         self.client.login(email=self.user.email, password='Password123')
         before_count = Club.objects.count()
+        before_count_clubmember = Club_Member.objects.count()
         response = self.client.post(self.url, self.valid_form_input, follow=True)
         after_count = Club.objects.count()
         self.assertEqual(after_count, before_count+1)
@@ -75,3 +76,7 @@ class CreateClubViewTestCase(TestCase):
         messages_list = list(response.context['messages'])
         # should change to 1 after add message
         self.assertEqual(len(messages_list), 0)
+
+        #test the club member table update
+        after_count_clubmember = Club_Member.objects.count()
+        self.assertEqual(after_count_clubmember, before_count_clubmember+1)
