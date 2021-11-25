@@ -13,6 +13,11 @@ def get_all_clubs():
     clubs = Club.objects.values_list('name', flat=True)
     return clubs
 
+def get_clubs_search(searched_letters):
+    searched_clubs = (Club.objects
+        .filter(name__icontains = searched_letters))
+    return get_all_clubs().filter(id__in=searched_clubs)
+
 def get_applicants():
     return get_users('AP')
 

@@ -238,5 +238,12 @@ def create_club(request):
 @only_members
 def clubs_list(request, *args):
     clubs = get_all_clubs()
+    if 'search_btn' in request.POST:
+        if request.method == 'POST':
+            searched_letters = request.POST['searched_letters']
+            if searched_letters:
+                clubs = get_clubs_search(searched_letters)
+
+    
 
     return render(request, 'clubs_list.html', {'clubs': clubs})
