@@ -227,8 +227,7 @@ def create_club(request):
             Club_Member.objects.create(
                 user=current_user,
                 club_name=form.cleaned_data.get('name'),
-                # MAY NEED TO HAVE AN UPDATE FIELD TO IF THEY WANT TO CHANGE THEIR AUTHO
-                authorization='AP'
+                authorization='ME'
             )
             return redirect('members_list')
     else:
