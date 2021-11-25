@@ -216,7 +216,7 @@ def transfer_ownership(request, member_id):
         {'member': member, 'auth' : get_authorization(current_user)})
 
 @login_required
-# Any user in the system can create their own club
+@only_members
 def create_club(request):
     if request.method == 'POST':
         form = CreateClubForm(request.POST)

@@ -18,11 +18,6 @@ class CreateClubFormTestCase(TestCase):
         form = CreateClubForm(data=self.valid_form_input)
         self.assertTrue(form.is_valid())
 
-    # def test_create_club_form_uses_model_validation(self):
-    #     self.valid_form_input['location'] = 'BadLocation'
-    #     form = CreateClubForm(data=self.valid_form_input)
-    #     self.assertFalse(form.is_valid())
-
     def test_form_has_necessary_fields(self):
         form = CreateClubForm()
         self.assertIn('name', form.fields)
@@ -31,7 +26,6 @@ class CreateClubFormTestCase(TestCase):
         self.assertIn('postal_code', form.fields)
         self.assertIn('country', form.fields)
         self.assertIn('description', form.fields)
-
 
     def test_form_must_save_correctly(self):
         form = CreateClubForm(data=self.valid_form_input)
