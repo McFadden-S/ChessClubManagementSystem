@@ -1,5 +1,5 @@
 from django import forms
-from .models import User, Club_Member
+from .models import User, Club_Member, Club
 from django.core.validators import RegexValidator
 
 # Used this from clucker project with some modifications
@@ -75,3 +75,10 @@ class UserChangePasswordForm(forms.Form):
 class LogInForm(forms.Form):
     email = forms.EmailField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput())
+
+class CreateClubForm(forms.ModelForm):
+    class Meta:
+        model = Club
+        fields = ['name','address','city','postal_code','country','description']
+        # widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()}
+    

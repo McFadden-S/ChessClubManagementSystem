@@ -34,4 +34,5 @@ urlpatterns = [
     path('promote_member/<int:member_id>',views.promote_member, name='promote_member'),
     path('demote_officer/<int:member_id>',views.demote_officer, name='demote_officer'),
     path('transfer_ownership/<int:member_id>',views.transfer_ownership, name='transfer_ownership'),
+    path('create_club/',views.create_club, name='create_club'),
 ]
