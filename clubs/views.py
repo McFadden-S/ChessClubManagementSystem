@@ -258,12 +258,13 @@ def dashboard(request):
             searched_letters = request.POST['searched_letters']
             if searched_letters:
                 my_clubs = get_clubs_search(searched_letters)
-
-    if 'search_btn_other_clubs' in request.POST:
-        if request.method == 'POST':
-            searched_letters = request.POST['searched_letters']
-            if searched_letters:
                 other_clubs = get_clubs_search(searched_letters)
+
+    if 'sort_table' in request.POST:
+        if request.method == 'POST':
+            sort_table = request.POST['sort_table']
+            my_clubs = my_clubs.order_by(sort_table)
+            other_clubs = other_clubs.order_by(sort_table)
 
     return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs})
 

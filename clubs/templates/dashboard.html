@@ -12,6 +12,34 @@
 </div>
 
 <div class="card-body">
+
+  <div class="row justify-content-end">
+    <div class="col"></div>
+    <div class="col-auto">
+      <form action="{% url 'dashboard' %}" method="post">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="search" placeholder="Search current clubs" name="searched_letters">
+          <button type="submit" name ="search_btn" class="btn btn-outline-light text-white">Search</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="row justify-content-end">
+    <div class="col"></div>
+    <div class="col-auto">
+      <form action="{% url 'dashboard' %}" method="post" id="form_sort">
+          {% csrf_token %}
+        <select name="sort_table" class="btn btn-outline-light text-white" onchange="this.form.submit()">
+            <option disabled="true" selected>--Sort By--</option>
+            <option value="name">Club Name</option>
+            <option value="city">City</option>
+        </select>
+      </form>
+    </div>
+  </div>
+
   <h2>My Clubs</h2>
   <div class="row">
 
@@ -22,19 +50,6 @@
           <p class="card-text">become an owner today</p>
           <a href="{% url 'create_club' %}" class="btn btn-dark">Create Club</a>
         </div>
-      </div>
-    </div>
-
-    <div class="row justify-content-end">
-      <div class="col"></div>
-      <div class="col-auto">
-        <form action="{% url 'dashboard' %}" method="post">
-          {% csrf_token %}
-          <div class="input-group mb-3">
-            <input type="search" placeholder="Search current clubs" name="searched_letters">
-            <button type="submit" name ="search_btn" class="btn btn-outline-light text-white">Search</button>
-          </div>
-        </form>
       </div>
     </div>
 
@@ -50,19 +65,6 @@
         </div>
       </div>
     {% endfor %}
-
-    <div class="row justify-content-end">
-      <div class="col"></div>
-      <div class="col-auto">
-        <form action="{% url 'dashboard' %}" method="post">
-          {% csrf_token %}
-          <div class="input-group mb-3">
-            <input type="search" placeholder="Search other clubs" name="searched_letters">
-            <button type="submit" name ="search_btn_other_clubs" class="btn btn-outline-light text-white">Search</button>
-          </div>
-        </form>
-      </div>
-    </div>
 
   </div>
   <h2>Other Clubs</h2>
