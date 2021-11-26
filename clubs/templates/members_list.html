@@ -9,7 +9,7 @@
   <div class="row justify-content-end">
     <div class="col"></div>
     <div class="col-auto">
-      <form action="{% url 'members_list' %}" method="post" id="form_bar">
+      <form action="{% url 'members_list' club_id %}" method="post" id="form_bar">
         {% csrf_token %}
         <div class="input-group mb-3">
           <input type="search" placeholder="Search member" name="searched_letters">
@@ -22,7 +22,7 @@
   <div class="row justify-content-end">
     <div class="col"></div>
     <div class="col-auto">
-      <form action="{% url 'members_list' %}" method="post" id="form_sort">
+      <form action="{% url 'members_list' club_id %}" method="post" id="form_sort">
           {% csrf_token %}
         <select name="sort_table" class="btn btn-outline-light text-white" onchange="this.form.submit()">
             <option disabled="true" selected>--Sort By--</option>
@@ -46,7 +46,7 @@
                 <img src="{{ owner.mini_gravatar }}" alt="Gravatar of {{ owner.first_name }} {{owner.last_name }}">
               </td>
               <td>
-                <a href="{% url 'show_member' owner.id %}">
+                <a href="{% url 'show_member' club_id owner.id %}">
                   {{ owner.first_name }} {{owner.last_name }}
                 </a>
               </td>
@@ -69,7 +69,7 @@
                 <img src="{{ member.mini_gravatar }}" alt="Gravatar of {{ member.first_name }} {{member.last_name }}">
               </td>
               <td>
-                <a href="{% url 'show_member' member.id %}">
+                <a href="{% url 'show_member' club_id member.id %}">
                   {{ member.first_name }} {{member.last_name }}
                 </a>
               </td>
@@ -91,7 +91,7 @@
                 <img src="{{ officer.mini_gravatar }}" alt="Gravatar of {{ officer.first_name }} {{officer.last_name }}">
               </td>
               <td>
-                <a href="{% url 'show_member' officer.id %}">
+                <a href="{% url 'show_member' club_id officer.id %}">
                   {{ officer.first_name }} {{officer.last_name }}
                 </a>
               </td>

@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.shortcuts import redirect
-from .helpers import get_authorization
+from .helpers import get_authorization, get_club
 from django.contrib import messages
 
 def login_prohibited(view_function):
@@ -12,55 +12,67 @@ def login_prohibited(view_function):
     return modified_view_function
 
 def only_applicants(view_func):
-    def modified_view_func(request, **kwargs):
-        authorization = get_authorization(request.user)
-        if authorization == None:
+    def modified_view_func(request, club_id, **kwargs):
+        authorization = get_authorization(request.user, get_club(club_id))
+        if not request.user.is_authenticated:
             return redirect('log_in')
+        if authorization == None:
+            messages.add_message(request, messages.ERROR, "You are not an applicant")
+            return redirect('dashboard')
         elif authorization == 'AP':
-            return view_func(request, **kwargs)
+            return view_func(request, club_id, **kwargs)
         else:
             messages.add_message(request, messages.ERROR, "You are not an applicant")
-            return redirect('members_list')
+            return redirect('members_list', club_id)
     return modified_view_func
 
 def only_members(view_func):
-    def modified_view_func(request, **kwargs):
-        authorization = get_authorization(request.user)
-        if authorization == None:
+    def modified_view_func(request, club_id, **kwargs):
+        authorization = get_authorization(request.user, get_club(club_id))
+        if not request.user.is_authenticated:
             return redirect('log_in')
+        if authorization == None:
+            messages.add_message(request, messages.ERROR, "You are not a member/owner/officer")
+            return redirect('dashboard')
         elif authorization == 'AP':
             messages.add_message(request, messages.ERROR, "You are not a member/owner/officer")
-            return redirect('waiting_list')
+            return redirect('waiting_list', club_id)
         else:
-            return view_func(request, **kwargs)
+            return view_func(request, club_id, **kwargs)
     return modified_view_func
 
 def only_officers(view_func):
-    def modified_view_func(request, **kwargs):
-        authorization = get_authorization(request.user)
-        if authorization == None:
+    def modified_view_func(request, club_id, **kwargs):
+        authorization = get_authorization(request.user, get_club(club_id))
+        if not request.user.is_authenticated:
             return redirect('log_in')
+        if authorization == None:
+            messages.add_message(request, messages.ERROR, "You are not an owner/officer")
+            return redirect('dashboard')
         elif authorization == 'AP':
             messages.add_message(request, messages.ERROR, "You are not an owner/officer")
-            return redirect('waiting_list')
+            return redirect('waiting_list', club_id)
         elif authorization == 'ME':
             messages.add_message(request, messages.ERROR, "You are not an owner/officer")
-            return redirect('members_list')
+            return redirect('members_list', club_id)
         else:
-            return view_func(request, **kwargs)
+            return view_func(request, club_id, **kwargs)
     return modified_view_func
 
 def only_owners(view_func):
-    def modified_view_func(request, **kwargs):
-        authorization = get_authorization(request.user)
-        if authorization == None:
+    def modified_view_func(request, club_id, **kwargs):
+        authorization = get_authorization(request.user, get_club(club_id))
+        if not request.user.is_authenticated:
             return redirect('log_in')
+        if authorization == None:
+            messages.add_message(request, messages.ERROR, "You are not an owner")
+            return redirect('dashboard')
         elif authorization == 'AP':
             messages.add_message(request, messages.ERROR, "You are not an owner")
-            return redirect('waiting_list')
+            return redirect('waiting_list', club_id)
         elif authorization == 'ME' or authorization == 'OF':
             messages.add_message(request, messages.ERROR, "You are not an owner")
-            return redirect('members_list')
+            return redirect('members_list', club_id)
         else:
-            return view_func(request, **kwargs)
+            return view_func(request, club_id, **kwargs)
     return modified_view_func

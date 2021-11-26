@@ -32,6 +32,6 @@ class HomeViewTestCase(TestCase):
     def test_get_home_redirects_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('waiting_list')
+        redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'waiting_list.html')
+        self.assertTemplateUsed(response, 'dashboard.html')
