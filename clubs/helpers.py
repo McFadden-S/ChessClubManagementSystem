@@ -100,13 +100,13 @@ def get_my_clubs(user):
         for club_name in my_clubs_names:
             my_clubs += [Club.objects.get(name=club_name)]
     except ObjectDoesNotExist:
-        return None
+        return []
     return my_clubs
 
 def get_other_clubs(user):
     try:
         my_clubs = get_my_clubs(user)
     except ObjectDoesNotExist:
-        return None
+        return []
     return [item for item in list(get_all_clubs()) if item not in my_clubs]
 
