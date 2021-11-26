@@ -1,4 +1,4 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db.models.functions import Concat
 from django.db.models import Value
 from .models import Club, Club_Member, User
@@ -7,6 +7,15 @@ def get_all_users_except_applicants():
     applicants = Club_Member.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
     members = User.objects.exclude(id__in=applicants)
     return members
+
+def get_all_clubs():
+    clubs = Club.objects.values_list('name', flat=True)
+    return clubs
+
+def get_clubs_search(searched_letters):
+    searched_clubs = (Club.objects
+        .filter(name__icontains = searched_letters))
+    return get_all_clubs().filter(id__in=searched_clubs)
 
 def get_applicants():
     return get_users('AP')
@@ -57,6 +66,8 @@ def get_authorization(user):
         authorization = (Club_Member.objects.get(user=user)).authorization
     except ObjectDoesNotExist:
         return None
+    except MultipleObjectsReturned:
+        authorization = Club_Member.objects.filter(user=user)[0].authorization
     return authorization
 
 def get_authorization_text(user):

@@ -220,10 +220,16 @@ def transfer_ownership(request, member_id):
 @only_members
 def create_club(request):
     if request.method == 'POST':
+        current_user = request.user
         form = CreateClubForm(request.POST)
         if form.is_valid():
             form.save()
             # redirect link needs to change
+            Club_Member.objects.create(
+                user=current_user,
+                club_name=form.cleaned_data.get('name'),
+                authorization='ME'
+            )
             return redirect('members_list')
     else:
         form = CreateClubForm()
@@ -236,3 +242,20 @@ def dashboard(request):
     my_clubs = get_my_clubs(current_user)
     other_clubs = get_other_clubs(current_user)
     return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs})
+
+@login_required
+@only_members
+def clubs_list(request, *args):
+    clubs = get_all_clubs()
+    if 'search_btn' in request.POST:
+        if request.method == 'POST':
+            searched_letters = request.POST['searched_letters']
+            if searched_letters:
+                clubs = get_clubs_search(searched_letters)
+
+    if 'sort_table' in request.POST:
+        if request.method == 'POST':
+            sort_table = request.POST['sort_table']
+            clubs = clubs.order_by(sort_table)
+
+    return render(request, 'clubs_list.html', {'clubs': clubs})
