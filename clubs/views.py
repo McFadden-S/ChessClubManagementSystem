@@ -252,6 +252,19 @@ def dashboard(request):
     current_user = request.user
     my_clubs = get_my_clubs(current_user)
     other_clubs = get_other_clubs(current_user)
+
+    if 'search_btn' in request.POST:
+        if request.method == 'POST':
+            searched_letters = request.POST['searched_letters']
+            if searched_letters:
+                my_clubs = get_clubs_search(searched_letters)
+
+    if 'search_btn_other_clubs' in request.POST:
+        if request.method == 'POST':
+            searched_letters = request.POST['searched_letters']
+            if searched_letters:
+                other_clubs = get_clubs_search(searched_letters)
+
     return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs})
 
 @login_required
