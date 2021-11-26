@@ -1,17 +1,12 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db.models.functions import Concat
 from django.db.models import Value
-from .models import Club_Member, User, Club
-from django.core.exceptions import MultipleObjectsReturned
+from .models import Club, Club_Member, User
 
 def get_all_users_except_applicants():
     applicants = Club_Member.objects.filter(authorization='Applicant').values_list('user__id', flat=True)
     members = User.objects.exclude(id__in=applicants)
     return members
-
-def get_all_clubs():
-    clubs = Club.objects.values_list('name', flat=True)
-    return clubs
 
 def get_clubs_search(searched_letters):
     searched_clubs = (Club.objects
@@ -101,3 +96,24 @@ def is_applicant(user):
     if get_authorization(user) == 'AP':
         return True
     return False
+
+def get_all_clubs():
+    return Club.objects.all()
+
+def get_my_clubs(user):
+    try:
+        my_clubs_names = Club_Member.objects.filter(user=user).values_list('club__id', flat=True)
+        my_clubs = []
+        for club in my_clubs_names:
+            my_clubs += [Club.objects.get(id=club)]
+    except ObjectDoesNotExist:
+        return []
+    return my_clubs
+
+def get_other_clubs(user):
+    try:
+        my_clubs = get_my_clubs(user)
+    except ObjectDoesNotExist:
+        return []
+    return [item for item in list(get_all_clubs()) if item not in my_clubs]
+

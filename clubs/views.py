@@ -1,3 +1,4 @@
+import math
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -94,7 +95,7 @@ def log_in(request):
                 return redirect('waiting_list')
             elif user is not None:
                 login(request, user)
-                redirect_url = 'members_list'
+                redirect_url = 'dashboard'
                 return redirect(redirect_url)
 
         messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
@@ -233,6 +234,14 @@ def create_club(request):
     else:
         form = CreateClubForm()
     return render(request, 'create_club.html', {'form': form})
+
+@login_required
+@only_members
+def dashboard(request):
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
+    other_clubs = get_other_clubs(current_user)
+    return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs})
 
 @login_required
 @only_members
