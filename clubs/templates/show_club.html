@@ -29,7 +29,9 @@
         {% if owner != None %}
         <tr>
           <td>
-              <b>Owner</b> {{ owner.gravatar }}
+              <b>Owner</b>
+              <br>
+              <img src="{{ owner.gravatar }}" alt="Gravatar of {{ owner.get_full_name}}">
               <br>
               Name: {{ owner.get_full_name }}
               <br>
@@ -42,16 +44,14 @@
               Location: {{ club.location }}
           </td>
         </tr>-->
-        {% if not is_user_in_club %}
-        <tr>
-          <td>
-            <a href="{% url 'apply_club' club.id%}" class="btn btn-outline-light text-white">Apply</a>
-          </td>
-        </tr>
-        {% endif %}
 
       </tbody>
     </table>
+
+    {% if not is_user_in_club %}
+        <a href="{% url 'apply_club' club.id%}" class="btn btn-outline-light text-white">Apply</a>
+    {% endif %}
+
     <a href="{% url 'dashboard' %}" class="btn btn-outline-light text-white">Back</a>
   </div>
 {% endblock %}

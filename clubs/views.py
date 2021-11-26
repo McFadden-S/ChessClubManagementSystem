@@ -277,9 +277,9 @@ def show_club(request, club_id):
     if club == None:
         return redirect('dashboard')
 
-    owner = get_owners(club)
+    owner = get_owners(club).first()
 
-    return render(request, 'show_club.html', {'club': club, 'owner': owner, 'is_user_in_club': is_user_in_club(request.user, club)})
+    return render(request, 'show_club.html', {'club_id': club_id, 'club': club, 'owner': owner, 'is_user_in_club': is_user_in_club(request.user, club)})
 
 @login_required
 def apply_club(request, club_id):
