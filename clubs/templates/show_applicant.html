@@ -40,14 +40,9 @@
           </td>
         </tr>
 
-        <tr>
-          <td>
-              <a href="{%url 'approve_applicant' club_id applicant.id%}" class="btn btn-outline-light text-white">Approve Application</a>
-          </td>
-        </tr>
-
       </tbody>
     </table>
+    <a href="{%url 'approve_applicant' club_id applicant.id%}" class="btn btn-outline-light text-white">Approve Application</a>
     <a href="{% url 'applicants_list' club_id %}" class="btn btn-outline-light text-white">Back</a>
   </div>
 {% endblock %}

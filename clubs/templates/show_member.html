@@ -49,33 +49,18 @@
 
         {% endif %}
 
-        {% if request_from_owner %}
-
-          {% if authorizationText == 'Member' %}
-            <tr>
-              <td>
-                <a href="{% url 'promote_member' club_id member.id%}" class="btn btn-outline-light text-white">Promote to officer</a>
-              </td>
-            </tr>
-
-          {% elif authorizationText == 'Officer' %}
-            <tr>
-              <td>
-                <a href="{% url 'demote_officer' club_id member.id%}" class="btn btn-outline-light text-white">Demote to member</a>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <a href="{% url 'transfer_ownership' club_id member.id%}" class="btn btn-outline-light text-white">Transfer ownership</a>
-              </td>
-            </tr>
-
-          {% endif %}
-        {% endif %}
-
       </tbody>
     </table>
+
+    {% if request_from_owner %}
+      {% if authorizationText == 'Member' %}
+          <a href="{% url 'promote_member' club_id member.id%}" class="btn btn-outline-light text-white">Promote to officer</a>
+      {% elif authorizationText == 'Officer' %}
+          <a href="{% url 'demote_officer' club_id member.id%}" class="btn btn-outline-light text-white">Demote to member</a>
+          <a href="{% url 'transfer_ownership' club_id member.id%}" class="btn btn-outline-light text-white">Transfer ownership</a>
+      {% endif %}
+    {% endif %}
+
     <a href="{% url 'members_list' club_id %}" class="btn btn-outline-light text-white">Back</a>
   </div>
 {% endblock %}
