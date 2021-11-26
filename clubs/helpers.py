@@ -127,27 +127,19 @@ def get_all_clubs():
 
 def get_my_clubs(user):
     try:
-        my_clubs_names = Club_Member.objects.filter(user=user).values_list('club__id', flat=True)
-        my_clubs = []
-        for club in my_clubs_names:
-            my_clubs += [Club.objects.get(id=club)]
+        my_clubs_ids = Club_Member.objects.filter(user=user).values_list('club__id', flat=True)
+        my_clubs = Club.objects.filter(id__in=my_clubs_ids)
     except ObjectDoesNotExist:
-        return []
+        return None
     return my_clubs
 
 def get_other_clubs(user):
     try:
         my_clubs = get_my_clubs(user)
-    except ObjectDoesNotExist:
-        return []
-    return [item for item in list(get_all_clubs()) if item not in my_clubs]
-
-def get_club(club_id):
-    try:
-        club = Club.objects.get(id=club_id)
+        other_clubs = Club.objects.exclude(id__in=my_clubs)
     except ObjectDoesNotExist:
         return None
-    return club
+    return other_clubs
 
 def is_user_in_club(user, club):
     try:
