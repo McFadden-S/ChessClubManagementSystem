@@ -9,11 +9,12 @@ from django.contrib.auth.hashers import check_password
 class membersListViewTestCase(TestCase):
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/default_club.json',
     ]
 
     def setUp(self):
         self.user = User.objects.get(email='bobsmith@example.org')
-        self.club1 = Club.objects.create(
+        self.club = Club.objects.create(
             name='club1',
             address = 'Bush House',
             city = 'London',
@@ -22,17 +23,10 @@ class membersListViewTestCase(TestCase):
             location = '51.51274545,-0.11717261325662154',
             description = 'Bush House',
         )
-        self.club2 = Club.objects.create(
-            name='club2',
-            address = 'Strand Building',
-            city = 'London',
-            postal_code = 'WC2B 4BG	',
-            country = 'United Kingdom',
-            location = '51.51274545,-0.11717261325662154',
-            description = 'Strand Building',
-        )
-        self.club1_member = Club_Member.objects.create(
-            user=self.user, authorization='OW'
+        self.club_member = Club_Member.objects.create(
+            user=self.user,
+            club=self.club,
+            authorization='OW',
         )
         self.url = reverse('dashboard')
 
@@ -51,12 +45,3 @@ class membersListViewTestCase(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-
-
-    # TODO Once Log In redirects to another view members only decorator and this test can be UNCOMMENTED
-    # def test_get_members_list_redirects_when_applicant(self):
-    #     self.client.login(email=self.user.email, password='Password123')
-    #     self.club.authorization='AP'
-    #     redirect_url = reverse_with_next('home', self.url)
-    #     response = self.client.get(self.url)
-    #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
