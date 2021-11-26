@@ -1,7 +1,7 @@
 """Tests of the promote member view."""
 from django.test import TestCase
 from django.urls import reverse
-from clubs.models import User, Club_Member
+from clubs.models import User, Club_Member, Club
 from clubs.tests.helpers import LogInTester
 
 
@@ -9,19 +9,23 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
     """Tests of the promote member view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/other_users.json',
+        'clubs/tests/fixtures/default_club.json'
     ]
 
     def setUp(self):
         self.owner = User.objects.get(email='bobsmith@example.org')
         self.member = User.objects.get(email='bethsmith@example.org')
+        self.club = Club.objects.get(name='Flying Orangutans')
         self.club_owner = Club_Member.objects.create(
             user=self.owner,
-            authorization='OW'
+            authorization='OW',
+            club=self.club
         )
         self.club_member = Club_Member.objects.create(
             user=self.member,
-            authorization='ME'
+            authorization='ME',
+            club=self.club
         )
         self.url = reverse('promote_member', kwargs={'member_id': self.member.id})
 

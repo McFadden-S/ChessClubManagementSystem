@@ -3,27 +3,31 @@ from django.contrib import messages
 from django.urls import reverse
 from django.test import TestCase
 from clubs.forms import LogInForm
-from clubs.models import Club_Member, User
+from clubs.models import Club_Member, User, Club
 from clubs.tests.helpers import LogInTester
 
 class LogInViewTestCase(TestCase, LogInTester):
     """Unit tests of the log in view"""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/other_users.json',
+        'clubs/tests/fixtures/default_club.json'
     ]
 
     def setUp(self):
         self.url = reverse('log_in')
         self.user = User.objects.get(email='bobsmith@example.org')
+        self.club = Club.objects.get(name='Flying Orangutans')
         Club_Member.objects.create(
             user=self.user,
-            authorization='ME'
+            authorization='ME',
+            club=self.club
         )
         self.applicant = User.objects.get(email='bethsmith@example.org')
         Club_Member.objects.create(
             user=self.applicant,
-            authorization='AP'
+            authorization='AP',
+            club=self.club
         )
 
     def test_log_in_url(self):

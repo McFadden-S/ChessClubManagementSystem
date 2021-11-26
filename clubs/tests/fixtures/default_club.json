@@ -1,0 +1,14 @@
+[
+  {
+    "model": "clubs.club",
+    "pk": 1,
+    "fields": {
+      "name": "Flying Orangutans",
+      "address": "Bush House",
+      "city": "London",
+      "postal_code": "WC2B 4BG",
+      "country": "GB",
+      "description": "Our goal is to have all orangutans rule the world."
+    }
+  }
+]
