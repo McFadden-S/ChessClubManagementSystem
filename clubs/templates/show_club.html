@@ -26,6 +26,17 @@
           </td>
         </tr>
 
+        {% if owner != None %}
+        <tr>
+          <td>
+              <b>Owner</b> {{ owner.gravatar }}
+              <br>
+              Name: {{ owner.get_full_name }}
+              <br>
+              Bio: {{ owner.bio }}
+          </td>
+        </tr>
+        {% endif %}
         <!--<tr>
           <td>
               Location: {{ club.location }}
