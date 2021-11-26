@@ -230,7 +230,12 @@ def create_club(request):
         current_user = request.user
         form = CreateClubForm(request.POST)
         if form.is_valid():
-            club_created = form.save()
+            try:
+                club_created = form.save()
+            except IndexError:
+                messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
+                form_new = CreateClubForm()
+                return render(request,'create_club.html',{'form': form_new})
             # redirect link needs to change
             Club_Member.objects.create(
                 user=current_user,

@@ -39,5 +39,47 @@ class CreateClubFormTestCase(TestCase):
         self.assertEqual(club.address, 'Bush House')
         self.assertEqual(club.city, 'London')
         self.assertEqual(club.postal_code, 'WC2B 4BG')
+        self.assertEqual(club.location, '51.51274545,-0.11717261325662154')
         self.assertEqual(club.country, 'GB')
         self.assertEqual(club.description, 'Aim to get the best orangutans out there')
+
+    #NEGATIVE TestCase
+    def test_form_must_not_save_correctly_bad_address(self):
+        self.valid_form_input['address'] = "badadress"
+        form = CreateClubForm(data=self.valid_form_input)
+        before_count = Club.objects.count()
+        # assume for now form is valid may need to add validators to forms.py
+        with self.assertRaises(IndexError):
+            form.save()
+        after_count = Club.objects.count()
+        self.assertEqual(after_count, before_count)
+
+    def test_form_must_not_save_correctly_bad_city(self):
+        self.valid_form_input['address'] = "badcity"
+        form = CreateClubForm(data=self.valid_form_input)
+        before_count = Club.objects.count()
+        # assume for now form is valid may need to add validators to forms.py
+        with self.assertRaises(IndexError):
+            form.save()
+        after_count = Club.objects.count()
+        self.assertEqual(after_count, before_count)
+
+    def test_form_must_not_save_correctly_bad_postalcode(self):
+        self.valid_form_input['address'] = "badpostalcode"
+        form = CreateClubForm(data=self.valid_form_input)
+        before_count = Club.objects.count()
+        # assume for now form is valid may need to add validators to forms.py
+        with self.assertRaises(IndexError):
+            form.save()
+        after_count = Club.objects.count()
+        self.assertEqual(after_count, before_count)
+
+    def test_form_must_not_save_correctly_bad_country(self):
+        self.valid_form_input['address'] = "badcountry"
+        form = CreateClubForm(data=self.valid_form_input)
+        before_count = Club.objects.count()
+        # assume for now form is valid may need to add validators to forms.py
+        with self.assertRaises(IndexError):
+            form.save()
+        after_count = Club.objects.count()
+        self.assertEqual(after_count, before_count)
