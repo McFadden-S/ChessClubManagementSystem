@@ -102,10 +102,10 @@ def get_all_clubs():
 
 def get_my_clubs(user):
     try:
-        my_clubs_names = Club_Member.objects.filter(user=user).values_list('club_name', flat=True)
+        my_clubs_names = Club_Member.objects.filter(user=user).values_list('club__id', flat=True)
         my_clubs = []
-        for club_name in my_clubs_names:
-            my_clubs += [Club.objects.get(name=club_name)]
+        for club in my_clubs_names:
+            my_clubs += [Club.objects.get(id=club)]
     except ObjectDoesNotExist:
         return []
     return my_clubs
