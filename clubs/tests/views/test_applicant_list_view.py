@@ -33,10 +33,10 @@ class ApplicantListViewTestCase(TestCase):
         Club_Member.objects.create(
             user=self.owner, authorization='OW', club=self.club
         )
-        self.url = reverse('applicants_list')
+        self.url = reverse('applicants_list', kwargs={'club_id': self.club.id})
 
     def test_applicants_list_url(self):
-        self.assertEqual(self.url, '/applicants_list/')
+        self.assertEqual(self.url, f'/{self.club.id}/applicants_list/')
 
     def test_get_applicants_list_by_officer(self):
         self.client.login(email=self.officer.email, password='Password123')
@@ -56,13 +56,12 @@ class ApplicantListViewTestCase(TestCase):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
-
     def test_get_applicants_list_redirects_member_list_when_authorization_is_member(self):
         user1 = User.objects.create_user(email="a@example.com",first_name="a",last_name="a",chess_experience="BG",password='Password123')
         club_member1 = Club_Member.objects.create(user=user1, authorization='ME', club=self.club)
         self.client.login(email=user1.email, password='Password123')
         response = self.client.get(self.url)
-        redirect_url=reverse('members_list')
+        redirect_url=reverse('members_list', kwargs = {'club_id' : self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     # WHEN LOGIN IS FIXED FOR APPLICANT

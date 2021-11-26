@@ -7,7 +7,12 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     {% if user.is_authenticated %}
-      {% include 'partials/menu.html' %}
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      {% if club_id != None %}
+        {% include 'partials/menu.html' %}
+      {% endif %}
+      {% include 'partials/account_menu.html' %}
+      </div>
     {% endif %}
   </div>
 </nav>

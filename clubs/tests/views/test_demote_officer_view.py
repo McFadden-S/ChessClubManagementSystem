@@ -27,16 +27,16 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
             authorization='OF',
             club=self.club
         )
-        self.url = reverse('demote_officer', kwargs={'member_id': self.officer.id})
+        self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
 
     def test_demote_officer_url(self):
-        self.assertEqual(self.url,f'/demote_officer/{self.officer.id}')
+        self.assertEqual(self.url,f'/{self.club.id}/demote_officer/{self.officer.id}')
 
     def test_get_demote_valid_officer(self):
         self.client.login(email='bobsmith@example.org', password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
-        url = reverse('members_list')
+        url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, url, status_code=302, target_status_code=200)
         auth = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(auth, 'ME')
@@ -47,7 +47,7 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
     def test_get_demote_invalid_officer(self):
         self.client.login(email='bobsmith@example.org', password='Password123')
         self.assertTrue(self._is_logged_in())
-        response_url = self.client.get(reverse('members_list'))
+        response_url = self.client.get(reverse('members_list', kwargs={'club_id': self.club.id}))
         self.assertEqual(response_url.status_code, 200)
         auth = self.club_officer.authorization
         self.assertNotEqual(auth, "ME")

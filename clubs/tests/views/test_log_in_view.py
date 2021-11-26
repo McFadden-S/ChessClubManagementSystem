@@ -59,9 +59,9 @@ class LogInViewTestCase(TestCase, LogInTester):
     def test_successful_applicant_log_in(self):
         form_input = {'email': 'bethsmith@example.org', 'password': 'Password123'}
         response = self.client.post(self.url, form_input, follow=True)
-        response_url = reverse('waiting_list')
+        response_url = reverse('dashboard')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'waiting_list.html')
+        self.assertTemplateUsed(response, 'dashboard.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
@@ -79,17 +79,17 @@ class LogInViewTestCase(TestCase, LogInTester):
     def test_get_log_in_redirects_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")
         response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('members_list')
+        redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'members_list.html')
+        self.assertTemplateUsed(response, 'dashboard.html')
 
     def test_post_log_in_redirects_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")
         form_input = {'email': 'incorrectUser@example.org', 'password': 'inCorrectPassword123'}
         response = self.client.post(self.url, form_input, follow=True)
-        redirect_url = reverse('members_list')
+        redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'members_list.html')
+        self.assertTemplateUsed(response, 'dashboard.html')
 
     def _is_logged_in(self):
         return '_auth_user_id' in self.client.session.keys()

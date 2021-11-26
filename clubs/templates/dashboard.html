@@ -20,7 +20,7 @@
           <div class="card-body">
             <h5 class="card-title">{{club.name}}</h5>
             <p class="card-text">{{club.city}}</p>
-            <a href="#" class="btn btn-dark">View Club</a>
+            <a href="{% url 'members_list' club.id %}" class="btn btn-dark">View Club</a>
           </div>
         </div>
       </div>
