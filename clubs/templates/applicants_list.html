@@ -10,7 +10,7 @@
   <div class="row justify-content-end">
     <div class="col"></div>
     <div class="col-auto">
-      <form action="{% url 'applicants_list' %}" method="post">
+      <form action="{% url 'applicants_list' club_id %}" method="post">
         {% csrf_token %}
         <div class="input-group mb-3">
           <input type="search" placeholder="Search applicant" name="searched_letters">
@@ -23,7 +23,7 @@
   <div class="row justify-content-end">
     <div class="col"></div>
     <div class="col-auto">
-      <form action="{% url 'applicants_list' %}" method="post" id="form_sort">
+      <form action="{% url 'applicants_list' club_id %}" method="post" id="form_sort">
           {% csrf_token %}
         <select name="sort_table" class="btn btn-outline-light text-white" onchange="this.form.submit()">
             <option disabled="true" selected>--Sort By--</option>
@@ -47,7 +47,7 @@
                 <img src="{{ applicant.mini_gravatar }}" alt="Gravatar of {{ applicant.first_name }} {{applicant.last_name }}">
               </td>
               <td>
-                <a href="{% url 'show_applicant' applicant.id %}">
+                <a href="{% url 'show_applicant' club_id applicant.id %}">
                   {{ applicant.first_name }} {{applicant.last_name }}
                 </a>
               </td>

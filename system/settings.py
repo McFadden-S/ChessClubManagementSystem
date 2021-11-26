@@ -145,7 +145,7 @@ AUTH_USER_MODEL = 'clubs.User'
 LOGIN_URL = 'log_in'
 
 # URL where @login_prohibited redirects to
-REDIRECT_URL_WHEN_LOGGED_IN = 'members_list'
+REDIRECT_URL_WHEN_LOGGED_IN = 'dashboard'
 
 MESSAGE_TAGS = {
     message_constants.DEBUG: 'dark',
