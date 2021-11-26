@@ -136,7 +136,7 @@ def show_member(request, club_id, member_id):
     authorizationText = get_authorization_text(member, club)
 
     if member == None or authorizationText == None:
-        return redirect('dashboard')
+        return redirect('members_list', club_id)
 
     return render(request, 'show_member.html',
         {'club_id': club_id,

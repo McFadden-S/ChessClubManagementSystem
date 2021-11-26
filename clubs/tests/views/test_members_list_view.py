@@ -27,7 +27,7 @@ class membersListViewTestCase(TestCase):
         Club_Member.objects.create(
             user=self.tertiary_user, authorization='ME', club=self.club
         )
-        self.url = reverse('members_list')
+        self.url = reverse('members_list', kwargs={'club_id': self.club.id})
 
     def create_ordered_list_by(self, order_by_var):
         member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)#.order_by('member.first_name')
@@ -35,7 +35,7 @@ class membersListViewTestCase(TestCase):
         return sorted_list
 
     def test_members_list_url(self):
-        self.assertEqual(self.url, '/members_list/')
+        self.assertEqual(self.url, f'/{self.club.id}/members_list/')
 
     def test_get_members_list(self):
         self.client.login(email=self.user.email, password='Password123')

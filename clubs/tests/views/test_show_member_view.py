@@ -18,10 +18,10 @@ class showMemberViewTestCase(TestCase):
         self.club_owner = Club_Member.objects.create(
             user=self.user, authorization='OW', club=self.club
         )
-        self.url = reverse('show_member', kwargs={'member_id': self.user.id})
+        self.url = reverse('show_member', kwargs={'club_id' : self.club.id, 'member_id': self.user.id})
 
     def test_show_member_url(self):
-        self.assertEqual(self.url, f'/show_member/{self.user.id}')
+        self.assertEqual(self.url, f'/{self.club.id}/show_member/{self.user.id}')
 
     def test_get_show_member(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -50,8 +50,8 @@ class showMemberViewTestCase(TestCase):
 
     def test_get_show_member_with_invalid_id(self):
         self.client.login(username=self.user.email, password='Password123')
-        url = reverse('show_member', kwargs={'member_id': self.user.id+9999})
+        url = reverse('show_member', kwargs={'club_id': self.club.id, 'member_id': self.user.id+9999})
         response = self.client.get(url, follow=True)
-        response_url = reverse('members_list')
+        response_url = reverse('members_list', kwargs={'club_id' : self.club.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'members_list.html')

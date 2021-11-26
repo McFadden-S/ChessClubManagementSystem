@@ -40,15 +40,6 @@ class CreateClubViewTestCase(TestCase):
         self.assertTrue(isinstance(form,CreateClubForm))
         self.assertEqual(form.is_bound, False)
 
-    def test_get_create_club_by_applicant(self):
-        self.client.login(email=self.secondary_user.email, password='Password123')
-        response = self.client.get(self.url)
-        redirect_url=reverse('waiting_list')
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-
-    # No need if using client validation
-    # def test_unsuccesful_sign_up(self):
-
     def test_succesful_create_club(self):
          # SAVE TO CLUB DB
         self.client.login(email=self.user.email, password='Password123')
@@ -62,8 +53,8 @@ class CreateClubViewTestCase(TestCase):
         after_count = Club.objects.count()
         self.assertEqual(after_count, before_count+1)
 
-        # TEST 2 - REDIRECT SUCCESSFUL - currenly members_list but should be club home page
-        response_url = reverse('members_list')
+        # TEST 2 - REDIRECT SUCCESSFUL
+        response_url = reverse('members_list', kwargs={'club_id': self.club.id+1})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'members_list.html')
 

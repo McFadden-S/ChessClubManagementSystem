@@ -32,9 +32,9 @@ class SignUpViewTestCase(TestCase):
     def test_get_SIGN_UP_redirects_when_logged_in(self):
         self.client.login(email=self.applicant.email, password="Password123")
         response = self.client.get(self.url, follow=True)
-        redirect_url = reverse('waiting_list')
+        redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'waiting_list.html')
+        self.assertTemplateUsed(response, 'dashboard.html')
 
     def test_post_signup_redirects_when_logged_in(self):
         self.client.login(email=self.applicant.email, password="Password123")
@@ -43,9 +43,9 @@ class SignUpViewTestCase(TestCase):
         after_count = User.objects.count()
         self.assertEqual(after_count, before_count)
 
-        redirect_url = reverse('waiting_list')
+        redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertTemplateUsed(response, 'waiting_list.html')
+        self.assertTemplateUsed(response, 'dashboard.html')
 
     def test_get_sign_up(self):
         response = self.client.get(self.url)
@@ -81,15 +81,15 @@ class SignUpViewTestCase(TestCase):
          self.assertEqual(after_count, before_count+1)
 
          # SAVE TO CLUB DB
+         after_count = User.objects.count()
+         self.assertEqual(after_count, before_count+1)
          after_count_club = Club_Member.objects.count()
-         self.assertEqual(after_count_club, before_count_club+1)
+         self.assertEqual(after_count_club, before_count_club)
 
          # TEST 2 - REDIRECT SUCCESSFUL MUST MAKE FOLLOWS IN RESPONSE TRUE
-         response_url = reverse('waiting_list')
+         response_url = reverse('dashboard')
          self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-
-
-         self.assertTemplateUsed(response, 'waiting_list.html')
+         self.assertTemplateUsed(response, 'dashboard.html')
 
          #test 4 - IN DB SEE NEW USER
          user = User.objects.get(email='bobsmith@example.org')
