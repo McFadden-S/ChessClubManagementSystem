@@ -49,7 +49,7 @@ class Club(models.Model):
     city = models.CharField(max_length=50)
     postal_code = models.CharField(max_length=20)
     country = CountryField(blank_label='(select country)')
-    location = PlainLocationField(based_fields=['address', 'city', 'postal_code', 'country'], zoom=7, blank=True)
+    location = PlainLocationField(based_fields=['address', 'city', 'postal_code', 'country'], zoom=7, blank=False)
     description = models.CharField(max_length=500, blank=False)
 
 class Club_Member(models.Model):
