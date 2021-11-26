@@ -141,3 +141,18 @@ def get_other_clubs(user):
     except ObjectDoesNotExist:
         return []
     return [item for item in list(get_all_clubs()) if item not in my_clubs]
+
+def get_club(club_id):
+    try:
+        club = Club.objects.get(id=club_id)
+    except ObjectDoesNotExist:
+        return None
+    return club
+
+def is_user_in_club(user, club):
+    try:
+        club_member = Club_Member.objects.get(user=user, club=club)
+    except ObjectDoesNotExist:
+        return False
+    else:
+        return True
