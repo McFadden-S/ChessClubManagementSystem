@@ -264,3 +264,21 @@ def clubs_list(request, *args):
             clubs = clubs.order_by(sort_table)
 
     return render(request, 'clubs_list.html', {'clubs': clubs})
+
+@login_required
+def show_club(request, club_id):
+    club = get_club(club_id)
+
+    if club == None:
+        return redirect('dashboard')
+
+    return render(request, 'show_club.html', {'club': club, 'is_user_in_club': is_user_in_club(request.user, club)})
+
+@login_required
+def apply_club(request, club_id):
+    current_user = request.user
+    club = get_club(club_id)
+    if not is_user_in_club(current_user, club):
+        Club_Member.objects.create(user=current_user, club=club, authorization='AP')
+        return redirect('waiting_list')
+    return redirect('dashboard')
