@@ -298,5 +298,5 @@ def apply_club(request, club_id):
     club = get_club(club_id)
     if not is_user_in_club(current_user, club):
         Club_Member.objects.create(user=current_user, club=club, authorization='AP')
-        return redirect('waiting_list', club_id)
+        return render(request,'waiting_list.html', {'club_id' : club_id})
     return redirect('dashboard')
