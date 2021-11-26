@@ -1,17 +1,21 @@
 from django.test import TestCase
-from clubs.models import User, Club_Member
+from clubs.models import User, Club_Member, Club
 from clubs.forms import SignUpForm
 from django.urls import reverse
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 
 class SignUpViewTestCase(TestCase):
-    fixtures = ['clubs/tests/fixtures/default_user.json']
+    fixtures = [
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/default_club.json'
+    ]
 
     def setUp(self):
         self.applicant = User.objects.get(email='bobsmith@example.org')
-        self.club = Club_Member.objects.create(
-            user=self.applicant, authorization='AP'
+        self.club = Club.objects.get(name='Flying Orangutans')
+        self.club_applicant = Club_Member.objects.create(
+            user=self.applicant, authorization='AP', club=self.club
         )
         self.valid_form_input = {
             'email': 'bellasmith@example.org',

@@ -222,12 +222,12 @@ def create_club(request):
         current_user = request.user
         form = CreateClubForm(request.POST)
         if form.is_valid():
-            form.save()
+            club_created = form.save()
             # redirect link needs to change
             Club_Member.objects.create(
                 user=current_user,
-                club_name=form.cleaned_data.get('name'),
-                authorization='ME'
+                club=club_created,
+                authorization='OF'
             )
             return redirect('members_list')
     else:

@@ -1,19 +1,22 @@
 """Tests of the home view."""
 from django.test import TestCase
-from clubs.models import User,Club_Member
+from clubs.models import User,Club_Member, Club
 
 from django.urls import reverse
 
 class HomeViewTestCase(TestCase):
     """Tests of the home view."""
     fixtures = [
-    'clubs/tests/fixtures/default_user.json',]
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/default_club.json'
+    ]
 
     def setUp(self):
         self.url = reverse('home')
         self.user = User.objects.get(email='bobsmith@example.org')
-        self.club = Club_Member.objects.create(
-            user=self.user, authorization='AP'
+        self.club = Club.objects.get(name='Flying Orangutans')
+        self.club_applicant = Club_Member.objects.create(
+            user=self.user, authorization='AP', club=self.club
         )
 
 

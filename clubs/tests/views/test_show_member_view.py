@@ -1,5 +1,5 @@
 from django.test import TestCase
-from clubs.models import User, Club_Member
+from clubs.models import User, Club_Member, Club
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
@@ -9,12 +9,14 @@ class showMemberViewTestCase(TestCase):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/default_club.json'
     ]
 
     def setUp(self):
         self.user = User.objects.get(email='bobsmith@example.org')
-        self.club = Club_Member.objects.create(
-            user=self.user, authorization='OW'
+        self.club = Club.objects.get(name='Flying Orangutans')
+        self.club_owner = Club_Member.objects.create(
+            user=self.user, authorization='OW', club=self.club
         )
         self.url = reverse('show_member', kwargs={'member_id': self.user.id})
 

@@ -6,18 +6,20 @@ from django.urls import reverse
 class CreateClubViewTestCase(TestCase):
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
-        'clubs/tests/fixtures/other_users.json'
+        'clubs/tests/fixtures/other_users.json',
+        'clubs/tests/fixtures/default_club.json'
     ]
 
     def setUp(self):
         # Applicant cannot create club
         self.user = User.objects.get(email='bobsmith@example.org')
         self.secondary_user = User.objects.get(email='bethsmith@example.org')
+        self.club = Club.objects.get(name='Flying Orangutans')
         Club_Member.objects.create(
-            user=self.user, authorization='ME'
+            user=self.user, authorization='ME', club=self.club
         )
         Club_Member.objects.create(
-            user=self.secondary_user, authorization='AP'
+            user=self.secondary_user, authorization='AP', club=self.club
         )
         self.valid_form_input = {
             'name': 'Orangutan',

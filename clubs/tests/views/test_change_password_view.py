@@ -1,5 +1,5 @@
 from django.test import TestCase
-from clubs.models import User,Club_Member
+from clubs.models import User,Club_Member, Club
 from clubs.forms import UserChangePasswordForm
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
@@ -8,12 +8,17 @@ from django.contrib.auth.hashers import check_password
 # Used this from clucker project with some modifications
 class userChangePasswordViewTestCase(TestCase):
 
-    fixtures = ['clubs/tests/fixtures/default_user.json']
+    fixtures = [
+        'clubs/tests/fixtures/default_user.json',
+        'clubs/tests/fixtures/default_club.json'
+    ]
 
     def setUp(self):
         self.user = User.objects.get(email='bobsmith@example.org')
+        self.club = Club.objects.get(name='Flying Orangutans')
         Club_Member.objects.create(
             user=self.user,
+            club=self.club
         )
         self.url = reverse('change_password')
         self.form_input = {

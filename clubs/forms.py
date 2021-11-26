@@ -39,7 +39,7 @@ class SignUpForm(forms.ModelForm):
             password=self.cleaned_data.get('new_password'),
         )
 
-        Club_Member.objects.create(user=user)
+        # Club_Member.objects.create(user=user)
 
         return user
 
