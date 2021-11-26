@@ -25,6 +25,20 @@
       </div>
     </div>
 
+    <div class="row justify-content-end">
+      <div class="col"></div>
+      <div class="col-auto">
+        <form action="{% url 'dashboard' %}" method="post">
+          {% csrf_token %}
+          <div class="input-group mb-3">
+            <input type="search" placeholder="Search current clubs" name="searched_letters">
+            <button type="submit" name ="search_btn" class="btn btn-outline-light text-white">Search</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
     {% for club in my_clubs %}
       <div class="col-auto">
         <div class="card bg-secondary text-end text-white mx-3 my-3" style="width: 18rem; height: 10rem;">
@@ -36,6 +50,19 @@
         </div>
       </div>
     {% endfor %}
+
+    <div class="row justify-content-end">
+      <div class="col"></div>
+      <div class="col-auto">
+        <form action="{% url 'dashboard' %}" method="post">
+          {% csrf_token %}
+          <div class="input-group mb-3">
+            <input type="search" placeholder="Search other clubs" name="searched_letters">
+            <button type="submit" name ="search_btn_other_clubs" class="btn btn-outline-light text-white">Search</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
   </div>
   <h2>Other Clubs</h2>
