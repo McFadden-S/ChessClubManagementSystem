@@ -8,10 +8,6 @@ def get_all_users_except_applicants():
     members = User.objects.exclude(id__in=applicants)
     return members
 
-def get_all_clubs():
-    clubs = Club.objects.values_list('name', flat=True)
-    return clubs
-
 def get_clubs_search(searched_letters):
     searched_clubs = (Club.objects
         .filter(name__icontains = searched_letters))

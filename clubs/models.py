@@ -54,7 +54,7 @@ class Club(models.Model):
 
 class Club_Member(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
-    #club_name = models.CharField(max_length=50, default="club", blank=False)
+    club_name = models.CharField(max_length=50, default="club", blank=False)
     club = models.ForeignKey(Club, on_delete=models.CASCADE, blank=False)
 
     APPLICANT = 'AP'
