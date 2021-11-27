@@ -303,3 +303,10 @@ def apply_club(request, club_id):
         Club_Member.objects.create(user=current_user, club=club, authorization='AP')
         return render(request,'waiting_list.html', {'club_id' : club_id})
     return redirect('dashboard')
+
+@login_required
+def my_clubs_dropdown(request):
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
+    cur_view = request.resolver_match.view_name
+    return redirect(cur_view, {'my_clubs': my_clubs})
