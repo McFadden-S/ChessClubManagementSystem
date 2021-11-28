@@ -240,7 +240,7 @@ def create_club(request):
             Club_Member.objects.create(
                 user=current_user,
                 club=club_created,
-                authorization='OF'
+                authorization='OW'
             )
             return redirect('members_list', club_created.id)
     else:
