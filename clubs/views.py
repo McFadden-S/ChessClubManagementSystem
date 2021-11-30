@@ -334,9 +334,10 @@ def delete_account(request):
             club.delete()
             continue
         # In club table, delete where only applicants in club and 1 owner(the request user)
-        count_applicants_in_club = get_count_of_specific_user_in_club(club, 'AP')
-        if count_applicants_in_club + 1 == count_all_users_in_club:
-            club.delete()
+        if is_owner(request.user, club):
+            count_applicants_in_club = get_count_of_specific_user_in_club(club, 'AP')
+            if count_applicants_in_club + 1 == count_all_users_in_club:
+                club.delete()
 
     # Delete the user from club_member and user table
     request.user.delete()

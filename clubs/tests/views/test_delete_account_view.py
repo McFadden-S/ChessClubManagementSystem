@@ -35,6 +35,26 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertEqual(after_count_user, before_count_user-1)
         self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
 
+    def test_any_user_who_has_club_can_delete_account(self):
+        self.client.login(email=self.user.email, password='Password123')
+        club_applicant = Club_Member.objects.create(
+            user=self.user,
+            authorization='AP',
+            club=self.club
+        )
+        before_count_user = User.objects.count()
+        before_count_club_member = Club_Member.objects.count()
+        before_count_club = Club.objects.count()
+        response = self.client.get(self.url)
+        after_count_user = User.objects.count()
+        after_count_club_member = Club_Member.objects.count()
+        after_count_club = Club.objects.count()
+        self.assertEqual(after_count_user, before_count_user-1)
+        self.assertEqual(after_count_club_member, before_count_club_member-1)
+        #club still exists because owner still present
+        self.assertEqual(after_count_club, before_count_club)
+        self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
+
     def test_owner_who_is_only_person_in_club_can_delete_account(self):
         self.client.login(email=self.owner.email, password='Password123')
         before_count_user = User.objects.count()
