@@ -23,7 +23,6 @@ class MembersListViewTestCase(TestCase):
             city='London',
             postal_code='WC2B 4BG	',
             country='United Kingdom',
-            # location='51.51274545,-0.11717261325662154',
             description='Bush House',
         )
         self.club_member = Club_Member.objects.create(
@@ -38,7 +37,6 @@ class MembersListViewTestCase(TestCase):
             city='Oxford',
             postal_code='OX1 3BG	',
             country='United Kingdom',
-            # location='51.754074, -1.254042',
             description='Bodleian Library',
         )
         self.club_member2 = Club_Member.objects.create(
@@ -53,7 +51,6 @@ class MembersListViewTestCase(TestCase):
             city='Cambridge',
             postal_code='CB2 1TN	',
             country='United Kingdom',
-            # location='52.205276, 0.119167',
             description='The Old Schools',
         )
         self.club_member3 = Club_Member.objects.create(

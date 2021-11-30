@@ -31,7 +31,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
             city='Oxford',
             postal_code='OX1 3BG	',
             country='United Kingdom',
-            # location='51.754074, -1.254042',
             description='Bodleian Library',
         )
 
@@ -104,3 +103,10 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         auth = Club_Member.objects.get(user=self.member).authorization
         self.assertEqual(auth, 'ME')
 
+    # def test_get_applicants_list_redirects_member_list_when_authorization_is_member(self):
+    #     self.client.login(email='harrysmith@example.org', password='Password123')
+    #     self.assertTrue(self._is_logged_in())
+    #     response = self.client.get(self.url)
+    #     url = reverse('applicants_list', kwargs={'club_id': self.club.id})
+    #     redirect_url = reverse('applicants_list', kwargs={'club_id': self.club.id})
+    #     self.assertRedirects(response, url, status_code=302, target_status_code=200)

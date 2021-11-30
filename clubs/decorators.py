@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from .helpers import get_authorization, get_club
 from django.contrib import messages
 
+
 def login_prohibited(view_function):
     def modified_view_function(request):
         if request.user.is_authenticated:

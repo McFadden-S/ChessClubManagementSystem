@@ -38,7 +38,7 @@ class ApplicantListViewTestCase(TestCase):
     def test_applicants_list_url(self):
         self.assertEqual(self.url, f'/{self.club.id}/waiting_list/')
 
-    def test_get_applicants_list_redirects_member_list_when_authorization_is_applicant(self):
+    def test_get_applicants_list_redirects_member_list_when_authorization_is_member(self):
         user1 = User.objects.create_user(email="a@example.com", first_name="a", last_name="a", chess_experience="BG",
                                          password='Password123')
         club_member1 = Club_Member.objects.create(user=user1, authorization='AP', club=self.club)
@@ -46,6 +46,7 @@ class ApplicantListViewTestCase(TestCase):
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertEqual(response.status_code, 200)
+
 
     # def test_if_auth_is_none(self):
     #     user1 = User.objects.create_user(email="a@example.com", first_name="a", last_name="a", chess_experience="BG",
