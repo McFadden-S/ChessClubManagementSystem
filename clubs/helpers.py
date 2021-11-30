@@ -71,6 +71,12 @@ def get_user_of_club(user_id, club):
         return None
     return user
 
+def get_count_of_users_in_club(search_club):
+    count = (Club_Member.objects
+        .filter(club=search_club)
+        .values_list('user__id', flat=True)
+        .count())
+    return count
 def get_authorization(user, club):
     try:
         authorization = Club_Member.objects.filter(club=club).get(user=user).authorization

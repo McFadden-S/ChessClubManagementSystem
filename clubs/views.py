@@ -314,5 +314,13 @@ def apply_club(request, *args, **kwargs):
 
 @login_required
 def delete_account(request):
+    my_clubs = get_my_clubs(request.user)
+    for club in my_clubs:
+        # Delete all of the users clubs in club table where they are the only "person"
+        if get_count_of_users_in_club(club) == 1:
+            club.delete()
+        
+
+    # Delete the user from club_member and user table
     request.user.delete()
     return redirect('home')
