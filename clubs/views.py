@@ -303,3 +303,9 @@ def apply_club(request, club_id):
         Club_Member.objects.create(user=current_user, club=club, authorization='AP')
         return render(request,'waiting_list.html', {'club_id' : club_id})
     return redirect('dashboard')
+
+@login_required
+def delete_account(request):
+    # current_user = request.user
+    request.user.delete()
+    return redirect('home')
