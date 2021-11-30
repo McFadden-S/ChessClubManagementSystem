@@ -52,15 +52,28 @@
       </tbody>
     </table>
 
+    <div>
     {% if request_from_owner %}
       {% if authorizationText == 'Member' %}
           <a href="{% url 'promote_member' club_id member.id%}" class="btn btn-outline-light text-white">Promote to officer</a>
+          <a href="{% url 'remove_user' club_id member.id%}" class="btn btn-outline-light text-white">Remove member</a>
       {% elif authorizationText == 'Officer' %}
           <a href="{% url 'demote_officer' club_id member.id%}" class="btn btn-outline-light text-white">Demote to member</a>
           <a href="{% url 'transfer_ownership' club_id member.id%}" class="btn btn-outline-light text-white">Transfer ownership</a>
+          <a href="{% url 'remove_user' club_id member.id%}" class="btn btn-outline-light text-white">Remove officer</a>
       {% endif %}
     {% endif %}
 
-    <a href="{% url 'members_list' club_id %}" class="btn btn-outline-light text-white">Back</a>
+    {% if request_from_officer %}
+      {% if authorizationText == 'Member' %}
+          <a href="{% url 'remove_user' club_id member.id%}" class="btn btn-outline-light text-white">Remove member</a>
+      {% endif %}
+    {% endif %}
+    </div>
+
+    <div>
+      <br>
+      <a href="{% url 'members_list' club_id %}" class="btn btn-outline-light text-white">Back</a>
+    </div>
   </div>
 {% endblock %}
