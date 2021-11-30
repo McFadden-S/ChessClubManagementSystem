@@ -9,6 +9,8 @@ from django.shortcuts import redirect,render
 from django.urls import reverse
 from django.conf import settings
 from django.views.generic.edit import FormView, UpdateView
+from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 
 from .forms import *
 from .models import *
@@ -16,10 +18,9 @@ from .helpers import *
 from .decorators import *
 from .mixins import *
 
-# Create your views here.
-@login_prohibited
-def home(request):
-    return render(request,'home.html')
+
+class HomeView(LoginProhibitedMixin, TemplateView):
+    template_name = 'home.html'
 
 class SignUpView(LoginProhibitedMixin, FormView):
     """View that signs up user."""
@@ -32,6 +33,28 @@ class SignUpView(LoginProhibitedMixin, FormView):
         login(self.request, self.object)
         messages.success(self.request, f"Your account was created successfully")
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('dashboard')
+
+class LogInView(LoginProhibitedMixin, FormView):
+    """View to log in to the system."""
+
+    template_name = "log_in.html"
+    form_class = LogInForm
+
+    def form_valid(self, form):
+        email = form.cleaned_data.get('email')
+        password = form.cleaned_data.get('password')
+        user = authenticate(email=email, password=password)
+
+        if user is None:
+            return super().form_invalid(form)
+
+        login(self.request, user)
+        messages.success(self.request, "Login Successful")
+        return super().form_valid(form)
+
 
     def get_success_url(self):
         return reverse('dashboard')
@@ -50,6 +73,7 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         """Return redirect URL after successful update."""
+        messages.success(self.request, "User Information Updated Successfully")
         return reverse('dashboard')
 
 class ChangePasswordView(LoginRequiredMixin, FormView):
@@ -66,8 +90,9 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
             new_password = form.cleaned_data.get('new_password')
             current_user.set_password(new_password)
             current_user.save()
-            messages.success(self.request, f"Your password was changed successfully")
             login(self.request, current_user)
+
+            messages.success(self.request, "Password Changed Successfully")
             return super().form_valid(form)
 
         else:
@@ -76,27 +101,10 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('dashboard')
 
-@login_required
-@only_applicants
-def waiting_list(request, club_id):
-    return render(request,'waiting_list.html', {'club_id' : club_id})
+class WaitingListView(ApplicantsOnlyMixin, TemplateView):
+    """ View for the waiting list for applicants to a club """
 
-@login_prohibited
-def log_in(request):
-    if request.method == 'POST':
-        form = LogInForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user = authenticate(email=email, password=password)
-            if user is not None:
-                login(request, user)
-                redirect_url = 'dashboard'
-                return redirect(redirect_url)
-
-        messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
-    form = LogInForm()
-    return render(request, 'log_in.html', {'form': form})
+    template_name = 'waiting_list.html'
 
 @login_required
 def log_out(request):
@@ -105,8 +113,8 @@ def log_out(request):
 
 @login_required
 @only_members
-def members_list(request, club_id):
-    club = get_club(club_id)
+def members_list(request, *args, **kwargs):
+    club = get_club(kwargs['club_id'])
     members = get_members(club)
     officers = get_officers(club)
     owners = get_owners(club)
@@ -126,20 +134,20 @@ def members_list(request, club_id):
             officers = officers.order_by(sort_table)
             owners = owners.order_by(sort_table)
 
-    return render(request, 'members_list.html', {'club_id': club_id, 'members': members, 'officers': officers, 'owners': owners})
+    return render(request, 'members_list.html', {'club_id': kwargs['club_id'], 'members': members, 'officers': officers, 'owners': owners})
 
 @login_required
 @only_members
-def show_member(request, club_id, member_id):
-    club = get_club(club_id)
-    member = get_user(member_id)
+def show_member(request, *args, **kwargs):
+    club = get_club(kwargs['club_id'])
+    member = get_user(kwargs['member_id'])
     authorizationText = get_authorization_text(member, club)
 
     if member == None or authorizationText == None:
-        return redirect('members_list', club_id)
+        return redirect('members_list', kwargs['club_id'])
 
     return render(request, 'show_member.html',
-        {'club_id': club_id,
+        {'club_id': kwargs['club_id'],
         'member': member,
         'authorizationText' : authorizationText,
         'request_from_owner' : is_owner(request.user, club),
@@ -147,8 +155,8 @@ def show_member(request, club_id, member_id):
 
 @login_required
 @only_officers
-def applicants_list(request, club_id, *args):
-    club = get_club(club_id)
+def applicants_list(request, *args, **kwargs):
+    club = get_club(kwargs['club_id'])
     applicants = get_applicants(club)
 
     if 'search_btn' in request.POST:
@@ -162,70 +170,70 @@ def applicants_list(request, club_id, *args):
             sort_table = request.POST['sort_table']
             applicants = applicants.order_by(sort_table)
 
-    return render(request, 'applicants_list.html', {'club_id' : club_id, 'applicants': applicants})
+    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants})
 
 @login_required
 @only_officers
-def show_applicant(request, club_id, applicant_id):
-    club = get_club(club_id)
-    applicant = get_user(applicant_id)
+def show_applicant(request, *args, **kwargs):
+    club = get_club(kwargs['club_id'])
+    applicant = get_user(kwargs['applicant_id'])
 
     if applicant == None or not is_applicant(applicant, club):
-        return redirect('applicants_list', club_id)
+        return redirect('applicants_list', kwargs['club_id'])
 
     return render(request, 'show_applicant.html',
-        {'club_id' : club_id, 'applicant': applicant})
+        {'club_id' : kwargs['club_id'], 'applicant': applicant})
 
 @login_required
 @only_officers
-def approve_applicant(request, club_id, applicant_id):
-    club = get_club(club_id)
+def approve_applicant(request, *args, **kwargs):
+    club = get_club(kwargs['club_id'])
     current_user = request.user
-    applicant = get_user(applicant_id)
+    applicant = get_user(kwargs['applicant_id'])
     if (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club):
         set_authorization(applicant, club, "ME")
-        return redirect('applicants_list', club_id)
-    return render(request, 'applicants_list.html', {'club_id' : club_id, 'applicants': applicants})
+        return redirect('applicants_list', kwargs['club_id'])
+    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants})
 
 @login_required
 @only_owners
-def promote_member(request, club_id, member_id):
-    club = get_club(club_id)
+def promote_member(request, *args, **kwargs):
+    club = get_club(kwargs['club_id'])
     current_user = request.user
-    member = get_user(member_id)
+    member = get_user(kwargs['member_id'])
     if is_owner(current_user, club) and is_member(member, club):
         set_authorization(member, club, "OF")
-        return redirect(members_list, club_id)
+        return redirect(members_list, kwargs['club_id'])
     return render(request, 'members_list.html',
-        {'club_id': club_id, 'member': member, 'auth' : get_authorization(current_user, club)})
+        {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
 
 @login_required
 @only_owners
-def demote_officer(request, club_id, member_id):
-    club = get_club(club_id)
+def demote_officer(request, *args, **kwargs):
+    club = get_club(kwargs['club_id'])
     current_user = request.user
-    member = get_user(member_id)
+    member = get_user(kwargs['member_id'])
     if is_owner(current_user, club) and is_officer(member, club):
         set_authorization(member, club, "ME")
-        return redirect(members_list, club_id)
+        return redirect(members_list, kwargs['club_id'])
     return render(request, 'members_list.html',
-        {'club_id': club_id, 'member': member, 'auth' : get_authorization(current_user, club)})
+        {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
 
 @login_required
 @only_owners
-def transfer_ownership(request, club_id, member_id):
-    club = get_club(club_id)
+def transfer_ownership(request, *args, **kwargs):
+    club = get_club(kwargs['club_id'])
     current_user = request.user
-    member = get_user(member_id)
+    member = get_user(kwargs['member_id'])
     if is_owner(current_user, club) and is_officer(member, club):
         set_authorization(member, club, "OW")
         set_authorization(current_user, club, "OF")
-        return redirect(members_list, club_id)
+        return redirect(members_list, kwargs['club_id'])
     return render(request, 'members_list.html',
-        {'club_id': club_id, 'member': member, 'auth' : get_authorization(current_user, club)})
+        {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
 
 @login_required
-def create_club(request):
+def create_club(request, *args, **kwargs):
     if request.method == 'POST':
         current_user = request.user
         form = CreateClubForm(request.POST)
@@ -248,7 +256,7 @@ def create_club(request):
     return render(request, 'create_club.html', {'form': form})
 
 @login_required
-def dashboard(request):
+def dashboard(request, *args, **kwargs):
     current_user = request.user
     my_clubs = get_my_clubs(current_user)
     other_clubs = get_other_clubs(current_user)
@@ -269,7 +277,7 @@ def dashboard(request):
     return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs})
 
 @login_required
-def clubs_list(request, *args):
+def clubs_list(request, *args, **kwargs):
     clubs = get_all_clubs()
     if 'search_btn' in request.POST:
         if request.method == 'POST':
@@ -285,23 +293,23 @@ def clubs_list(request, *args):
     return render(request, 'clubs_list.html', {'clubs': clubs})
 
 @login_required
-def show_club(request, club_id):
-    club = get_club(club_id)
+def show_club(request, *args, **kwargs):
+    club = get_club(kwargs['club_id'])
 
     if club == None:
         return redirect('dashboard')
 
     owner = get_owners(club).first()
 
-    return render(request, 'show_club.html', {'club_id': club_id, 'club': club, 'owner': owner, 'is_user_in_club': is_user_in_club(request.user, club)})
+    return render(request, 'show_club.html', {'club_id': kwargs['club_id'], 'club': club, 'owner': owner, 'is_user_in_club': is_user_in_club(request.user, club)})
 
 @login_required
-def apply_club(request, club_id):
+def apply_club(request, *args, **kwargs):
     current_user = request.user
-    club = get_club(club_id)
+    club = get_club(kwargs['club_id'])
     if not is_user_in_club(current_user, club):
         Club_Member.objects.create(user=current_user, club=club, authorization='AP')
-        return render(request,'waiting_list.html', {'club_id' : club_id})
+        return render(request,'waiting_list.html', {'club_id' : kwargs['club_id']})
     return redirect('dashboard')
 
 @login_required

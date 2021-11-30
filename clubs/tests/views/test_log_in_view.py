@@ -50,11 +50,10 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertTemplateUsed(response, 'log_in.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, LogInForm))
-        self.assertFalse(form.is_bound)
+        self.assertTrue(form.is_bound)
         self.assertFalse(self._is_logged_in())
         messages_list = list(response.context['messages'])
-        self.assertEqual(len(messages_list), 1)
-        self.assertEqual(messages_list[0].level, messages.ERROR)
+        self.assertEqual(len(messages_list), 0)
 
     def test_successful_applicant_log_in(self):
         form_input = {'email': 'bethsmith@example.org', 'password': 'Password123'}
@@ -63,7 +62,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
         messages_list = list(response.context['messages'])
-        self.assertEqual(len(messages_list), 0)
+        self.assertEqual(len(messages_list), 1)
 
     def test_successful_non_applicant_log_in(self):
         form_input = {'email': 'bobsmith@example.org', 'password': 'Password123'}
@@ -73,7 +72,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
         messages_list = list(response.context['messages'])
-        self.assertEqual(len(messages_list), 0)
+        self.assertEqual(len(messages_list), 1)
 
 
     def test_get_log_in_redirects_when_logged_in(self):
