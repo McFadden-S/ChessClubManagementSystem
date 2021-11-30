@@ -35,6 +35,7 @@ urlpatterns = [
     path('<int:club_id>/applicants_list/', views.applicants_list, name='applicants_list'),
     path('<int:club_id>/show_applicant/<int:applicant_id>', views.show_applicant, name='show_applicant'),
     path('<int:club_id>/approve_applicant/<int:applicant_id>', views.approve_applicant, name='approve_applicant'),
+    path('<int:club_id>/reject_applicant/<int:applicant_id>', views.reject_applicant, name='reject_applicant'),
     path('<int:club_id>/promote_member/<int:member_id>',views.promote_member, name='promote_member'),
     path('<int:club_id>/demote_officer/<int:member_id>',views.demote_officer, name='demote_officer'),
     path('<int:club_id>/transfer_ownership/<int:member_id>',views.transfer_ownership, name='transfer_ownership'),

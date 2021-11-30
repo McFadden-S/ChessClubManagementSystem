@@ -42,7 +42,13 @@
 
       </tbody>
     </table>
-    <a href="{%url 'approve_applicant' club_id applicant.id%}" class="btn btn-outline-light text-white">Approve Application</a>
-    <a href="{% url 'applicants_list' club_id %}" class="btn btn-outline-light text-white">Back</a>
+    <div>
+      <a href="{%url 'approve_applicant' club_id applicant.id%}" class="btn btn-outline-light text-white">Approve Application</a>
+      <a href="{%url 'reject_applicant' club_id applicant.id%}" class="btn btn-outline-light text-white">Reject Application</a>
+    </div>
+    <div>
+      <br>
+      <a href="{% url 'applicants_list' club_id %}" class="btn btn-outline-light text-white">Back</a>
+    </div>
   </div>
 {% endblock %}
