@@ -196,6 +196,18 @@ def approve_applicant(request, *args, **kwargs):
     return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants})
 
 @login_required
+@only_officers
+def reject_applicant(request, *args, **kwargs):
+    """Reject the application and remove the applicant from the club."""
+    club = get_club(kwargs['club_id'])
+    current_user = request.user
+    applicant = get_user(kwargs['applicant_id'])
+    if (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club):
+        remove_user_from_club(applicant, club)
+        return redirect('applicants_list', kwargs['club_id'])
+    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants})
+
+@login_required
 @only_owners
 def promote_member(request, *args, **kwargs):
     club = get_club(kwargs['club_id'])

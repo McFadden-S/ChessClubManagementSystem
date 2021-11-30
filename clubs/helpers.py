@@ -163,3 +163,12 @@ def is_user_in_club(user, club):
         return False
     else:
         return True
+
+def remove_user_from_club(user, club):
+    """Remove the user in the club."""
+    try:
+        club_user = Club_Member.objects.get(user=user, club=club)
+    except ObjectDoesNotExist:
+        return None
+    else:
+        club_user.delete()
