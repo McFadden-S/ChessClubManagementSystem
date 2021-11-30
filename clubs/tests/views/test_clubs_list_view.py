@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import check_password
 
 
 # Used this from clucker project with some modifications
-class MembersListViewTestCase(TestCase):
+class ClubListViewTestCase(TestCase):
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -62,41 +62,52 @@ class MembersListViewTestCase(TestCase):
             authorization='OW',
         )
 
-        self.url = reverse('dashboard')
+        self.url = reverse('clubs_list')
 
     def create_ordered_list_by(self, order_by_var):
         club_list = Club.objects.all()
         sorted_list = Club.objects.filter(id__in=club_list).order_by(order_by_var)
         return sorted_list
 
-    def test_members_list_url(self):
-        self.assertEqual(self.url, '/dashboard/')
+    def test_clubs_list_url(self):
+        self.assertEqual(self.url, '/clubs_list/')
 
     def test_get_clubs_list(self):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'clubs_list.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
-
-    def test_get_dashboard_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.url)
-        response = self.client.get(self.url)
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_search_bar_to_filter_list(self):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'clubs_list.html')
         self.assertContains(response, 'club1')
         self.assertContains(response, 'club2')
         self.assertContains(response, 'club3')
         search_bar = 'club1'
         response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'clubs_list.html')
+        self.assertContains(response, 'club1')
+        self.assertNotContains(response, 'club2')
+        self.assertNotContains(response, 'club3')
+
+    def test_search_bar(self):
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'clubs_list.html')
+        self.assertContains(response, 'club1')
+        self.assertContains(response, 'club2')
+        self.assertContains(response, 'club3')
+        search_bar = 'club1'
+        response = self.client.post(self.url, {'search_btn': False, 'searched_letters': search_bar})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'clubs_list.html')
         self.assertContains(response, 'club1')
         self.assertNotContains(response, 'club2')
         self.assertNotContains(response, 'club3')
@@ -105,14 +116,14 @@ class MembersListViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'clubs_list.html')
         self.assertContains(response, 'club1')
         self.assertContains(response, 'club2')
         self.assertContains(response, 'club3')
         search_bar = ''
         response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'clubs_list.html')
         self.assertContains(response, 'club1')
         self.assertContains(response, 'club2')
         self.assertContains(response, 'club3')
@@ -123,12 +134,10 @@ class MembersListViewTestCase(TestCase):
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'clubs_list.html')
         response = self.client.post(self.url, {'sort_table': sort_table})
         club_list = Club.objects.all()
         clubs = list(Club.objects.all().filter(id__in=club_list))
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'dashboard.html')
+        self.assertTemplateUsed(response, 'clubs_list.html')
         self.assertListEqual(clubs, second_list)
-
-
