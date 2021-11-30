@@ -306,6 +306,5 @@ def apply_club(request, club_id):
 
 @login_required
 def delete_account(request):
-    # current_user = request.user
     request.user.delete()
     return redirect('home')
