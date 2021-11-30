@@ -316,16 +316,17 @@ def apply_club(request, *args, **kwargs):
 def delete_account(request):
     my_clubs = get_my_clubs(request.user)
     for club in my_clubs:
-        # Delete all of the users clubs in club table when they are the only "person"
+        # In club table, delete all the request.users clubs where they are the only "person"
         count_all_users_in_club = get_count_of_users_in_club(club)
         if count_all_users_in_club == 1:
             club.delete()
             continue
-        # Delete, when apart from user owner there are only applicants in club
+        # In club table, delete where only applicants in club and 1 owner(the request user)
         count_applicants_in_club = get_count_of_specific_user_in_club(club, 'AP')
         if count_applicants_in_club + 1 == count_all_users_in_club:
             club.delete()
 
     # Delete the user from club_member and user table
     request.user.delete()
+    messages.add_message(request, messages.SUCCESS, "Your account has been deleted")
     return redirect('home')
