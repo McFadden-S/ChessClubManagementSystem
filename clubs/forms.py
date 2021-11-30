@@ -98,7 +98,6 @@ class CreateClubForm(forms.ModelForm):
             city=self.cleaned_data.get('city'),
             postal_code=self.cleaned_data.get('postal_code'),
             country=self.cleaned_data.get('country'),
-            location=f"{lat},{lon}",
             description=self.cleaned_data.get('description'),
         )
 

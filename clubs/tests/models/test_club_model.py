@@ -11,7 +11,6 @@ class ClubModelTestCase(TestCase):
             city='London',
             postal_code='WC2B 4BG',
             country='GB',
-            location='51.51274545,-0.11717261325662154',
             description='Aim to get the best orangutans out there'
         )
         self.second_club = Club.objects.create(
@@ -20,7 +19,6 @@ class ClubModelTestCase(TestCase):
             city='London',
             postal_code='WC2R 2LS',
             country='GB',
-            location='51.51274545,-0.11717261325662154',
             description='Aim to get the best monkeys out there'
         )
 
