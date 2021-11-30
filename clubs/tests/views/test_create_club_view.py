@@ -29,6 +29,14 @@ class CreateClubViewTestCase(TestCase):
             'country': 'GB',
             'description' : 'Aim to get the best orangutans out there'
         }
+        self.invalid_form_input = {
+            'name': 'Invalid Orangutan',
+            'address': 'Bush ',
+            'city': 'Ldn',
+            'postal_code': 'WC2B 4BG',
+            'country': 'GB',
+            'description': 'Aim to get the worst orangutans out there'
+        }
         self.url = reverse('create_club')
 
     def test_get_create_club(self):
@@ -73,3 +81,14 @@ class CreateClubViewTestCase(TestCase):
         #test the club member table update
         after_count_clubmember = Club_Member.objects.count()
         self.assertEqual(after_count_clubmember, before_count_clubmember+1)
+
+    def test_unsuccesful_create_club(self):
+         self.client.login(email=self.user.email, password='Password123')
+         before_count = Club.objects.count()
+         before_count_clubmember = Club_Member.objects.count()
+         response = self.client.post(self.url, self.invalid_form_input, follow=True)
+         after_count = Club.objects.count()
+         self.assertEqual(after_count, before_count)
+         response_url = reverse('create_club')
+         self.assertEqual(response.status_code, 200)
+         self.assertTemplateUsed(response, 'create_club.html')

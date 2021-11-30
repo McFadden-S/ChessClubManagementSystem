@@ -38,6 +38,8 @@ class ApplicantListViewTestCase(TestCase):
     def test_applicants_list_url(self):
         self.assertEqual(self.url, f'/{self.club.id}/applicants_list/')
 
+
+
     def test_get_applicants_list_by_officer(self):
         self.client.login(email=self.officer.email, password='Password123')
         response = self.client.get(self.url)
@@ -83,6 +85,18 @@ class ApplicantListViewTestCase(TestCase):
         applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
         sorted_list = User.objects.filter(id__in=applicants_list).order_by(order_by_var)
         return sorted_list
+
+    #dont see any thing that uses get_all_users_except_applicants.
+    # def test_all_members_but_applicants(self):
+    #     ap_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
+    #     members = User.objects.exclude(id__in=ap_list)
+    #     return members
+    #
+    # def test_all_members(self):
+    #     second_list = list(self.test_all_members_but_applicants())
+    #     members1 = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
+    #     members = list(User.objects.exclude(id__in=members1))
+    #     self.assertListEqual(second_list, members)
 
     def test_sorted_list_first_name(self):
         sort_table = 'first_name'
