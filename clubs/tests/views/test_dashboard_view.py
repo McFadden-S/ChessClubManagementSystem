@@ -20,7 +20,6 @@ class membersListViewTestCase(TestCase):
             city = 'London',
             postal_code = 'WC2B 4BG	',
             country = 'United Kingdom',
-            location = '51.51274545,-0.11717261325662154',
             description = 'Bush House',
         )
         self.club_member = Club_Member.objects.create(

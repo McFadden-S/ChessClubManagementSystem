@@ -39,7 +39,6 @@ class CreateClubFormTestCase(TestCase):
         self.assertEqual(club.address, 'Bush House')
         self.assertEqual(club.city, 'London')
         self.assertEqual(club.postal_code, 'WC2B 4BG')
-        self.assertEqual(club.location, '51.51274545,-0.11717261325662154')
         self.assertEqual(club.country, 'GB')
         self.assertEqual(club.description, 'Aim to get the best orangutans out there')
 

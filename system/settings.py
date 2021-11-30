@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'clubs',
-    'location_field.apps.DefaultConfig',
     'django_countries',
     'widget_tweaks'
 ]
