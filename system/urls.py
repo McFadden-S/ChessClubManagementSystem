@@ -38,6 +38,7 @@ urlpatterns = [
     path('<int:club_id>/reject_applicant/<int:applicant_id>', views.reject_applicant, name='reject_applicant'),
     path('<int:club_id>/promote_member/<int:member_id>',views.promote_member, name='promote_member'),
     path('<int:club_id>/demote_officer/<int:member_id>',views.demote_officer, name='demote_officer'),
+    path('<int:club_id>/remove_user/<int:user_id>', views.remove_user, name='remove_user'),
     path('<int:club_id>/transfer_ownership/<int:member_id>',views.transfer_ownership, name='transfer_ownership'),
     path('delete_account/',views.delete_account, name='delete_account'),
 ]

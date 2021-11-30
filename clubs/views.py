@@ -199,6 +199,7 @@ def approve_applicant(request, *args, **kwargs):
 @only_officers
 def reject_applicant(request, *args, **kwargs):
     """Reject the application and remove the applicant from the club."""
+
     club = get_club(kwargs['club_id'])
     current_user = request.user
     applicant = get_user(kwargs['applicant_id'])
@@ -230,6 +231,25 @@ def demote_officer(request, *args, **kwargs):
         return redirect(members_list, kwargs['club_id'])
     return render(request, 'members_list.html',
         {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
+
+@login_required
+@only_officers
+def remove_user(request, *args, **kwargs):
+    """Remove the user from the club"""
+    
+    club = get_club(kwargs['club_id'])
+    current_user = request.user
+    user = get_user(kwargs['user_id'])
+    if is_owner(current_user, club) and (is_officer(user, club) or is_member(user, club)):
+        #Owner can remove both officers and members.
+        remove_user_from_club(user, club)
+        return redirect(members_list, kwargs['club_id'])
+    elif is_officer(current_user, club) and is_member(user, club):
+        #Officer can only remove members.
+        remove_user_from_club(user, club)
+        return redirect(members_list, kwargs['club_id'])
+    return render(request, 'members_list.html',
+        {'club_id': kwargs['club_id'], 'members': get_members(club), 'officers': get_officers(club), 'owners': get_owners(club)})
 
 @login_required
 @only_owners
