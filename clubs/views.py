@@ -236,7 +236,7 @@ def demote_officer(request, *args, **kwargs):
 @only_officers
 def remove_user(request, *args, **kwargs):
     """Remove the user from the club"""
-    
+
     club = get_club(kwargs['club_id'])
     current_user = request.user
     user = get_user(kwargs['user_id'])
@@ -347,17 +347,7 @@ def apply_club(request, *args, **kwargs):
 @login_required
 def delete_account(request):
     my_clubs = get_my_clubs(request.user)
-    for club in my_clubs:
-        # In club table, delete all the request.users clubs where they are the only "person"
-        count_all_users_in_club = get_count_of_users_in_club(club)
-        if count_all_users_in_club == 1:
-            club.delete()
-            continue
-        # In club table, delete where only applicants in club and 1 owner(the request user)
-        if is_owner(request.user, club):
-            count_applicants_in_club = get_count_of_specific_user_in_club(club, 'AP')
-            if count_applicants_in_club + 1 == count_all_users_in_club:
-                club.delete()
+    remove_clubs(request.user, my_clubs)
 
     # Delete the user from club_member and user table
     request.user.delete()
