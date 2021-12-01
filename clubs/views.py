@@ -101,6 +101,26 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('dashboard')
 
+
+class CreateClubView(LoginRequiredMixin, FormView):
+    template_name = "create_club.html"
+    form_class = CreateClubForm
+
+    def form_valid(self,form):
+        current_user = self.request.user
+        try:
+            club_created = form.save()
+            Club_Member.objects.create(user=current_user, club=club_created, authorization='OW')
+            messages.success(self.request, "Club created Successfully")
+            return super().form_valid(form)
+        except IndexError:
+            messages.error(self.request, "Invalid address")
+            form_new = CreateClubForm()
+            return render(self.request,'create_club.html',{'form': form_new})
+
+    def get_success_url(self):
+        return reverse('dashboard')
+
 class WaitingListView(ApplicantsOnlyMixin, TemplateView):
     """ View for the waiting list for applicants to a club """
 
@@ -264,28 +284,28 @@ def transfer_ownership(request, *args, **kwargs):
     return render(request, 'members_list.html',
         {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
 
-@login_required
-def create_club(request, *args, **kwargs):
-    if request.method == 'POST':
-        current_user = request.user
-        form = CreateClubForm(request.POST)
-        if form.is_valid():
-            try:
-                club_created = form.save()
-            except IndexError:
-                messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
-                form_new = CreateClubForm()
-                return render(request,'create_club.html',{'form': form_new})
-            # redirect link needs to change
-            Club_Member.objects.create(
-                user=current_user,
-                club=club_created,
-                authorization='OW'
-            )
-            return redirect('members_list', club_created.id)
-    else:
-        form = CreateClubForm()
-    return render(request, 'create_club.html', {'form': form})
+# @login_required
+# def create_club(request, *args, **kwargs):
+#     if request.method == 'POST':
+#         current_user = request.user
+#         form = CreateClubForm(request.POST)
+#         if form.is_valid():
+#             try:
+#                 club_created = form.save()
+#             except IndexError:
+#                 messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
+#                 form_new = CreateClubForm()
+#                 return render(request,'create_club.html',{'form': form_new})
+#             # redirect link needs to change
+#             Club_Member.objects.create(
+#                 user=current_user,
+#                 club=club_created,
+#                 authorization='OW'
+#             )
+#             return redirect('members_list', club_created.id)
+#     else:
+#         form = CreateClubForm()
+#     return render(request, 'create_club.html', {'form': form})
 
 @login_required
 def dashboard(request, *args, **kwargs):
