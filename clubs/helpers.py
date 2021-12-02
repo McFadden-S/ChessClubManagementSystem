@@ -156,6 +156,13 @@ def get_other_clubs(user):
         return None
     return other_clubs
 
+def get_club_to_auth(user, my_clubs):
+    auth_list = []
+    for club in my_clubs:
+        auth_list.append(get_authorization_text(user, club))
+    club_auth = list(zip(list(my_clubs), auth_list))
+    return club_auth
+
 def is_user_in_club(user, club):
     try:
         club_member = Club_Member.objects.get(user=user, club=club)
