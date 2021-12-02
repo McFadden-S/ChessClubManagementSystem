@@ -303,7 +303,11 @@ def dashboard(request, *args, **kwargs):
             my_clubs = my_clubs.order_by(sort_table)
             other_clubs = other_clubs.order_by(sort_table)
 
-    return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs})
+    auth_list = []
+    for club in my_clubs:
+        auth_list.append(get_authorization_text(current_user, club))
+    combined = list(zip(list(my_clubs), auth_list))
+    return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs, 'combined': combined})
 
 @login_required
 def clubs_list(request, *args, **kwargs):

@@ -44,17 +44,20 @@
 
   <div class="row">
 
-    {% for club in my_clubs %}
+    {% for club,auth in combined %}
       <div class="col-auto">
-        <div class="card bg-secondary text-end text-white mx-3 my-3" style="width: 18rem; height: 10rem;">
+        <div class="card bg-secondary text-end text-white mx-3 my-3" style="width: 18rem; height: 11rem;">
           <div class="card-body">
             <h5 class="card-title">{{club.name}}</h5>
             <p class="card-text">{{club.city}}</p>
+            <p class="card-text">{{auth}}</p>
             <a href="{% url 'show_club' club.id %}" class="btn btn-dark">View Club</a>
           </div>
         </div>
       </div>
     {% endfor %}
+
+
 
   </div>
   <h2>Other Clubs</h2>
