@@ -2,8 +2,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.functions import Concat
 from django.db.models import Value
 from django.contrib import messages
-from django.shortcuts import redirect
-from django.urls import reverse
 from .models import Club, Club_Member, User
 
 def get_all_users_except_applicants():
