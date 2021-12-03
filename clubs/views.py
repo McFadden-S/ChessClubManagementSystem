@@ -160,15 +160,15 @@ def members_list(request, *args, **kwargs):
 @only_members
 def show_member(request, *args, **kwargs):
     club = get_club(kwargs['club_id'])
-    member = get_user(kwargs['member_id'])
-    authorizationText = get_authorization_text(member, club)
+    user = get_user(kwargs['member_id'])
+    authorizationText = get_authorization_text(user, club)
 
-    if member == None or authorizationText == None:
+    if user == None or authorizationText == None:
         return redirect('members_list', kwargs['club_id'])
 
     return render(request, 'show_member.html',
         {'club_id': kwargs['club_id'],
-        'member': member,
+        'user': user,
         'authorizationText' : authorizationText,
         'request_from_owner' : is_owner(request.user, club),
         'request_from_officer' : is_officer(request.user, club)})
@@ -196,13 +196,18 @@ def applicants_list(request, *args, **kwargs):
 @only_officers
 def show_applicant(request, *args, **kwargs):
     club = get_club(kwargs['club_id'])
-    applicant = get_user(kwargs['applicant_id'])
+    user = get_user(kwargs['applicant_id'])
+    authorizationText = get_authorization_text(user, club)
 
-    if applicant == None or not is_applicant(applicant, club):
+    if user == None or not is_applicant(user, club):
         return redirect('applicants_list', kwargs['club_id'])
 
     return render(request, 'show_applicant.html',
-        {'club_id' : kwargs['club_id'], 'applicant': applicant})
+        {'club_id' : kwargs['club_id'],
+        'user': user,
+        'authorizationText' : authorizationText,
+        'request_from_owner' : is_owner(request.user, club),
+        'request_from_officer' : is_officer(request.user, club)})
 
 @login_required
 @only_officers

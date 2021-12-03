@@ -6,67 +6,22 @@
   </div>
 
   <div class="card-body">
-    <table class="table table-dark table-striped">
-
-      <thead class="table-dark">
-        <h2>{{ member.get_full_name }}</h2>
-        <p class="mb-2 text-muted">{{ authorizationText }}</p>
-      </thead>
-
-      <tbody>
-
-        <tr>
-          <td>
-            <img src="{{ member.gravatar }}" alt="Gravatar of {{ member.get_full_name }}">
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-              Bio: {{ member.bio }}
-          </td>
-        </tr>
-
-        {% if request_from_owner or request_from_officer %}
-
-        <tr>
-          <td>
-              Email: {{ member.email }}
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-              Chess experience: {{ member.chess_experience }}
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-              Personal statement: {{ member.personal_statement }}
-          </td>
-        </tr>
-
-        {% endif %}
-
-      </tbody>
-    </table>
-
+    {% include 'partials/user_profile.html' %}
     <div>
     {% if request_from_owner %}
       {% if authorizationText == 'Member' %}
-          <a href="{% url 'promote_member' club_id member.id%}" class="btn btn-outline-light text-white">Promote to officer</a>
-          <a href="{% url 'remove_user' club_id member.id%}" class="btn btn-outline-light text-white">Remove member</a>
+          <a href="{% url 'promote_member' club_id user.id%}" class="btn btn-outline-light text-white">Promote to officer</a>
+          <a href="{% url 'remove_user' club_id user.id%}" class="btn btn-outline-light text-white">Remove member</a>
       {% elif authorizationText == 'Officer' %}
-          <a href="{% url 'demote_officer' club_id member.id%}" class="btn btn-outline-light text-white">Demote to member</a>
-          <a href="{% url 'transfer_ownership' club_id member.id%}" class="btn btn-outline-light text-white">Transfer ownership</a>
-          <a href="{% url 'remove_user' club_id member.id%}" class="btn btn-outline-light text-white">Remove officer</a>
+          <a href="{% url 'demote_officer' club_id user.id%}" class="btn btn-outline-light text-white">Demote to member</a>
+          <a href="{% url 'transfer_ownership' club_id user.id%}" class="btn btn-outline-light text-white">Transfer ownership</a>
+          <a href="{% url 'remove_user' club_id user.id%}" class="btn btn-outline-light text-white">Remove officer</a>
       {% endif %}
     {% endif %}
 
     {% if request_from_officer %}
       {% if authorizationText == 'Member' %}
-          <a href="{% url 'remove_user' club_id member.id%}" class="btn btn-outline-light text-white">Remove member</a>
+          <a href="{% url 'remove_user' club_id user.id%}" class="btn btn-outline-light text-white">Remove member</a>
       {% endif %}
     {% endif %}
     </div>
