@@ -7,8 +7,12 @@ from django.contrib.auth.hashers import check_password
 from django.shortcuts import redirect,render
 from django.urls import reverse
 from django.conf import settings
+
 from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.views.generic import TemplateView
+from django.views import View
 
 from .forms import *
 from .models import *
@@ -99,7 +103,6 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('dashboard')
 
-
 class CreateClubView(LoginRequiredMixin, FormView):
     template_name = "create_club.html"
     form_class = CreateClubForm
@@ -129,6 +132,22 @@ def log_out(request):
     logout(request)
     return redirect('home')
 
+# To be implemented after javascript search sort complete
+# class MembersListView(MembersRequiredMixin, TemplateView):
+#
+#     template_name = "members_list.html"
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         club = get_club(kwargs['club_id'])
+#
+#         context['club_id'] = kwargs['club_id']
+#         context['members'] = get_members(club)
+#         context['officers'] = get_officers(club)
+#         context['owners'] = get_owners(club)
+#
+#         return context
+
 @login_required
 @only_members
 def members_list(request, *args, **kwargs):
@@ -154,22 +173,19 @@ def members_list(request, *args, **kwargs):
 
     return render(request, 'members_list.html', {'club_id': kwargs['club_id'], 'members': members, 'officers': officers, 'owners': owners})
 
-@login_required
-@only_members
-def show_member(request, *args, **kwargs):
-    club = get_club(kwargs['club_id'])
-    user = get_user(kwargs['member_id'])
-    authorizationText = get_authorization_text(user, club)
-
-    if user == None or authorizationText == None:
-        return redirect('members_list', kwargs['club_id'])
-
-    return render(request, 'show_member.html',
-        {'club_id': kwargs['club_id'],
-        'user': user,
-        'authorizationText' : authorizationText,
-        'request_from_owner' : is_owner(request.user, club),
-        'request_from_officer' : is_officer(request.user, club)})
+# To be implemented after javascript search sort complete
+# class ApplicantsListView(OfficersRequiredMixin, TemplateView):
+#
+#     template_name = "applicants_list.html"
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         club = get_club(kwargs['club_id'])
+#
+#         context['club_id'] = kwargs['club_id']
+#         context['applicants'] = get_applicants(club)
+#
+#         return context
 
 @login_required
 @only_officers
@@ -190,33 +206,84 @@ def applicants_list(request, *args, **kwargs):
 
     return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants})
 
-@login_required
-@only_officers
-def show_applicant(request, *args, **kwargs):
-    club = get_club(kwargs['club_id'])
-    user = get_user(kwargs['applicant_id'])
-    authorizationText = get_authorization_text(user, club)
+class ShowView(TemplateView):
 
-    if user == None or not is_applicant(user, club):
-        return redirect('applicants_list', kwargs['club_id'])
+    def get(self, request, *args, **kwargs):
+        club = get_club(kwargs['club_id'])
+        user = get_user(kwargs[self.id_name])
 
-    return render(request, 'show_applicant.html',
-        {'club_id' : kwargs['club_id'],
-        'user': user,
-        'authorizationText' : authorizationText,
-        'request_from_owner' : is_owner(request.user, club),
-        'request_from_officer' : is_officer(request.user, club)})
+        if user == None or self.is_show_authorization_correct(user, club):
+            return redirect(self.redirect_location, kwargs['club_id'])
 
-@login_required
-@only_officers
-def approve_applicant(request, *args, **kwargs):
-    club = get_club(kwargs['club_id'])
-    current_user = request.user
-    applicant = get_user(kwargs['applicant_id'])
-    if (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club):
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        club = get_club(kwargs['club_id'])
+        user = get_user(kwargs[self.id_name])
+
+        context['club_id'] = kwargs['club_id']
+        context['user'] = user
+        context['authorizationText'] = get_authorization_text(user, club)
+        context['request_from_owner'] = is_owner(self.request.user, club)
+        context['request_from_officer'] = is_officer(self.request.user, club)
+
+        return context
+
+class ShowMemberView(MembersRequiredMixin, ShowView):
+
+    template_name = 'show_member.html'
+    redirect_location = 'members_list'
+    id_name = 'member_id'
+
+    def is_show_authorization_correct(self, user, club):
+        return get_authorization_text(user, club) == None
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+class ShowApplicantView(OfficersRequiredMixin, ShowView):
+
+    template_name = 'show_applicant.html'
+    redirect_location = 'applicants_list'
+    id_name = 'applicant_id'
+
+    def is_show_authorization_correct(self, user, club):
+        return not is_applicant(user, club)
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+class ActionView(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        club = get_club(kwargs['club_id'])
+        current_user = request.user
+        user = get_user(kwargs[self.id_name])
+        if (is_actionable(current_user, user, club)):
+            self.action(user, club)
+            return redirect(self.redirect_location, kwargs['club_id'])
+
+class ApproveApplicantView(OfficersRequiredMixin, ActionView):
+
+    redirect_location = 'applicants_list'
+    id_name = 'applicant_id'
+
+    def is_actionable(self, current_user, user, club):
+        return (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club)
+
+    def action(self, user, club):
         set_authorization(applicant, club, "ME")
-        return redirect('applicants_list', kwargs['club_id'])
-    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants})
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 @login_required
 @only_officers
@@ -239,7 +306,7 @@ def promote_member(request, *args, **kwargs):
     member = get_user(kwargs['member_id'])
     if is_owner(current_user, club) and is_member(member, club):
         set_authorization(member, club, "OF")
-        return redirect(members_list, kwargs['club_id'])
+        return redirect('members_list', kwargs['club_id'])
     return render(request, 'members_list.html',
         {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
 
@@ -251,7 +318,7 @@ def demote_officer(request, *args, **kwargs):
     member = get_user(kwargs['member_id'])
     if is_owner(current_user, club) and is_officer(member, club):
         set_authorization(member, club, "ME")
-        return redirect(members_list, kwargs['club_id'])
+        return redirect('members_list', kwargs['club_id'])
     return render(request, 'members_list.html',
         {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
 
@@ -266,11 +333,11 @@ def remove_user(request, *args, **kwargs):
     if is_owner(current_user, club) and (is_officer(user, club) or is_member(user, club)):
         #Owner can remove both officers and members.
         remove_user_from_club(user, club)
-        return redirect(members_list, kwargs['club_id'])
+        return redirect('members_list', kwargs['club_id'])
     elif is_officer(current_user, club) and is_member(user, club):
         #Officer can only remove members.
         remove_user_from_club(user, club)
-        return redirect(members_list, kwargs['club_id'])
+        return redirect('members_list', kwargs['club_id'])
     return render(request, 'members_list.html',
         {'club_id': kwargs['club_id'], 'members': get_members(club), 'officers': get_officers(club), 'owners': get_owners(club)})
 
@@ -283,7 +350,7 @@ def transfer_ownership(request, *args, **kwargs):
     if is_owner(current_user, club) and is_officer(member, club):
         set_authorization(member, club, "OW")
         set_authorization(current_user, club, "OF")
-        return redirect(members_list, kwargs['club_id'])
+        return redirect('members_list', kwargs['club_id'])
     return render(request, 'members_list.html',
         {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
 
@@ -308,22 +375,6 @@ def dashboard(request, *args, **kwargs):
 
     club_auth = get_club_to_auth(current_user, my_clubs)
     return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs, 'club_auth': club_auth})
-
-@login_required
-def clubs_list(request, *args, **kwargs):
-    clubs = get_all_clubs()
-    if 'search_btn' in request.POST:
-        if request.method == 'POST':
-            searched_letters = request.POST['searched_letters']
-            if searched_letters:
-                clubs = get_clubs_search(searched_letters)
-
-    if 'sort_table' in request.POST:
-        if request.method == 'POST':
-            sort_table = request.POST['sort_table']
-            clubs = clubs.order_by(sort_table)
-
-    return render(request, 'clubs_list.html', {'clubs': clubs})
 
 @login_required
 def show_club(request, *args, **kwargs):
