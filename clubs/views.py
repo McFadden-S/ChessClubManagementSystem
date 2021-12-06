@@ -183,7 +183,7 @@ def show_applicant(request, club_id, applicant_id):
     my_clubs = get_my_clubs(current_user)
 
     if applicant == None or not is_applicant(applicant, club):
-        return redirect('applicants_list', club_id, {'my_clubs': my_clubs})
+        return redirect('applicants_list', club_id)
 
     return render(request, 'show_applicant.html',
         {'club_id' : club_id, 'applicant': applicant, 'my_clubs': my_clubs})
@@ -256,7 +256,7 @@ def create_club(request):
                 club=club_created,
                 authorization='OF'
             )
-            return redirect('members_list', club_created.id, {'my_clubs': my_clubs})
+            return redirect('members_list', club_created.id)
     else:
         form = CreateClubForm()
     return render(request, 'create_club.html', {'form': form, 'my_clubs': my_clubs})
