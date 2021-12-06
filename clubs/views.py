@@ -79,7 +79,9 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
 @login_required
 @only_applicants
 def waiting_list(request, club_id):
-    return render(request,'waiting_list.html', {'club_id' : club_id})
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
+    return render(request,'waiting_list.html', {'club_id' : club_id, 'my_clubs': my_clubs})
 
 @login_prohibited
 def log_in(request):
@@ -126,7 +128,9 @@ def members_list(request, club_id):
             officers = officers.order_by(sort_table)
             owners = owners.order_by(sort_table)
 
-    return render(request, 'members_list.html', {'club_id': club_id, 'members': members, 'officers': officers, 'owners': owners})
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
+    return render(request, 'members_list.html', {'club_id': club_id, 'members': members, 'officers': officers, 'owners': owners, 'my_clubs': my_clubs})
 
 @login_required
 @only_members
@@ -138,12 +142,16 @@ def show_member(request, club_id, member_id):
     if member == None or authorizationText == None:
         return redirect('members_list', club_id)
 
+
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
     return render(request, 'show_member.html',
         {'club_id': club_id,
         'member': member,
         'authorizationText' : authorizationText,
         'request_from_owner' : is_owner(request.user, club),
-        'request_from_officer' : is_officer(request.user, club)})
+        'request_from_officer' : is_officer(request.user, club),
+        'my_clubs': my_clubs})
 
 @login_required
 @only_officers
@@ -162,19 +170,23 @@ def applicants_list(request, club_id, *args):
             sort_table = request.POST['sort_table']
             applicants = applicants.order_by(sort_table)
 
-    return render(request, 'applicants_list.html', {'club_id' : club_id, 'applicants': applicants})
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
+    return render(request, 'applicants_list.html', {'club_id' : club_id, 'applicants': applicants, 'my_clubs': my_clubs})
 
 @login_required
 @only_officers
 def show_applicant(request, club_id, applicant_id):
     club = get_club(club_id)
     applicant = get_user(applicant_id)
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
 
     if applicant == None or not is_applicant(applicant, club):
-        return redirect('applicants_list', club_id)
+        return redirect('applicants_list', club_id, {'my_clubs': my_clubs})
 
     return render(request, 'show_applicant.html',
-        {'club_id' : club_id, 'applicant': applicant})
+        {'club_id' : club_id, 'applicant': applicant, 'my_clubs': my_clubs})
 
 @login_required
 @only_officers
@@ -182,10 +194,11 @@ def approve_applicant(request, club_id, applicant_id):
     club = get_club(club_id)
     current_user = request.user
     applicant = get_user(applicant_id)
+    my_clubs = get_my_clubs(current_user)
     if (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club):
         set_authorization(applicant, club, "ME")
         return redirect('applicants_list', club_id)
-    return render(request, 'applicants_list.html', {'club_id' : club_id, 'applicants': applicants})
+    return render(request, 'applicants_list.html', {'club_id' : club_id, 'applicant': applicant})
 
 @login_required
 @only_owners
@@ -226,8 +239,9 @@ def transfer_ownership(request, club_id, member_id):
 
 @login_required
 def create_club(request):
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
     if request.method == 'POST':
-        current_user = request.user
         form = CreateClubForm(request.POST)
         if form.is_valid():
             try:
@@ -235,17 +249,17 @@ def create_club(request):
             except IndexError:
                 messages.add_message(request, messages.ERROR, "The credentials provided were invalid")
                 form_new = CreateClubForm()
-                return render(request,'create_club.html',{'form': form_new})
+                return render(request,'create_club.html', {'form': form_new, 'my_clubs': my_clubs})
             # redirect link needs to change
             Club_Member.objects.create(
                 user=current_user,
                 club=club_created,
                 authorization='OF'
             )
-            return redirect('members_list', club_created.id)
+            return redirect('members_list', club_created.id, {'my_clubs': my_clubs})
     else:
         form = CreateClubForm()
-    return render(request, 'create_club.html', {'form': form})
+    return render(request, 'create_club.html', {'form': form, 'my_clubs': my_clubs})
 
 @login_required
 def dashboard(request):
@@ -282,7 +296,9 @@ def clubs_list(request, *args):
             sort_table = request.POST['sort_table']
             clubs = clubs.order_by(sort_table)
 
-    return render(request, 'clubs_list.html', {'clubs': clubs})
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
+    return render(request, 'clubs_list.html', {'clubs': clubs, 'my_clubs': my_clubs})
 
 @login_required
 def show_club(request, club_id):
@@ -293,7 +309,9 @@ def show_club(request, club_id):
 
     owner = get_owners(club).first()
 
-    return render(request, 'show_club.html', {'club_id': club_id, 'club': club, 'owner': owner, 'is_user_in_club': is_user_in_club(request.user, club)})
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
+    return render(request, 'show_club.html', {'club_id': club_id, 'club': club, 'owner': owner, 'is_user_in_club': is_user_in_club(request.user, club), 'my_clubs': my_clubs})
 
 @login_required
 def apply_club(request, club_id):
@@ -303,10 +321,3 @@ def apply_club(request, club_id):
         Club_Member.objects.create(user=current_user, club=club, authorization='AP')
         return render(request,'waiting_list.html', {'club_id' : club_id})
     return redirect('dashboard')
-
-@login_required
-def my_clubs_dropdown(request):
-    current_user = request.user
-    my_clubs = get_my_clubs(current_user)
-    cur_view = request.resolver_match.view_name
-    return redirect(cur_view, {'my_clubs': my_clubs})
