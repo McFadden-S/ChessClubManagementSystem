@@ -266,9 +266,9 @@ class ActionView(TemplateView):
         club = get_club(kwargs['club_id'])
         current_user = request.user
         user = get_user(kwargs[self.id_name])
-        if (is_actionable(current_user, user, club)):
-            self.action(user, club)
-            return redirect(self.redirect_location, kwargs['club_id'])
+        if (self.is_actionable(current_user, user, club)):
+            self.action(current_user, user, club)
+        return redirect(self.redirect_location, kwargs['club_id'])
 
 class ApproveApplicantView(OfficersRequiredMixin, ActionView):
 
@@ -276,83 +276,131 @@ class ApproveApplicantView(OfficersRequiredMixin, ActionView):
     id_name = 'applicant_id'
 
     def is_actionable(self, current_user, user, club):
-        return (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club)
+        return (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(user, club)
 
-    def action(self, user, club):
-        set_authorization(applicant, club, "ME")
+    def action(self, current_user, user, club):
+        set_authorization(user, club, "ME")
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-
-@login_required
-@only_officers
-def reject_applicant(request, *args, **kwargs):
+class RejectApplicantView(OfficersRequiredMixin, ActionView):
     """Reject the application and remove the applicant from the club."""
 
-    club = get_club(kwargs['club_id'])
-    current_user = request.user
-    applicant = get_user(kwargs['applicant_id'])
-    if (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club):
-        remove_user_from_club(applicant, club)
-        return redirect('applicants_list', kwargs['club_id'])
-    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants})
+    redirect_location = 'applicants_list'
+    id_name = 'applicant_id'
 
-@login_required
-@only_owners
-def promote_member(request, *args, **kwargs):
-    club = get_club(kwargs['club_id'])
-    current_user = request.user
-    member = get_user(kwargs['member_id'])
-    if is_owner(current_user, club) and is_member(member, club):
-        set_authorization(member, club, "OF")
-        return redirect('members_list', kwargs['club_id'])
-    return render(request, 'members_list.html',
-        {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
+    def is_actionable(self, current_user, user, club):
+        return (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(user, club)
 
-@login_required
-@only_owners
-def demote_officer(request, *args, **kwargs):
-    club = get_club(kwargs['club_id'])
-    current_user = request.user
-    member = get_user(kwargs['member_id'])
-    if is_owner(current_user, club) and is_officer(member, club):
-        set_authorization(member, club, "ME")
-        return redirect('members_list', kwargs['club_id'])
-    return render(request, 'members_list.html',
-        {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
+    def action(self, current_user, user, club):
+        remove_user_from_club(user, club)
 
-@login_required
-@only_officers
-def remove_user(request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+class PromoteMemberView(OwnersRequiredMixin, ActionView):
+
+    redirect_location = 'members_list'
+    id_name = 'member_id'
+
+    def is_actionable(self, current_user, user, club):
+        return is_owner(current_user, club) and is_member(user, club)
+
+    def action(self, current_user, user, club):
+        set_authorization(user, club, "OF")
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+class DemoteOfficerView(OwnersRequiredMixin, ActionView):
+
+    redirect_location = 'members_list'
+    id_name = 'member_id'
+
+    def is_actionable(self, current_user, user, club):
+        return is_owner(current_user, club) and is_officer(user, club)
+
+    def action(self, current_user, user, club):
+        set_authorization(user, club, "ME")
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+class RemoveUserView(OfficersRequiredMixin, ActionView):
     """Remove the user from the club"""
 
-    club = get_club(kwargs['club_id'])
-    current_user = request.user
-    user = get_user(kwargs['user_id'])
-    if is_owner(current_user, club) and (is_officer(user, club) or is_member(user, club)):
-        #Owner can remove both officers and members.
+    redirect_location = 'members_list'
+    id_name = 'user_id'
+
+    def is_actionable(self, current_user, user, club):
+        cu_is_owner = is_owner(current_user, club)
+        cu_is_officer = is_officer(current_user, club)
+        u_is_officer = is_officer(user, club)
+        u_is_member = is_member(user, club)
+        return (cu_is_owner and (u_is_officer or u_is_member)) or (cu_is_officer and u_is_member)
+
+    def action(self, current_user, user, club):
         remove_user_from_club(user, club)
-        return redirect('members_list', kwargs['club_id'])
-    elif is_officer(current_user, club) and is_member(user, club):
-        #Officer can only remove members.
-        remove_user_from_club(user, club)
-        return redirect('members_list', kwargs['club_id'])
-    return render(request, 'members_list.html',
-        {'club_id': kwargs['club_id'], 'members': get_members(club), 'officers': get_officers(club), 'owners': get_owners(club)})
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+class TransferOwnershipView(OwnersRequiredMixin, ActionView):
+
+    redirect_location = 'members_list'
+    id_name = 'member_id'
+
+    def is_actionable(self, current_user, user, club):
+        return is_owner(current_user, club) and is_officer(user, club)
+
+    def action(self, current_user, user, club):
+        set_authorization(user, club, "OW")
+        set_authorization(current_user, club, "OF")
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+#Mainined ActionView REVIEW IF CAN BE AN ActionView
+class ApplyClubView(LoginRequiredMixin, TemplateView):
+
+    redirect_location = 'dashboard'
+
+    def is_actionable(self, current_user, user, club):
+        return not is_user_in_club(current_user, club)
+
+    def action(self, current_user, user, club):
+        Club_Member.objects.create(user=current_user, club=club, authorization='AP')
+        self.redirect_location = 'waiting_list'
+
+    def get(self, request, *args, **kwargs):
+        club = get_club(kwargs['club_id'])
+        current_user = request.user
+        user = None
+
+        if (self.is_actionable(current_user, user, club)):
+            self.action(current_user, user, club)
+            return redirect(self.redirect_location, kwargs['club_id'])
+        return redirect(self.redirect_location)
 
 @login_required
-@only_owners
-def transfer_ownership(request, *args, **kwargs):
-    club = get_club(kwargs['club_id'])
+def apply_club(request, *args, **kwargs):
     current_user = request.user
-    member = get_user(kwargs['member_id'])
-    if is_owner(current_user, club) and is_officer(member, club):
-        set_authorization(member, club, "OW")
-        set_authorization(current_user, club, "OF")
-        return redirect('members_list', kwargs['club_id'])
-    return render(request, 'members_list.html',
-        {'club_id': kwargs['club_id'], 'member': member, 'auth' : get_authorization(current_user, club)})
+    club = get_club(kwargs['club_id'])
+    if not is_user_in_club(current_user, club):
+        Club_Member.objects.create(user=current_user, club=club, authorization='AP')
+        return render(request,'waiting_list.html', {'club_id' : kwargs['club_id']})
+    return redirect('dashboard')
+
+@login_required
+def delete_account(request):
+    my_clubs = get_my_clubs(request.user)
+    remove_clubs(request.user, my_clubs)
+
+    # Delete the user from club_member and user table
+    request.user.delete()
+    messages.add_message(request, messages.SUCCESS, "Your account has been deleted")
+    return redirect('home')
 
 @login_required
 def dashboard(request, *args, **kwargs):
@@ -386,22 +434,3 @@ def show_club(request, *args, **kwargs):
     owner = get_owners(club).first()
 
     return render(request, 'show_club.html', {'club_id': kwargs['club_id'], 'club': club, 'owner': owner, 'is_user_in_club': is_user_in_club(request.user, club)})
-
-@login_required
-def apply_club(request, *args, **kwargs):
-    current_user = request.user
-    club = get_club(kwargs['club_id'])
-    if not is_user_in_club(current_user, club):
-        Club_Member.objects.create(user=current_user, club=club, authorization='AP')
-        return render(request,'waiting_list.html', {'club_id' : kwargs['club_id']})
-    return redirect('dashboard')
-
-@login_required
-def delete_account(request):
-    my_clubs = get_my_clubs(request.user)
-    remove_clubs(request.user, my_clubs)
-
-    # Delete the user from club_member and user table
-    request.user.delete()
-    messages.add_message(request, messages.SUCCESS, "Your account has been deleted")
-    return redirect('home')
