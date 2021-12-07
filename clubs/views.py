@@ -240,8 +240,9 @@ def reject_applicant(request, *args, **kwargs):
     if (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club):
         remove_user_from_club(applicant, club)
         return redirect('applicants_list', kwargs['club_id'])
+
     my_clubs = get_my_clubs(current_user)
-    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants, 'my_clubs': my_clubs})
+    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': get_applicants(club), 'my_clubs': my_clubs})
 
 @login_required
 @only_owners
