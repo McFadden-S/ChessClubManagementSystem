@@ -190,8 +190,8 @@ def remove_clubs(user, clubs):
             count_applicants_in_club = get_count_of_specific_user_in_club(club, 'AP')
             if count_applicants_in_club + 1 == count_all_users_in_club:
                 club.delete()
-            elif get_count_of_specific_user_in_club(club, 'OW') == 1:
-                # at least one member officer or owner in addition  to applicants and owner
+            else:
+                # at least one member or at least 1 officer in addition  to applicants and owner
                 return (False, club.id)
 
     return (True,0)
