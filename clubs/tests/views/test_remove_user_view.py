@@ -93,8 +93,8 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         before_count = Club_Member.objects.count()
         url = reverse('remove_user', kwargs={'club_id': self.club.id, 'user_id': self.owner.id})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'members_list.html')
+        response_url = reverse('members_list', kwargs={'club_id': self.club.id})
+        self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if no user has been removed
         self.assertEqual(before_count, after_count)

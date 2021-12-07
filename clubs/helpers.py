@@ -87,6 +87,8 @@ def get_count_of_specific_user_in_club(search_club, search_authorization):
     return count
 
 def get_authorization(user, club):
+    if user is None or user.is_anonymous:
+        return ""
     try:
         authorization = Club_Member.objects.filter(club=club).get(user=user).authorization
     except ObjectDoesNotExist:

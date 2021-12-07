@@ -1,5 +1,6 @@
 {% extends 'partials/wide_dark_card.html' %}
 {% block contents %}
+
 <div class="card-header">
   <h1 class="card-title">Members List</h1>
 </div>
@@ -9,7 +10,7 @@
   <div class="row justify-content-end">
     <div class="col"></div>
     <div class="col-auto">
-      <form action="{% url 'members_list' club_id %}" method="post" id="form_bar">
+      <form action="{% url 'members_list' club_id %}" method="get" id="form_bar">
         {% csrf_token %}
         <div class="input-group mb-3">
           <input type="search" placeholder="Search member" name="searched_letters">
@@ -22,7 +23,7 @@
   <div class="row justify-content-end">
     <div class="col"></div>
     <div class="col-auto">
-      <form action="{% url 'members_list' club_id %}" method="post" id="form_sort">
+      <form action="{% url 'members_list' club_id %}" method="get" id="form_sort">
           {% csrf_token %}
         <select name="sort_table" class="btn btn-outline-light text-white" onchange="this.form.submit()">
             <option disabled="true" selected>--Sort By--</option>
