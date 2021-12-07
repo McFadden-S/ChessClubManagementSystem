@@ -5,6 +5,9 @@ from django.contrib import messages
 from clubs.helpers import *
 from .mixins import *
 
+from django.contrib.auth.decorators import login_required
+from clubs.decorators import *
+
 class ActionView(TemplateView):
 
     def get(self, request, *args, **kwargs):
@@ -126,4 +129,31 @@ class ApplyClubView(LoginRequiredMixin, TemplateView):
         if (self.is_actionable(current_user, user, club)):
             self.action(current_user, user, club)
             return redirect(self.redirect_location, kwargs['club_id'])
+        return redirect(self.redirect_location)
+
+
+class DeleteAccountView(LoginRequiredMixin, TemplateView):
+
+    redirect_location = 'members_list'
+
+    def is_actionable(self, current_user):
+        my_clubs = get_my_clubs(current_user)
+        return remove_clubs(current_user, my_clubs)[0] == False
+
+    def alternative_action(self, request, current_user):
+        current_user.delete()
+        messages.add_message(request, messages.SUCCESS, "Your account has been deleted")
+        self.redirect_location = 'home'
+
+    def action(self, request, current_user):
+        my_clubs = get_my_clubs(current_user)
+        messages.add_message(request, messages.ERROR, "You must transfer ownership before you delete account for club")
+        return remove_clubs(current_user, my_clubs)[1]
+
+    def get(self, request, *args, **kwargs):
+        current_user = request.user
+
+        if (self.is_actionable(current_user)):
+            return redirect(self.redirect_location, self.action(request, current_user))
+        self.alternative_action(request, current_user)
         return redirect(self.redirect_location)
