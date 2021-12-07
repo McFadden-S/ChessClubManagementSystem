@@ -40,5 +40,6 @@ urlpatterns = [
     path('<int:club_id>/demote_officer/<int:member_id>', views.DemoteOfficerView.as_view(), name='demote_officer'),
     path('<int:club_id>/remove_user/<int:user_id>', views.RemoveUserView.as_view(), name='remove_user'),
     path('<int:club_id>/transfer_ownership/<int:member_id>', views.TransferOwnershipView.as_view(), name='transfer_ownership'),
+    path('<int:club_id>/leave_club/<int:member_id>', views.LeaveClubView.as_view(), name='leave_club'),
     path('delete_account/',views.DeleteAccountView.as_view(), name='delete_account'),
 ]

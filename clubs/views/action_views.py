@@ -131,6 +131,24 @@ class ApplyClubView(LoginRequiredMixin, TemplateView):
             return redirect(self.redirect_location, kwargs['club_id'])
         return redirect(self.redirect_location)
 
+class LeaveClubView(LoginRequiredMixin, ActionView):
+    """View that lets the user leave a club"""
+
+    redirect_location = 'dashboard'
+
+    # Only members and officers can leave a club
+    def is_actionable(self, current_user, club):
+        return is_member(current_user, club) or is_officer(current_user, club)
+
+    def action(self, current_user, club):
+        remove_user_from_club(current_user, club)
+
+    def get(self, request, *args, **kwargs):
+        club = get_club(kwargs['club_id'])
+        current_user = request.user
+        if (self.is_actionable(current_user, club)):
+            self.action(current_user, club)
+        return redirect(self.redirect_location)
 
 class DeleteAccountView(LoginRequiredMixin, TemplateView):
 
