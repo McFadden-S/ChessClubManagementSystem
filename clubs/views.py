@@ -333,8 +333,12 @@ def show_club(request, *args, **kwargs):
         return redirect('dashboard')
 
     owner = get_owners(club).first()
-
-    return render(request, 'show_club.html', {'club_id': kwargs['club_id'], 'club': club, 'owner': owner, 'is_user_in_club': is_user_in_club(request.user, club)})
+    club_auth = get_club_to_auth(request.user, get_my_clubs(request.user))
+    my_club_auth = ""
+    for clubs,auth in club_auth:
+        if club == clubs:
+            my_club_auth = auth
+    return render(request, 'show_club.html', {'club_id': kwargs['club_id'], 'my_club_auth':my_club_auth, 'club': club, 'owner': owner, 'is_user_in_club': is_user_in_club(request.user, club)})
 
 @login_required
 def apply_club(request, *args, **kwargs):
