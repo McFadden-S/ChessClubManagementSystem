@@ -153,7 +153,7 @@ def members_list(request, *args, **kwargs):
 
     current_user = request.user
     my_clubs = get_my_clubs(current_user)
-    return render(request, 'members_list.html', {'club_id': kwargs['club_id'], 'members': members, 'officers': officers, 'owners': owners, 'my_clubs': my_clubs})
+    return render(request, 'members_list.html', {'club_id': kwargs['club_id'], 'members': members, 'officers': officers, 'owners': owners, 'my_clubs': my_clubs, 'request_from_owner' : is_owner(request.user, club), 'request_from_officer' : is_officer(request.user, club), 'request_from_member' : is_member(request.user, club)})
 
 @login_required
 @only_members
@@ -195,7 +195,7 @@ def applicants_list(request, *args, **kwargs):
 
     current_user = request.user
     my_clubs = get_my_clubs(current_user)
-    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants, 'my_clubs': my_clubs})
+    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants, 'my_clubs': my_clubs,'request_from_owner' : is_owner(request.user, club), 'request_from_officer' : is_officer(request.user, club), 'request_from_member' : is_member(request.user, club)})
 
 @login_required
 @only_officers
