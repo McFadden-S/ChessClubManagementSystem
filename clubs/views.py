@@ -99,6 +99,7 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse('dashboard')
 
+
 class CreateClubView(LoginRequiredMixin, FormView):
     template_name = "create_club.html"
     form_class = CreateClubForm
