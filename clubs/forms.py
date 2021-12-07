@@ -81,8 +81,8 @@ class CreateClubForm(forms.ModelForm):
     class Meta:
         model = Club
         fields = ['name','address','city','postal_code','country','description']
-        # validators=
-        # widgets = { 'bio': forms.Textarea(), 'personal_statement': forms.Textarea()}
+        widgets = { 'description': forms.Textarea()}
+
     def save(self):
         super().save(commit=False)
         # https://stackoverflow.com/questions/25888396/how-to-get-latitude-longitude-with-python
@@ -98,7 +98,6 @@ class CreateClubForm(forms.ModelForm):
             city=self.cleaned_data.get('city'),
             postal_code=self.cleaned_data.get('postal_code'),
             country=self.cleaned_data.get('country'),
-            location=f"{lat},{lon}",
             description=self.cleaned_data.get('description'),
         )
 

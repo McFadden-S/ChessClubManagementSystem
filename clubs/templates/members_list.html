@@ -43,11 +43,11 @@
           {% for owner in owners %}
             <tr>
               <td>
-                <img src="{{ owner.mini_gravatar }}" alt="Gravatar of {{ owner.first_name }} {{owner.last_name }}">
+                <img src="{{ owner.mini_gravatar }}" alt="Gravatar of {{ owner.get_full_name }}">
               </td>
               <td>
                 <a href="{% url 'show_member' club_id owner.id %}">
-                  {{ owner.first_name }} {{owner.last_name }}
+                  {{ owner.get_full_name }}
                 </a>
               </td>
             </tr>
@@ -66,11 +66,11 @@
           {% for member in members %}
             <tr>
               <td>
-                <img src="{{ member.mini_gravatar }}" alt="Gravatar of {{ member.first_name }} {{member.last_name }}">
+                <img src="{{ member.mini_gravatar }}" alt="Gravatar of {{ member.get_full_name }}">
               </td>
               <td>
                 <a href="{% url 'show_member' club_id member.id %}">
-                  {{ member.first_name }} {{member.last_name }}
+                  {{ member.get_full_name }}
                 </a>
               </td>
             </tr>
@@ -88,11 +88,11 @@
           {% for officer in officers %}
             <tr>
               <td>
-                <img src="{{ officer.mini_gravatar }}" alt="Gravatar of {{ officer.first_name }} {{officer.last_name }}">
+                <img src="{{ officer.mini_gravatar }}" alt="Gravatar of {{ officer.get_full_name }}">
               </td>
               <td>
                 <a href="{% url 'show_member' club_id officer.id %}">
-                  {{ officer.first_name }} {{officer.last_name }}
+                  {{ officer.get_full_name }}
                 </a>
               </td>
             </tr>
