@@ -1,5 +1,11 @@
 {% extends 'partials/wide_dark_card.html' %}
 {% block contents %}
+<!--<script>
+  function getFilteredList() {
+      console.log({{ members|safe }})
+  }
+</script>-->
+
 <div class="card-header">
   <h1 class="card-title">Members List</h1>
 </div>
@@ -23,6 +29,8 @@
     <div class="col"></div>
     <div class="col-auto">
       <form action="{% url 'members_list' club_id %}" method="post" id="form_sort">
+        <!--<div name="previous_searched_letters" value={{searched_letters}}></div>-->
+        <input type="hidden" name="previous_searched_letters" value={{searched_letters}}>
           {% csrf_token %}
         <select name="sort_table" class="btn btn-outline-light text-white" onchange="this.form.submit()">
             <option disabled="true" selected>--Sort By--</option>

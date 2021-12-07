@@ -10,6 +10,9 @@ from django.conf import settings
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic import TemplateView
 
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+
 from .forms import *
 from .models import *
 from .helpers import *
@@ -136,23 +139,56 @@ def members_list(request, *args, **kwargs):
     members = get_members(club)
     officers = get_officers(club)
     owners = get_owners(club)
+    searched_letters=''
+    previous_searched_letters=''
 
-    if 'search_btn' in request.POST:
-        if request.method == 'POST':
+    # if 'search_btn' in request.POST:
+    #     if request.method == 'POST':
+    #         searched_letters = request.POST['searched_letters']
+    #         if searched_letters:
+    #             members = get_members_search(club, searched_letters)
+    #             officers = get_officers_search(club, searched_letters)
+    #             owners = get_owners_search(club, searched_letters)
+    #
+    # if 'sort_table' in request.POST:
+    #     if request.method == 'POST':
+    #         sort_table = request.POST['sort_table']
+    #         members = members.order_by(sort_table)
+    #         officers = officers.order_by(sort_table)
+    #         owners = owners.order_by(sort_table)
+
+    if request.method == 'POST':
+
+        if 'search_btn' in request.POST:
             searched_letters = request.POST['searched_letters']
             if searched_letters:
                 members = get_members_search(club, searched_letters)
                 officers = get_officers_search(club, searched_letters)
                 owners = get_owners_search(club, searched_letters)
+        else:
+            previous_searched_letters = request.POST['previous_searched_letters']
+            searched_letters=previous_searched_letters
+            print("hello")
+            members = get_members_search(club, previous_searched_letters)
+            officers = get_officers_search(club, previous_searched_letters)
+            owners = get_owners_search(club, previous_searched_letters)
 
-    if 'sort_table' in request.POST:
-        if request.method == 'POST':
+        if 'sort_table' in request.POST:
+            print("bye")
             sort_table = request.POST['sort_table']
             members = members.order_by(sort_table)
             officers = officers.order_by(sort_table)
             owners = owners.order_by(sort_table)
 
-    return render(request, 'members_list.html', {'club_id': kwargs['club_id'], 'members': members, 'officers': officers, 'owners': owners})
+    # members = json.dumps(members.values_list(flat=True))
+    # officers = json.dumps(officers.values_list(flat=True))
+    # owners = json.dumps(owners.values_list(flat=True))
+    # members = json.dumps(list(members.values()), cls=DjangoJSONEncoder)
+    # officers = json.dumps(list(officers.values()), cls=DjangoJSONEncoder)
+    # owners = json.dumps(list(owners.values()), cls=DjangoJSONEncoder)
+
+    # return render(request, 'members_list.html', {'club_id': kwargs['club_id'], 'members': members, 'officers': officers, 'owners': owners})
+    return render(request, 'members_list.html', {'club_id': kwargs['club_id'], 'members': members, 'officers': officers, 'owners': owners, 'searched_letters': searched_letters})
 
 @login_required
 @only_members
