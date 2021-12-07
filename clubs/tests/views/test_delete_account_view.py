@@ -107,9 +107,9 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         after_count_user = User.objects.count()
         after_count_club_member = Club_Member.objects.count()
         after_count_club = Club.objects.count()
-        self.assertEqual(after_count_user, before_count_user-1)
-        # Only the user who deleted account is removed but the club still exists
-        self.assertEqual(after_count_club_member, before_count_club_member-1)
+        self.assertEqual(after_count_user, before_count_user)
+        # CHECK ERROR MESSAGE
+        self.assertEqual(after_count_club_member, before_count_club_member)
         # Since club still has member the club still exists
         self.assertEqual(after_count_club, before_count_club)
-        self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
+        self.assertRedirects(response, reverse('members_list', kwargs={'club_id' : self.club.id}), status_code=302, target_status_code=200)
