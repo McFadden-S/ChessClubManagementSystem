@@ -2,15 +2,14 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.functions import Concat
 from django.db.models import Value
 from django.contrib import messages
-from django.shortcuts import redirect
-from django.urls import reverse
 from .models import Club, Club_Member, User
 
-def get_all_users_except_applicants():
-    applicants = (Club_Member.objects.filter(authorization='Applicant')
-                                     .values_list('user__id', flat=True))
-    members = User.objects.exclude(id__in=applicants)
-    return members
+#not being used
+# def get_all_users_except_applicants():
+#     applicants = (Club_Member.objects.filter(authorization='Applicant')
+#                                      .values_list('user__id', flat=True))
+#     members = User.objects.exclude(id__in=applicants)
+#     return members
 
 def get_clubs_search(searched_letters):
     searched_clubs = (Club.objects.filter(name__icontains = searched_letters))
@@ -61,15 +60,16 @@ def get_user(user_id):
         return None
     return user
 
-def get_user_of_club(user_id, club):
-    try:
-        user = User.objects.get(id=user_id)
-
-        #below will through an ObjectDoesNotExist if not apart of club
-        Club_Member.objects.filter(club=club).get(user=user)
-    except ObjectDoesNotExist:
-        return None
-    return user
+# not being used  
+# def get_user_of_club(user_id, club):
+#     try:
+#         user = User.objects.get(id=user_id)
+#
+#         #below will through an ObjectDoesNotExist if not apart of club
+#         Club_Member.objects.filter(club=club).get(user=user)
+#     except ObjectDoesNotExist:
+#         return None
+#     return user
 
 def get_count_of_users_in_club(search_club):
     count = (Club_Member.objects
@@ -87,6 +87,8 @@ def get_count_of_specific_user_in_club(search_club, search_authorization):
     return count
 
 def get_authorization(user, club):
+    if user is None or user.is_anonymous:
+        return ""
     try:
         authorization = Club_Member.objects.filter(club=club).get(user=user).authorization
     except ObjectDoesNotExist:
@@ -156,6 +158,13 @@ def get_other_clubs(user):
         return None
     return other_clubs
 
+def get_club_to_auth(user, my_clubs):
+    auth_list = []
+    for club in my_clubs:
+        auth_list.append(get_authorization_text(user, club))
+    club_auth = list(zip(list(my_clubs), auth_list))
+    return club_auth
+
 def is_user_in_club(user, club):
     try:
         club_member = Club_Member.objects.get(user=user, club=club)
@@ -172,3 +181,21 @@ def remove_user_from_club(user, club):
         return None
     else:
         club_user.delete()
+
+def remove_clubs(user, clubs):
+    for club in clubs:
+        # In club table, delete all the request.users clubs where they are the only "person"
+        count_all_users_in_club = get_count_of_users_in_club(club)
+        if count_all_users_in_club == 1:
+            club.delete()
+            continue
+        # In club table, delete where only applicants in club and (the 1 owner(the request user) is only deleted)
+        if is_owner(user, club):
+            count_applicants_in_club = get_count_of_specific_user_in_club(club, 'AP')
+            if count_applicants_in_club + 1 == count_all_users_in_club:
+                club.delete()
+            else:
+                # at least one member or at least 1 officer in addition  to applicants and owner
+                return (False, club.id)
+
+    return (True,0)

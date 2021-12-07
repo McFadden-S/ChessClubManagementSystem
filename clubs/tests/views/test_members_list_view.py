@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import check_password
 
 
 # Used this from clucker project with some modifications
-class membersListViewTestCase(TestCase):
+class MembersListViewTestCase(TestCase):
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -30,7 +30,7 @@ class membersListViewTestCase(TestCase):
         self.url = reverse('members_list', kwargs={'club_id': self.club.id})
 
     def create_ordered_list_by(self, order_by_var):
-        member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)#.order_by('member.first_name')
+        member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
         sorted_list = User.objects.filter(id__in=member_list).order_by(order_by_var)
         return sorted_list
 
@@ -90,6 +90,7 @@ class membersListViewTestCase(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'members_list.html')
+        #response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
         response = self.client.post(self.url, {'sort_table': sort_table})
         member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
         members = list(User.objects.filter(id__in=member_list))
