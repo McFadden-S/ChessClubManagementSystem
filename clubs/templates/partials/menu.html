@@ -3,6 +3,8 @@
         <a class="btn btn-secondary nav-link m-2 text-dark" href="{% url 'members_list' club_id %}">Members</a>
     </li>
     <li class="nav-item">
+      {%if request_from_owner or request_from_officer%}
         <a class="btn btn-secondary nav-link m-2 text-dark" href="{% url 'applicants_list' club_id %}">Applicants</a>
+        {%endif%}
     </li>
 </ul>

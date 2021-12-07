@@ -8,12 +8,10 @@
     </button>
     {% if user.is_authenticated %}
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        {%if request_from_owner or request_from_officer%}
+        {%if request_from_owner or request_from_officer or request_from_member%}
           {% include 'partials/menu.html' %}
         {%endif%}
-        {%if request_from_member%}
-          {% include 'partials/menu_member.html' %}
-        {%endif%}
+
       </div>
     {% endif %}
   </div>
