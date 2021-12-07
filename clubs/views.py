@@ -348,17 +348,14 @@ def show_club(request, *args, **kwargs):
         return redirect('dashboard')
 
     owner = get_owners(club).first()
-    club_auth = get_club_to_auth(request.user, get_my_clubs(request.user))
-    my_club_auth = ""
-    for clubs,auth in club_auth:
-        if club == clubs:
-            my_club_auth = auth
-    current_user = request.user
-    my_clubs = get_my_clubs(current_user)
+
+    my_clubs = get_my_clubs(request.user)
     return render(request, 'show_club.html',
                   {'club_id': kwargs['club_id'],
-                   'my_club_auth':my_club_auth,
                    'club': club, 'owner': owner,
+                   'request_from_owner' : is_owner(request.user, club),
+                   'request_from_officer' : is_officer(request.user, club),
+                   'request_from_member' : is_member(request.user, club),
                    'is_user_in_club': is_user_in_club(request.user, club),
                    'my_clubs': my_clubs}
                  )
