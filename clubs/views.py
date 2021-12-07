@@ -322,23 +322,23 @@ def dashboard(request, *args, **kwargs):
     club_auth = get_club_to_auth(current_user, my_clubs)
     return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs, 'club_auth': club_auth})
 
-@login_required
-def clubs_list(request, *args, **kwargs):
-    clubs = get_all_clubs()
-    if 'search_btn' in request.POST:
-        if request.method == 'POST':
-            searched_letters = request.POST['searched_letters']
-            if searched_letters:
-                clubs = get_clubs_search(searched_letters)
-
-    if 'sort_table' in request.POST:
-        if request.method == 'POST':
-            sort_table = request.POST['sort_table']
-            clubs = clubs.order_by(sort_table)
-
-    current_user = request.user
-    my_clubs = get_my_clubs(current_user)
-    return render(request, 'clubs_list.html', {'clubs': clubs, 'my_clubs': my_clubs})
+# @login_required
+# def clubs_list(request, *args, **kwargs):
+#     clubs = get_all_clubs()
+#     if 'search_btn' in request.POST:
+#         if request.method == 'POST':
+#             searched_letters = request.POST['searched_letters']
+#             if searched_letters:
+#                 clubs = get_clubs_search(searched_letters)
+#
+#     if 'sort_table' in request.POST:
+#         if request.method == 'POST':
+#             sort_table = request.POST['sort_table']
+#             clubs = clubs.order_by(sort_table)
+#
+#     current_user = request.user
+#     my_clubs = get_my_clubs(current_user)
+#     return render(request, 'clubs_list.html', {'clubs': clubs, 'my_clubs': my_clubs})
 
 @login_required
 def show_club(request, *args, **kwargs):
