@@ -128,7 +128,6 @@ class ApplyClubView(LoginRequiredMixin, TemplateView):
             return redirect(self.redirect_location, kwargs['club_id'])
         return redirect(self.redirect_location)
 
-
 class LeaveClubView(LoginRequiredMixin, ActionView):
     """View that lets the user leave a club"""
 
@@ -140,9 +139,6 @@ class LeaveClubView(LoginRequiredMixin, ActionView):
 
     def action(self, current_user, club):
         remove_user_from_club(current_user, club)
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         club = get_club(kwargs['club_id'])
