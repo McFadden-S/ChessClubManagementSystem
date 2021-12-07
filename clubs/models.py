@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser,BaseUserManager
+from django.contrib.auth.models import AbstractUser
 from .managers import UserManager
 from libgravatar import Gravatar
 from django_countries.fields import CountryField

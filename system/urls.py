@@ -26,7 +26,7 @@ urlpatterns = [
     path('update_user/', views.UpdateUserView.as_view(), name='update_user'),
     path('change_password/', views.ChangePasswordView.as_view(), name='change_password'),
     path('dashboard/',views.dashboard, name='dashboard'),
-    path('create_club/',views.create_club, name='create_club'),
+    path('create_club/',views.CreateClubView.as_view(), name='create_club'),
     path('show_club/<int:club_id>', views.show_club, name='show_club'),
     path('apply_club/<int:club_id>',views.apply_club, name='apply_club'),
     path('<int:club_id>/waiting_list/',views.WaitingListView.as_view(), name='waiting_list'),
@@ -38,6 +38,7 @@ urlpatterns = [
     path('<int:club_id>/reject_applicant/<int:applicant_id>', views.reject_applicant, name='reject_applicant'),
     path('<int:club_id>/promote_member/<int:member_id>',views.promote_member, name='promote_member'),
     path('<int:club_id>/demote_officer/<int:member_id>',views.demote_officer, name='demote_officer'),
+    path('<int:club_id>/remove_user/<int:user_id>', views.remove_user, name='remove_user'),
     path('<int:club_id>/transfer_ownership/<int:member_id>',views.transfer_ownership, name='transfer_ownership'),
     path('delete_account/',views.delete_account, name='delete_account'),
 ]

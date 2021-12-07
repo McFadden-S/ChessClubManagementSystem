@@ -1,0 +1,45 @@
+<table class="table table-dark table-striped">
+
+  <thead class="table-dark">
+    <h2>{{ user.get_full_name }}</h2>
+    <p class="mb-2 text-muted">{{ authorizationText }}</p>
+  </thead>
+
+  <tbody>
+
+    <tr>
+      <td>
+        <img src="{{ user.gravatar }}" alt="Gravatar of {{ user.get_full_name }}">
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+          Bio: {{ user.bio }}
+      </td>
+    </tr>
+
+    {% if request_from_owner or request_from_officer %}
+
+    <tr>
+      <td>
+          Email: {{ user.email }}
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+          Chess experience: {{ user.chess_experience }}
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+          Personal statement: {{ user.personal_statement }}
+      </td>
+    </tr>
+
+    {% endif %}
+
+  </tbody>
+</table>

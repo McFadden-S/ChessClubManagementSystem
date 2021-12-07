@@ -45,4 +45,4 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
 
         # Checks whether if the applicant still exists in the Club
         with self.assertRaises(ObjectDoesNotExist):
-            auth = Club_Member.objects.get(user=self.applicant, club=self.club)
+            Club_Member.objects.get(user=self.applicant, club=self.club)

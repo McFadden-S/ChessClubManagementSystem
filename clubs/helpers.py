@@ -2,8 +2,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.functions import Concat
 from django.db.models import Value
 from django.contrib import messages
-from django.shortcuts import redirect
-from django.urls import reverse
 from .models import Club, Club_Member, User
 
 def get_all_users_except_applicants():
@@ -156,6 +154,13 @@ def get_other_clubs(user):
         return None
     return other_clubs
 
+def get_club_to_auth(user, my_clubs):
+    auth_list = []
+    for club in my_clubs:
+        auth_list.append(get_authorization_text(user, club))
+    club_auth = list(zip(list(my_clubs), auth_list))
+    return club_auth
+
 def is_user_in_club(user, club):
     try:
         club_member = Club_Member.objects.get(user=user, club=club)
@@ -172,3 +177,16 @@ def remove_user_from_club(user, club):
         return None
     else:
         club_user.delete()
+
+def remove_clubs(user, clubs):
+    for club in clubs:
+        # In club table, delete all the request.users clubs where they are the only "person"
+        count_all_users_in_club = get_count_of_users_in_club(club)
+        if count_all_users_in_club == 1:
+            club.delete()
+            continue
+        # In club table, delete where only applicants in club and 1 owner(the request user)
+        if is_owner(user, club):
+            count_applicants_in_club = get_count_of_specific_user_in_club(club, 'AP')
+            if count_applicants_in_club + 1 == count_all_users_in_club:
+                club.delete()
