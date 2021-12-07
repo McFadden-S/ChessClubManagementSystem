@@ -31,7 +31,7 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
             city='Oxford',
             postal_code='OX1 3BG	',
             country='United Kingdom',
-            location='51.754074, -1.254042',
+            # location='51.754074, -1.254042',
             description='Bodleian Library',
         )
 
@@ -93,7 +93,7 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         auth = Club_Member.objects.get(user=self.applicant).authorization
         self.assertEqual(auth, 'ME')
 
-
+    # test if (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club):
     def test_approve_invalid_applicant_with_owner(self):
         url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.member.id})
         self.client.login(email='bobsmith@example.org', password='Password123')
@@ -103,5 +103,4 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertRedirects(response, url, status_code=302, target_status_code=200)
         auth = Club_Member.objects.get(user=self.member).authorization
         self.assertEqual(auth, 'ME')
-
 
