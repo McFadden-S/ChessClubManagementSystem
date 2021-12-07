@@ -8,7 +8,10 @@
     </button>
     {% if user.is_authenticated %}
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      {% include 'partials/account_menu.html' %}
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          {% include 'partials/my_clubs.html' %}
+        </ul>
+        {% include 'partials/account_menu.html' %}
       </div>
     {% endif %}
   </div>

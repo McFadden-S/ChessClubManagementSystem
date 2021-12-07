@@ -171,7 +171,9 @@ def members_list(request, *args, **kwargs):
             officers = officers.order_by(sort_table)
             owners = owners.order_by(sort_table)
 
-    return render(request, 'members_list.html', {'club_id': kwargs['club_id'], 'members': members, 'officers': officers, 'owners': owners})
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
+    return render(request, 'members_list.html', {'club_id': kwargs['club_id'], 'members': members, 'officers': officers, 'owners': owners, 'my_clubs': my_clubs})
 
 # To be implemented after javascript search sort complete
 # class ApplicantsListView(OfficersRequiredMixin, TemplateView):
@@ -204,7 +206,9 @@ def applicants_list(request, *args, **kwargs):
             sort_table = request.POST['sort_table']
             applicants = applicants.order_by(sort_table)
 
-    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants})
+    current_user = request.user
+    my_clubs = get_my_clubs(current_user)
+    return render(request, 'applicants_list.html', {'club_id' : kwargs['club_id'], 'applicants': applicants, 'my_clubs': my_clubs})
 
 class ShowView(TemplateView):
 
