@@ -13,6 +13,9 @@
         {%if my_club_auth == "Owner" or my_club_auth == "Officer"%}
           {% include 'partials/menu.html' %}
         {%endif%}
+        {%if my_club_auth == "Member"%}
+          {% include 'partials/menu_member.html' %}
+        {%endif%}
       </div>
     {% endif %}
   </div>
