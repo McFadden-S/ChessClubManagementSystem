@@ -1,4 +1,5 @@
 from django.views.generic.edit import FormView, UpdateView
+from django.views.generic import TemplateView
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.hashers import check_password
@@ -48,6 +49,12 @@ class LogInView(LoginProhibitedMixin, FormView):
 
     def get_success_url(self):
         return reverse('dashboard')
+
+class LogOutView(LoginRequiredMixin, TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('home')
 
 class UpdateUserView(LoginRequiredMixin, UpdateView):
     """View to update logged-in user's profile."""
@@ -102,21 +109,3 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         return reverse('dashboard')
-
-@login_required
-def log_out(request):
-    logout(request)
-    return redirect('home')
-
-@login_required
-def delete_account(request):
-    my_clubs = get_my_clubs(request.user)
-    if remove_clubs(request.user, my_clubs)[0] == False:
-        messages.add_message(request, messages.ERROR, "You must transfer ownership before you delete account for club")
-        return redirect('members_list', remove_clubs(request.user, my_clubs)[1])
-
-
-    # Delete the user from club_member and user table
-    request.user.delete()
-    messages.add_message(request, messages.SUCCESS, "Your account has been deleted")
-    return redirect('home')

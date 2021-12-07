@@ -60,11 +60,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email='bobsmith@example.org', password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
         auth = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(auth, 'OF')
-
-
-
-
-

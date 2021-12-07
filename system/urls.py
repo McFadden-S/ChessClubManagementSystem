@@ -22,7 +22,7 @@ urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
     path('sign_up/', views.SignUpView.as_view(), name='sign_up'),
     path('log_in/', views.LogInView.as_view(), name='log_in'),
-    path('log_out/', views.log_out, name='log_out'),
+    path('log_out/', views.LogOutView.as_view(), name='log_out'),
     path('update_user/', views.UpdateUserView.as_view(), name='update_user'),
     path('change_password/', views.ChangePasswordView.as_view(), name='change_password'),
     path('dashboard/',views.dashboard, name='dashboard'),
@@ -40,5 +40,5 @@ urlpatterns = [
     path('<int:club_id>/demote_officer/<int:member_id>', views.DemoteOfficerView.as_view(), name='demote_officer'),
     path('<int:club_id>/remove_user/<int:user_id>', views.RemoveUserView.as_view(), name='remove_user'),
     path('<int:club_id>/transfer_ownership/<int:member_id>', views.TransferOwnershipView.as_view(), name='transfer_ownership'),
-    path('delete_account/',views.delete_account, name='delete_account'),
+    path('delete_account/',views.DeleteAccountView.as_view(), name='delete_account'),
 ]
