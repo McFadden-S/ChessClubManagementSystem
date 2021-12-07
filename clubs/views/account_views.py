@@ -111,7 +111,10 @@ def log_out(request):
 @login_required
 def delete_account(request):
     my_clubs = get_my_clubs(request.user)
-    remove_clubs(request.user, my_clubs)
+    if remove_clubs(request.user, my_clubs)[0] == False:
+        messages.add_message(request, messages.ERROR, "You must transfer ownership before you delete account for club")
+        return redirect('members_list', remove_clubs(request.user, my_clubs)[1])
+
 
     # Delete the user from club_member and user table
     request.user.delete()
