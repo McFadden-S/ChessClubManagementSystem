@@ -13,7 +13,7 @@
       <form action="{% url 'applicants_list' club_id %}" method="post">
         {% csrf_token %}
         <div class="input-group mb-3">
-          <input type="search" placeholder="Search applicant" name="searched_letters">
+          <input type="search" placeholder="Search applicant" name="searched_letters" style="border: 1in;">
           <button type="submit" name ="search_btn" class="btn btn-outline-light text-white">Search</button>
         </div>
       </form>
