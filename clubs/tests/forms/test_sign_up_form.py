@@ -44,7 +44,6 @@ class SignUpFormTestCase(TestCase):
         newPasswordWidget = form.fields['new_password'].widget
         self.assertTrue(isinstance(newPasswordWidget, forms.PasswordInput))
 
-
         self.assertIn('password_confirmation', form.fields)
         newPasswordConfirm = form.fields['password_confirmation'].widget
         self.assertTrue(isinstance(newPasswordConfirm, forms.PasswordInput))
@@ -72,13 +71,12 @@ class SignUpFormTestCase(TestCase):
         form = SignUpForm(data=self.valid_form_input)
         self.assertFalse(form.is_valid())
 
-
     def test_form_must_save_correctly(self):
         form = SignUpForm(data=self.valid_form_input)
         before_count = User.objects.count()
         form.save()
         after_count = User.objects.count()
-        self.assertEqual(after_count, before_count+1)
+        self.assertEqual(after_count, before_count + 1)
 
         user = User.objects.get(email='bobsmith@example.com')
         self.assertEqual(user.first_name, 'Bob')

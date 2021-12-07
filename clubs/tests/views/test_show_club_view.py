@@ -15,9 +15,6 @@ class ShowClubViewTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.get(email='bobsmith@example.org')
         self.club = Club.objects.get(name='Flying Orangutans')
-        # self.club_owner = Club_Member.objects.create(
-        #     user=self.user, authorization='OW', club=self.club
-        # )
         self.url = reverse('show_club', kwargs={'club_id': self.club.id})
 
     def test_show_club_url(self):
@@ -55,3 +52,9 @@ class ShowClubViewTestCase(TestCase):
         response_url = reverse('dashboard')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+
+
+
+
+
+    
