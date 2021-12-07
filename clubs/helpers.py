@@ -4,12 +4,11 @@ from django.db.models import Value
 from django.contrib import messages
 from .models import Club, Club_Member, User
 
-# havent seen this being used.
-# def get_all_users_except_applicants():
-#     applicants = (Club_Member.objects.filter(authorization='Applicant')
-#                                      .values_list('user__id', flat=True))
-#     members = User.objects.exclude(id__in=applicants)
-#     return members
+def get_all_users_except_applicants():
+    applicants = (Club_Member.objects.filter(authorization='Applicant')
+                                     .values_list('user__id', flat=True))
+    members = User.objects.exclude(id__in=applicants)
+    return members
 
 def get_clubs_search(searched_letters):
     searched_clubs = (Club.objects.filter(name__icontains = searched_letters))
@@ -59,16 +58,16 @@ def get_user(user_id):
     except ObjectDoesNotExist:
         return None
     return user
-# havent seen this being used.
-# def get_user_of_club(user_id, club):
-#     try:
-#         user = User.objects.get(id=user_id)
-#
-#         #below will through an ObjectDoesNotExist if not apart of club
-#         Club_Member.objects.filter(club=club).get(user=user)
-#     except ObjectDoesNotExist:
-#         return None
-#     return user
+
+def get_user_of_club(user_id, club):
+    try:
+        user = User.objects.get(id=user_id)
+
+        #below will through an ObjectDoesNotExist if not apart of club
+        Club_Member.objects.filter(club=club).get(user=user)
+    except ObjectDoesNotExist:
+        return None
+    return user
 
 def get_count_of_users_in_club(search_club):
     count = (Club_Member.objects
