@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.conf import settings
-from .helpers import get_authorization, get_club
+from clubs.helpers import get_authorization, get_club
 from django.contrib import messages
 
 class LoginProhibitedMixin():
