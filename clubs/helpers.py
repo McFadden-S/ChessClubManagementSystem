@@ -185,8 +185,13 @@ def remove_clubs(user, clubs):
         if count_all_users_in_club == 1:
             club.delete()
             continue
-        # In club table, delete where only applicants in club and 1 owner(the request user)
+        # In club table, delete where only applicants in club and (the 1 owner(the request user) is only deleted)
         if is_owner(user, club):
             count_applicants_in_club = get_count_of_specific_user_in_club(club, 'AP')
             if count_applicants_in_club + 1 == count_all_users_in_club:
                 club.delete()
+            elif get_count_of_specific_user_in_club(club, 'OW') == 1:
+                # at least one member officer or owner in addition  to applicants and owner
+                return (False, club.id)
+
+    return (True,0)
