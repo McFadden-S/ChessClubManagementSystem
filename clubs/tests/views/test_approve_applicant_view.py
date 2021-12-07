@@ -93,7 +93,18 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth, 'ME')
 
     # # test if (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club):
-    # fix when applicants is initialie in views.
+    # fix when applicants is initialise in views.
+    # def test_approve_valid_applicant_with_officer(self):
+    #     self.client.login(email='bethsmith@example.org', password='Password123')
+    #     self.assertTrue(self._is_logged_in())
+    #     auth = Club_Member.objects.get(user=self.applicant).authorization
+    #     self.assertEqual(auth, 'AP')
+    #     response = self.client.get(self.url)
+    #     url = reverse('applicants_list', kwargs={'club_id': self.club.id})
+    #     self.assertRedirects(response, url, status_code=302, target_status_code=200)
+    #     auth = Club_Member.objects.get(user=self.applicant).authorization
+    #     self.assertEqual(auth, 'ME')
+
     # def test_approve_invalid_applicant_with_owner(self):
     #     url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.member.id})
     #     self.client.login(email='bobsmith@example.org', password='Password123')
@@ -103,11 +114,3 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
     #     self.assertRedirects(response, url, status_code=302, target_status_code=200)
     #     auth = Club_Member.objects.get(user=self.member).authorization
     #     self.assertEqual(auth, 'ME')
-
-    # def test_get_applicants_list_redirects_member_list_when_authorization_is_member(self):
-    #     self.client.login(email='harrysmith@example.org', password='Password123')
-    #     self.assertTrue(self._is_logged_in())
-    #     response = self.client.get(self.url)
-    #     url = reverse('applicants_list', kwargs={'club_id': self.club.id})
-    #     redirect_url = reverse('applicants_list', kwargs={'club_id': self.club.id})
-    #     self.assertRedirects(response, url, status_code=302, target_status_code=200)
