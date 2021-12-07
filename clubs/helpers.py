@@ -4,6 +4,7 @@ from django.db.models import Value
 from django.contrib import messages
 from .models import Club, Club_Member, User
 
+#not being used
 # def get_all_users_except_applicants():
 #     applicants = (Club_Member.objects.filter(authorization='Applicant')
 #                                      .values_list('user__id', flat=True))
@@ -59,6 +60,7 @@ def get_user(user_id):
         return None
     return user
 
+# not being used  
 # def get_user_of_club(user_id, club):
 #     try:
 #         user = User.objects.get(id=user_id)
@@ -190,8 +192,8 @@ def remove_clubs(user, clubs):
             count_applicants_in_club = get_count_of_specific_user_in_club(club, 'AP')
             if count_applicants_in_club + 1 == count_all_users_in_club:
                 club.delete()
-            elif get_count_of_specific_user_in_club(club, 'OW') == 1:
-                # at least one member officer or owner in addition  to applicants and owner
+            else:
+                # at least one member or at least 1 officer in addition  to applicants and owner
                 return (False, club.id)
 
     return (True,0)
