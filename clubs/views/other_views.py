@@ -12,7 +12,6 @@ from clubs.helpers import *
 from .mixins import *
 
 from django.contrib.auth.decorators import login_required
-from clubs.decorators import *
 
 class HomeView(LoginProhibitedMixin, TemplateView):
     template_name = 'home.html'
@@ -40,6 +39,15 @@ class WaitingListView(ApplicantsOnlyMixin, TemplateView):
     """ View for the waiting list for applicants to a club """
 
     template_name = 'waiting_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_user = self.request.user
+
+        context['my_clubs'] = get_my_clubs(current_user)
+        context['my_authorization'] = get_authorization_text(current_user, club)
+
+        return context
 
 @login_required
 def dashboard(request, *args, **kwargs):

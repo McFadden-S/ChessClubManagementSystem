@@ -1,0 +1,18 @@
+<script>
+
+function sort(){
+  var sortOption = document.getElementById("sort_select").value;
+  var tables = document.getElementsByTagName("table");
+  for(table of tables){
+    sortTable(table, sortOption);
+  }
+}
+
+function sortTable(table, sortOption){
+  var rows = table.getElementsByTagName("tr");
+  for(row of rows){
+    row.style.display = 'none';
+  }
+}
+
+</script>

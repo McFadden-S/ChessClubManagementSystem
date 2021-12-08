@@ -5,9 +5,6 @@ from django.contrib import messages
 from clubs.helpers import *
 from .mixins import *
 
-from django.contrib.auth.decorators import login_required
-from clubs.decorators import *
-
 class ActionView(TemplateView):
 
     def get(self, request, *args, **kwargs):
@@ -131,7 +128,7 @@ class ApplyClubView(LoginRequiredMixin, TemplateView):
             return redirect(self.redirect_location, kwargs['club_id'])
         return redirect(self.redirect_location)
 
-
+#Mainined ActionView REVIEW IF CAN BE AN ActionView
 class DeleteAccountView(LoginRequiredMixin, TemplateView):
 
     redirect_location = 'members_list'
