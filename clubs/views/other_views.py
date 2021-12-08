@@ -45,6 +45,7 @@ class WaitingListView(ApplicantsOnlyMixin, TemplateView):
         current_user = self.request.user
 
         context['my_clubs'] = get_my_clubs(current_user)
+        club = get_club(kwargs['club_id'])
         context['my_authorization'] = get_authorization_text(current_user, club)
 
         return context

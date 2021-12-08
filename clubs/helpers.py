@@ -60,7 +60,7 @@ def get_user(user_id):
         return None
     return user
 
-# not being used  
+# not being used
 # def get_user_of_club(user_id, club):
 #     try:
 #         user = User.objects.get(id=user_id)
