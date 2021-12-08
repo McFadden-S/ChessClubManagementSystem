@@ -65,7 +65,15 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         with self.assertHTML(response) as html:
             follow_signup_url = reverse('sign_up')
             button = html.find(f'.//form[@action="{follow_signup_url}"]/ul/li/input')
+            gravatar_text = html.find(f'.//div[@class="card-body"]/p')
+            gravatar_link_text = html.find(f'.//div[@class="card-body"]/p/a')
+            header = html.find(f'.//div[@class="card-header"]/h1')
+            log_in_text = html.find(f'.//div[@class="card-footer"]/p/a')
             self.assertEqual(button.value, "Sign Up")
+            self.assertEquals(gravatar_text.text, "To have a profile photo, sign up with a gravatar associated email or set up a gravatar ")
+            self.assertEquals(gravatar_link_text.text,"here")
+            self.assertEqual(header.text, "Sign Up")
+            self.assertEqual(log_in_text.text, "here")
 
     """ 1) Successful and unsuccessful signups"""
     def test_succesful_sign_up_by_applicant(self):
