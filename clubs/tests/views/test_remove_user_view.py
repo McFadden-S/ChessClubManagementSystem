@@ -33,7 +33,7 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         self.remove_member_url = reverse('remove_user', kwargs={'club_id': self.club.id, 'user_id': self.member.id})
         self.remove_officer_url = reverse('remove_user', kwargs={'club_id': self.club.id, 'user_id': self.officer.id})
 
-    def test_remove_user_url(self):
+    def test_remove_member_url(self):
         self.assertEqual(self.remove_member_url,f'/{self.club.id}/remove_user/{self.member.id}')
 
     def test_remove_officer_url(self):
