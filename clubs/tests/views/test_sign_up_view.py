@@ -112,6 +112,7 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
     """ 2) Get sign-up redirect tests"""
     def test_get_sign_up_redirects_when_logged_in_as_applicant(self):
         self.client.login(email=self.applicant.email, password="Password123")
+        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
