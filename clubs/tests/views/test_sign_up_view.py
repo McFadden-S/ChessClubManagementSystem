@@ -112,6 +112,7 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
     """ 2) Get sign-up redirect tests"""
     def test_get_sign_up_redirects_when_logged_in_as_applicant(self):
         self.client.login(email=self.applicant.email, password="Password123")
+        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -122,6 +123,7 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
 
     def test_get_sign_up_redirects_when_logged_in_as_member(self):
         self.client.login(email=self.member.email, password="Password123")
+        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -132,6 +134,7 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
 
     def test_get_sign_up_redirects_when_logged_in_as_officer(self):
         self.client.login(email=self.officer.email, password="Password123")
+        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -142,6 +145,7 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
 
     def test_get_sign_up_redirects_when_logged_in_as_owner(self):
         self.client.login(email=self.owner.email, password="Password123")
+        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -154,6 +158,7 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
     """ 3) Post sign-up redirect tests"""
     def test_post_signup_redirects_when_logged_in_as_applicant(self):
         self.client.login(email=self.applicant.email, password="Password123")
+        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
         before_count = User.objects.count()
         response = self.client.post(self.url, self.valid_form_input, follow=True)
         after_count = User.objects.count()
@@ -166,6 +171,7 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
 
     def test_post_signup_redirects_when_logged_in_as_member(self):
         self.client.login(email=self.member.email, password="Password123")
+        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
         before_count = User.objects.count()
         response = self.client.post(self.url, self.valid_form_input, follow=True)
         after_count = User.objects.count()
@@ -178,6 +184,7 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
 
     def test_post_signup_redirects_when_logged_in_as_officer(self):
         self.client.login(email=self.officer.email, password="Password123")
+        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
         before_count = User.objects.count()
         response = self.client.post(self.url, self.valid_form_input, follow=True)
         after_count = User.objects.count()
@@ -190,6 +197,7 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
 
     def test_post_signup_redirects_when_logged_in_as_owner(self):
         self.client.login(email=self.owner.email, password="Password123")
+        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
         before_count = User.objects.count()
         response = self.client.post(self.url, self.valid_form_input, follow=True)
         after_count = User.objects.count()
