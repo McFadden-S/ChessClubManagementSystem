@@ -243,3 +243,28 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         self.assertTrue(isinstance(form, SignUpForm))
         self.assertTrue(form.is_bound)
         self.assertFalse(self._is_logged_in())
+
+    """ Tests for duplication """
+    def test_unsuccesful_sign_up_by_using_email_already_used(self):
+        response1 = self.client.post(self.url, self.valid_form_input)
+        after_count1 = User.objects.count()
+        valid_form_input2 = {
+            'email': 'bellasmith@example.org',
+            'first_name': 'Peter',
+            'last_name': 'Smith',
+            'bio': 'Hi',
+            'chess_experience': 'BG',
+            'personal_statement': 'I am Orangutan',
+            'new_password': 'Password123',
+            'password_confirmation': 'Password123'
+        }
+        self.client.logout()
+        response2 = self.client.post(self.url, valid_form_input2)
+        after_count2 = User.objects.count()
+        self.assertEqual(after_count2, after_count1)
+        self.assertEqual(response2.status_code, 200)
+        self.assertTemplateUsed(response2, 'sign_up.html')
+        form = response2.context['form']
+        self.assertTrue(isinstance(form, SignUpForm))
+        self.assertTrue(form.is_bound)
+        self.assertFalse(self._is_logged_in())
