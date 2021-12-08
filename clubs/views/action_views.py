@@ -165,7 +165,7 @@ class DeleteAccountView(LoginRequiredMixin, TemplateView):
 
     def action(self, request, current_user):
         my_clubs = get_my_clubs(current_user)
-        messages.add_message(request, messages.ERROR, "You must transfer ownership before you delete account for club")
+        messages.add_message(request, messages.ERROR, "You must transfer ownership to a new owner")
         return remove_clubs(current_user, my_clubs)[1]
 
     def get(self, request, *args, **kwargs):
