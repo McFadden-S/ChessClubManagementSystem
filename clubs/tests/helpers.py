@@ -1,5 +1,5 @@
 from django.urls import reverse
-
+from with_asserts.mixin import AssertHTMLMixin
 def reverse_with_next(url_name, next_url):
     url = reverse(url_name)
     url += f"?next={next_url}"
