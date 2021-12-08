@@ -4,11 +4,12 @@ from django.db.models import Value
 from django.contrib import messages
 from .models import Club, Club_Member, User
 
-def get_all_users_except_applicants():
-    applicants = (Club_Member.objects.filter(authorization='Applicant')
-                                     .values_list('user__id', flat=True))
-    members = User.objects.exclude(id__in=applicants)
-    return members
+#not being used
+# def get_all_users_except_applicants():
+#     applicants = (Club_Member.objects.filter(authorization='Applicant')
+#                                      .values_list('user__id', flat=True))
+#     members = User.objects.exclude(id__in=applicants)
+#     return members
 
 def get_clubs_search(searched_letters):
     searched_clubs = (Club.objects.filter(name__icontains = searched_letters))
@@ -59,15 +60,16 @@ def get_user(user_id):
         return None
     return user
 
-def get_user_of_club(user_id, club):
-    try:
-        user = User.objects.get(id=user_id)
-
-        #below will through an ObjectDoesNotExist if not apart of club
-        Club_Member.objects.filter(club=club).get(user=user)
-    except ObjectDoesNotExist:
-        return None
-    return user
+# not being used  
+# def get_user_of_club(user_id, club):
+#     try:
+#         user = User.objects.get(id=user_id)
+#
+#         #below will through an ObjectDoesNotExist if not apart of club
+#         Club_Member.objects.filter(club=club).get(user=user)
+#     except ObjectDoesNotExist:
+#         return None
+#     return user
 
 def get_count_of_users_in_club(search_club):
     count = (Club_Member.objects
@@ -85,6 +87,8 @@ def get_count_of_specific_user_in_club(search_club, search_authorization):
     return count
 
 def get_authorization(user, club):
+    if user is None or user.is_anonymous:
+        return ""
     try:
         authorization = Club_Member.objects.filter(club=club).get(user=user).authorization
     except ObjectDoesNotExist:
@@ -185,8 +189,13 @@ def remove_clubs(user, clubs):
         if count_all_users_in_club == 1:
             club.delete()
             continue
-        # In club table, delete where only applicants in club and 1 owner(the request user)
+        # In club table, delete where only applicants in club and (the 1 owner(the request user) is only deleted)
         if is_owner(user, club):
             count_applicants_in_club = get_count_of_specific_user_in_club(club, 'AP')
             if count_applicants_in_club + 1 == count_all_users_in_club:
                 club.delete()
+            else:
+                # at least one member or at least 1 officer in addition  to applicants and owner
+                return (False, club.id)
+
+    return (True,0)

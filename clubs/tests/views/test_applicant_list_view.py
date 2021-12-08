@@ -5,9 +5,9 @@ from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 
+
 # Used this from clucker project with some modifications
 class ApplicantListViewTestCase(TestCase):
-
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -57,20 +57,22 @@ class ApplicantListViewTestCase(TestCase):
         self.assertEqual(len(messages_list), 0)
 
     def test_get_applicants_list_redirects_member_list_when_authorization_is_member(self):
-        user1 = User.objects.create_user(email="a@example.com",first_name="a",last_name="a",chess_experience="BG",password='Password123')
+        user1 = User.objects.create_user(email="a@example.com", first_name="a", last_name="a", chess_experience="BG",
+                                         password='Password123')
         club_member1 = Club_Member.objects.create(user=user1, authorization='ME', club=self.club)
         self.client.login(email=user1.email, password='Password123')
         response = self.client.get(self.url)
-        redirect_url=reverse('members_list', kwargs = {'club_id' : self.club.id})
+        redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     # WHEN LOGIN IS FIXED FOR APPLICANT
     # def test_get_applicants_list_redirects_member_list_when_authorization_is_APPLICANT(self):
-    #     user1 = User.objects.create_user(email="a@example.com",first_name="a",last_name="a",chess_experience="BG",password='Password123')
-    #     club1 = Club_Member.objects.create(user=user1, authorization='ME')
+    #     user1 = User.objects.create_user(email="a@example.com", first_name="a", last_name="a", chess_experience="BG",
+    #                                      password='Password123')
+    #     club1 = Club_Member.objects.create(user=user1, authorization='ME', club=self.club)
     #     self.client.login(email=user1.email, password='Password123')
     #     response = self.client.get(self.url)
-    #     redirect_url=reverse('members_list')
+    #     redirect_url = reverse('dashboard')
     #     # ERROR MESSAGE
     #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
@@ -83,6 +85,18 @@ class ApplicantListViewTestCase(TestCase):
         applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
         sorted_list = User.objects.filter(id__in=applicants_list).order_by(order_by_var)
         return sorted_list
+
+    # dont see any thing that uses get_all_users_except_applicants.
+    # def test_all_members_but_applicants(self):
+    #     ap_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
+    #     members = User.objects.exclude(id__in=ap_list)
+    #     return members
+    #
+    # def test_all_members(self):
+    #     second_list = list(self.test_all_members_but_applicants())
+    #     members1 = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
+    #     members = list(User.objects.exclude(id__in=members1))
+    #     self.assertListEqual(second_list, members)
 
     def test_sorted_list_first_name(self):
         sort_table = 'first_name'

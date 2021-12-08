@@ -31,8 +31,8 @@ class ApplyClubViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed('waiting_list.html')
+        url = reverse('waiting_list', kwargs={'club_id': self.club.id})
+        self.assertRedirects(response, url, status_code=302, target_status_code=200)
         auth = Club_Member.objects.get(user=self.user).authorization
         self.assertEqual(auth, 'AP')
 
