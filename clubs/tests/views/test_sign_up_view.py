@@ -6,8 +6,9 @@ from django.urls import reverse
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 from clubs.tests.helpers import LogInTester
+from with_asserts.mixin import AssertHTMLMixin
 
-class SignUpViewTestCase(TestCase, LogInTester):
+class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
     """Tests of the sign up view."""
 
     fixtures = [
@@ -61,6 +62,10 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.assertFalse(form.is_bound)
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
+        with self.assertHTML(response) as html:
+            follow_signup_url = reverse('sign_up')
+            button = html.find(f'.//form[@action="{follow_signup_url}"]/ul/li/input')
+            self.assertEqual(button.value, "Sign Up")
 
     """ 1) Successful and unsuccessful signups"""
     def test_succesful_sign_up_by_applicant(self):
@@ -102,7 +107,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.assertTrue(isinstance(form, SignUpForm))
         self.assertTrue(form.is_bound)
         self.assertFalse(self._is_logged_in())
-        
+
 
     """ 2) Get sign-up redirect tests"""
     def test_get_sign_up_redirects_when_logged_in_as_applicant(self):
