@@ -1,3 +1,4 @@
+"""Tests of the sign up view."""
 from django.test import TestCase
 from clubs.models import User, Club_Member, Club
 from clubs.forms import SignUpForm
@@ -7,6 +8,8 @@ from django.contrib import messages
 from clubs.tests.helpers import LogInTester
 
 class SignUpViewTestCase(TestCase, LogInTester):
+    """Tests of the sign up view."""
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/default_club.json',
@@ -84,6 +87,8 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in())
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
+
 
     def test_unsuccesful_sign_up_using_email_by_applicant(self):
         self.valid_form_input['email'] = '@yahoo.com'
@@ -97,6 +102,7 @@ class SignUpViewTestCase(TestCase, LogInTester):
         self.assertTrue(isinstance(form, SignUpForm))
         self.assertTrue(form.is_bound)
         self.assertFalse(self._is_logged_in())
+        
 
     """ 2) Get sign-up redirect tests"""
     def test_get_sign_up_redirects_when_logged_in_as_applicant(self):
@@ -105,6 +111,9 @@ class SignUpViewTestCase(TestCase, LogInTester):
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
+
 
     def test_get_sign_up_redirects_when_logged_in_as_member(self):
         self.client.login(email=self.member.email, password="Password123")
@@ -112,6 +121,9 @@ class SignUpViewTestCase(TestCase, LogInTester):
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
+
 
     def test_get_sign_up_redirects_when_logged_in_as_officer(self):
         self.client.login(email=self.officer.email, password="Password123")
@@ -119,6 +131,9 @@ class SignUpViewTestCase(TestCase, LogInTester):
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
+
 
     def test_get_sign_up_redirects_when_logged_in_as_owner(self):
         self.client.login(email=self.owner.email, password="Password123")
@@ -126,6 +141,9 @@ class SignUpViewTestCase(TestCase, LogInTester):
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
+
 
 
     """ 3) Post sign-up redirect tests"""
@@ -138,6 +156,8 @@ class SignUpViewTestCase(TestCase, LogInTester):
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
 
     def test_post_signup_redirects_when_logged_in_as_member(self):
         self.client.login(email=self.member.email, password="Password123")
@@ -148,6 +168,8 @@ class SignUpViewTestCase(TestCase, LogInTester):
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
 
     def test_post_signup_redirects_when_logged_in_as_officer(self):
         self.client.login(email=self.officer.email, password="Password123")
@@ -158,6 +180,8 @@ class SignUpViewTestCase(TestCase, LogInTester):
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
 
     def test_post_signup_redirects_when_logged_in_as_owner(self):
         self.client.login(email=self.owner.email, password="Password123")
@@ -168,7 +192,9 @@ class SignUpViewTestCase(TestCase, LogInTester):
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
-        
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
+
 
     """ 4) Password combinations """
     def test_unsuccesful_sign_up_by_matching_invalid_passwords(self):
