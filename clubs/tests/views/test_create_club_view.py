@@ -33,14 +33,7 @@ class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
             'country': 'GB',
             'description' : 'Aim to get the best orangutans out there'
         }
-        self.invalid_form_input = {
-            'name': 'Invalid Orangutan',
-            'address': 'Bush ',
-            'city': 'Ldn',
-            'postal_code': 'WC2B 4BG',
-            'country': 'GB',
-            'description': 'Aim to get the worst orangutans out there'
-        }
+
         self.url = reverse('create_club')
 
     def test_create_club_url(self):
@@ -88,13 +81,16 @@ class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
-        
 
-    def test_unsuccesful_create_club(self):
+
+    """Since club model and form do not have validator """
+
+    def test_unsuccesful_create_club_via_bad_address(self):
          self.client.login(email=self.user.email, password='Password123')
          before_count_club = Club.objects.count()
          before_count_clubmember = Club_Member.objects.count()
-         response = self.client.post(self.url, self.invalid_form_input, follow=True)
+         self.valid_form_input['address'] ="AAAAAAAAAAAAAAAAAbdadress"
+         response = self.client.post(self.url, self.valid_form_input, follow=True)
          after_count_club = Club.objects.count()
          self.assertEqual(after_count_club, before_count_club)
          after_count_clubmember = Club_Member.objects.count()
@@ -102,6 +98,50 @@ class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
          response_url = reverse('create_club')
          self.assertEqual(response.status_code, 200)
          self.assertTemplateUsed(response, 'create_club.html')
+
+    def test_unsuccesful_create_club_via_bad_city(self):
+         self.client.login(email=self.user.email, password='Password123')
+         before_count_club = Club.objects.count()
+         before_count_clubmember = Club_Member.objects.count()
+         self.valid_form_input['city'] ="ldn"
+         response = self.client.post(self.url, self.valid_form_input, follow=True)
+         after_count_club = Club.objects.count()
+         self.assertEqual(after_count_club, before_count_club)
+         after_count_clubmember = Club_Member.objects.count()
+         self.assertEqual(after_count_clubmember, before_count_clubmember)
+         response_url = reverse('create_club')
+         self.assertEqual(response.status_code, 200)
+         self.assertTemplateUsed(response, 'create_club.html')
+
+    def test_unsuccesful_create_club_via_bad_postal_code(self):
+         self.client.login(email=self.user.email, password='Password123')
+         before_count_club = Club.objects.count()
+         before_count_clubmember = Club_Member.objects.count()
+         self.valid_form_input['postal_code'] ="badpostalcode"
+         response = self.client.post(self.url, self.valid_form_input, follow=True)
+         after_count_club = Club.objects.count()
+         self.assertEqual(after_count_club, before_count_club)
+         after_count_clubmember = Club_Member.objects.count()
+         self.assertEqual(after_count_clubmember, before_count_clubmember)
+         response_url = reverse('create_club')
+         self.assertEqual(response.status_code, 200)
+         self.assertTemplateUsed(response, 'create_club.html')
+
+    def test_unsuccesful_create_club_via_bad_country(self):
+         self.client.login(email=self.user.email, password='Password123')
+         before_count_club = Club.objects.count()
+         before_count_clubmember = Club_Member.objects.count()
+         self.valid_form_input['country'] ="BadCountry"
+         response = self.client.post(self.url, self.valid_form_input, follow=True)
+         after_count_club = Club.objects.count()
+         self.assertEqual(after_count_club, before_count_club)
+         after_count_clubmember = Club_Member.objects.count()
+         self.assertEqual(after_count_clubmember, before_count_clubmember)
+         response_url = reverse('create_club')
+         self.assertEqual(response.status_code, 200)
+         self.assertTemplateUsed(response, 'create_club.html')
+
+    """ Redirect tests"""
 
     def test_get_create_club_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
