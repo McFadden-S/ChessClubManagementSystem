@@ -10,9 +10,6 @@ from clubs.forms import *
 from clubs.helpers import *
 from .mixins import *
 
-from django.contrib.auth.decorators import login_required
-from clubs.decorators import *
-
 class SignUpView(LoginProhibitedMixin, FormView):
     """View that signs up user."""
 
@@ -45,7 +42,6 @@ class LogInView(LoginProhibitedMixin, FormView):
         login(self.request, user)
         messages.success(self.request, "Login Successful")
         return super().form_valid(form)
-
 
     def get_success_url(self):
         return reverse('dashboard')

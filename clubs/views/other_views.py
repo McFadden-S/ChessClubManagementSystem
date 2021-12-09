@@ -11,9 +11,6 @@ from clubs.models import *
 from clubs.helpers import *
 from .mixins import *
 
-from django.contrib.auth.decorators import login_required
-from clubs.decorators import *
-
 class HomeView(LoginProhibitedMixin, TemplateView):
     template_name = 'home.html'
 
@@ -41,24 +38,12 @@ class WaitingListView(ApplicantsOnlyMixin, TemplateView):
 
     template_name = 'waiting_list.html'
 
-@login_required
-def dashboard(request, *args, **kwargs):
-    current_user = request.user
-    my_clubs = get_my_clubs(current_user)
-    other_clubs = get_other_clubs(current_user)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        current_user = self.request.user
+        club = get_club(kwargs['club_id'])
 
-    if 'search_btn' in request.POST:
-        if request.method == 'POST':
-            searched_letters = request.POST['searched_letters']
-            if searched_letters:
-                my_clubs = get_clubs_search(searched_letters)
-                other_clubs = get_clubs_search(searched_letters)
+        context['my_clubs'] = get_my_clubs(current_user)
+        context['my_authorization'] = get_authorization_text(current_user, club)
 
-    if 'sort_table' in request.POST:
-        if request.method == 'POST':
-            sort_table = request.POST['sort_table']
-            my_clubs = my_clubs.order_by(sort_table)
-            other_clubs = other_clubs.order_by(sort_table)
-
-    club_auth = get_club_to_auth(current_user, my_clubs)
-    return render(request,'dashboard.html', {'other_clubs': other_clubs, 'my_clubs': my_clubs, 'club_auth': club_auth})
+        return context

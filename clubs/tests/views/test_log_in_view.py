@@ -42,6 +42,8 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertFalse(form.is_bound)
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
+        self.assertFalse(self._is_logged_in())
+
 
     def test_unsuccessful_log_in(self):
         form_input = {'email': 'bobsmith@example.org', 'password': 'WrongPassword123'}
@@ -58,6 +60,7 @@ class LogInViewTestCase(TestCase, LogInTester):
     def test_successful_applicant_log_in(self):
         form_input = {'email': 'bethsmith@example.org', 'password': 'Password123'}
         response = self.client.post(self.url, form_input, follow=True)
+        self.assertTrue(self._is_logged_in())
         response_url = reverse('dashboard')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
@@ -77,6 +80,7 @@ class LogInViewTestCase(TestCase, LogInTester):
 
     def test_get_log_in_redirects_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -84,6 +88,7 @@ class LogInViewTestCase(TestCase, LogInTester):
 
     def test_post_log_in_redirects_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")
+        self.assertTrue(self._is_logged_in())
         form_input = {'email': 'incorrectUser@example.org', 'password': 'inCorrectPassword123'}
         response = self.client.post(self.url, form_input, follow=True)
         redirect_url = reverse('dashboard')

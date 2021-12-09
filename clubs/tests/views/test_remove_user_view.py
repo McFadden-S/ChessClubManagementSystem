@@ -2,7 +2,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from clubs.models import User, Club_Member, Club
-from clubs.tests.helpers import LogInTester
+from clubs.tests.helpers import LogInTester,reverse_with_next
 from django.core.exceptions import ObjectDoesNotExist
 
 class RemoveUserViewTestCase(TestCase, LogInTester):
@@ -422,3 +422,15 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
             Club_Member.objects.get(user=self.another_applicant, club=self.club)
         except (ObjectDoesNotExist):
             self.fail('The user should not be removed')
+
+    def test_get_remove_member_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.remove_member_url)
+        response = self.client.get(self.remove_member_url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())
+
+    def test_get_remove_officer_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.remove_officer_url)
+        response = self.client.get(self.remove_officer_url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())

@@ -3,9 +3,10 @@ from clubs.models import User, Club_Member, Club
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
+from clubs.tests.helpers import LogInTester
 
 # Used this from clucker project with some modifications
-class ShowClubViewTestCase(TestCase):
+class ShowClubViewTestCase(TestCase, LogInTester):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -22,6 +23,7 @@ class ShowClubViewTestCase(TestCase):
 
     def test_get_show_club(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'show_club.html')
@@ -32,14 +34,18 @@ class ShowClubViewTestCase(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())
+
 
     def test_post_show_club_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())
 
     def test_get_show_club_with_valid_id(self):
         self.client.login(username=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'show_club.html')
@@ -47,14 +53,9 @@ class ShowClubViewTestCase(TestCase):
 
     def test_get_show_club_with_invalid_id(self):
         self.client.login(username=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         url = reverse('show_club', kwargs={'club_id': self.club.id+9999})
         response = self.client.get(url, follow=True)
         response_url = reverse('dashboard')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
-
-
-
-
-
-    
