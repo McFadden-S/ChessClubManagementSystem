@@ -51,12 +51,12 @@ class ClubModelTestCase(TestCase):
         self.club.description = self.second_club.description
         self.assert_club_is_valid()
 
-    def test_address_must_not_be_longer_500_chars(self):
-        self.club.address = 'o' * 501
+    def test_description_must_not_be_longer_500_chars(self):
+        self.club.description = 'o' * 501
         self.assert_club_is_invalid()
 
-    def test_address_can_have_100_chars(self):
-        self.club.address = 'o' * 500
+    def test_description_can_have_500_chars(self):
+        self.club.description = 'o' * 500
         self.assert_club_is_valid()
 
     """ Unit tests for valid address"""
@@ -104,11 +104,11 @@ class ClubModelTestCase(TestCase):
         self.club.postal_code = ''
         self.assert_club_is_invalid()
 
-    def test_city_must_not_be_longer_20_chars(self):
+    def test_postal_code_must_not_be_longer_20_chars(self):
         self.club.postal_code = 'o' * 21
         self.assert_club_is_invalid()
 
-    def test_city_can_have_20_chars(self):
+    def test_postal_code_can_have_20_chars(self):
         self.club.postal_code = 'o' * 20
         self.assert_club_is_valid()
 
