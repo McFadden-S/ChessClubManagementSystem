@@ -32,6 +32,8 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         self.assertEqual(self.url,f'/{self.club.id}/reject_applicant/{self.applicant.id}')
 
     def test_get_reject_applicant_redirects_when_not_logged_in(self):
+        """Test that user is redirected to log in page if user is not logged in."""
+
         self.assertFalse(self._is_logged_in())
         before_count = Club_Member.objects.count()
         response = self.client.get(self.url)
