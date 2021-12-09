@@ -1,5 +1,7 @@
 {% extends 'partials/dark_card.html' %}
 {% block contents %}
+{% include 'partials/user_search_script.html'%}
+{% include 'partials/user_sort_script.html'%}
 
 <div class="card-header">
   <h1 class="card-title">Applicants List</h1>
@@ -7,58 +9,14 @@
 
 <div class="card-body">
 
-  <div class="row justify-content-end">
-    <div class="col"></div>
-    <div class="col-auto">
-      <form action="{% url 'applicants_list' club_id %}" method="post">
-        {% csrf_token %}
-        <div class="input-group mb-3">
-          <input type="search" placeholder="Search applicant" name="searched_letters">
-          <button type="submit" name ="search_btn" class="btn btn-outline-light text-white">Search</button>
-        </div>
-      </form>
-    </div>
-  </div>
+  {% include 'partials/search_bar.html' %}
 
-  <div class="row justify-content-end">
-    <div class="col"></div>
-    <div class="col-auto">
-      <form action="{% url 'applicants_list' club_id %}" method="post" id="form_sort">
-          {% csrf_token %}
-        <select name="sort_table" class="btn btn-outline-light text-white" onchange="this.form.submit()">
-            <option disabled="true" selected>--Sort By--</option>
-            <option value="first_name">First Name</option>
-            <option value="last_name">Last name</option>
-        </select>
-      </form>
-    </div>
-  </div>
+  {% include 'partials/sort_select.html' with options='partials/user_table_sort_options.html'%}
 
   <div class="row">
-    <div class="col-12">
-      <table class="table table-dark table-striped">
-        <thead class="table-dark">
-          <h2>Applicants</h2>
-        </thead>
-        <tbody>
-          {% for applicant in applicants %}
-            <tr>
-              <td>
-                <img src="{{ applicant.mini_gravatar }}" alt="Gravatar of {{ applicant.get_full_name }}">
-              </td>
-              <td>
-                <a href="{% url 'show_applicant' club_id applicant.id %}">
-                  {{ applicant.get_full_name }}
-                </a>
-              </td>
-            </tr>
-          {% empty %}
-           EMPTY
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+    {% include 'partials/user_table.html' with table_title="Applicants" user_list=applicants size="col-12"%}
   </div>
 
-{% endblock %}
 </div>
+
+{% endblock %}
