@@ -2,7 +2,7 @@ from django.test import TestCase
 from clubs.models import User, Club_Member, Club
 from clubs.forms import CreateClubForm
 from django.urls import reverse
-from clubs.tests.helpers import LogInTester
+from clubs.tests.helpers import LogInTester, reverse_with_next
 
 class CreateClubViewTestCase(TestCase, LogInTester):
     fixtures = [
@@ -96,3 +96,15 @@ class CreateClubViewTestCase(TestCase, LogInTester):
          response_url = reverse('create_club')
          self.assertEqual(response.status_code, 200)
          self.assertTemplateUsed(response, 'create_club.html')
+
+    def test_get_create_club_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.url)
+        response = self.client.get(self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())
+
+    def test_post_create_club_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.url)
+        response = self.client.post(self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())
