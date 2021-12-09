@@ -2,7 +2,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from clubs.models import User, Club_Member, Club
-from clubs.tests.helpers import LogInTester
+from clubs.tests.helpers import LogInTester, reverse_with_next
 
 
 class PromoteMemberViewTestCase(TestCase, LogInTester):
@@ -63,3 +63,9 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(response.status_code, 302)
         auth = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(auth, 'OF')
+
+    def test_get_promote_member_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.url)
+        response = self.client.get(self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())

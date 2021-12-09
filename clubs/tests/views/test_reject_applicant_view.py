@@ -2,7 +2,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from clubs.models import User, Club_Member, Club
-from clubs.tests.helpers import LogInTester
+from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.core.exceptions import ObjectDoesNotExist
 
 class RejectApplicantViewTestCase(TestCase, LogInTester):
@@ -46,3 +46,9 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         # Checks whether if the applicant still exists in the Club
         with self.assertRaises(ObjectDoesNotExist):
             Club_Member.objects.get(user=self.applicant, club=self.club)
+
+    def test_get_reject_applicant_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.url)
+        response = self.client.get(self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())

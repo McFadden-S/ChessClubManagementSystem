@@ -4,6 +4,7 @@ from django.urls import reverse
 from clubs.models import User, Club_Member, Club
 from clubs.tests.helpers import LogInTester
 from django.contrib import messages
+from clubs.tests.helpers import reverse_with_next
 
 class DeleteAccountViewTestCase(TestCase, LogInTester):
     """Tests of the apply club view."""
@@ -27,6 +28,12 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_delete_account_url(self):
         self.assertEqual(self.url,'/delete_account/')
+
+    def test_get_delete_account_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.url)
+        response = self.client.get(self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())
 
     def test_any_user_without_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
