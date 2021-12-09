@@ -1,0 +1,41 @@
+<script>
+
+function sort(){
+  var sortOption = document.getElementById("sort_select").value;
+  sortData("myClubsData", sortOption)
+  sortData("otherClubsData", sortOption)
+}
+
+//Sort Idea from https://www.w3schools.com/howto/howto_js_sort_table.asp
+function sortData(data_name, sortOption){
+  var switching, i, x, y, shouldSwitch;
+  switching = true;
+  while (switching) {
+    switching = false;
+    data = document.getElementsByName(data_name);
+    for(i = 0; i < (data.length - 1); i++){
+      shouldSwitch = false;
+      x = data[i];
+      y = data[i + 1];
+      if (switchCheck(x, y, sortOption)) {
+        shouldSwitch = true;
+        break;
+      }
+    }
+    if (shouldSwitch) {
+      data[i].parentNode.parentNode.insertBefore(data[i + 1].parentNode, data[i].parentNode);
+      switching = true;
+    }
+  }
+}
+
+function switchCheck(x, y, sortOption){
+  var tagName = ""
+  if(sortOption == "name"){ tagName = "h5" }
+  else if(sortOption == "city"){ tagName = "p"}
+  else{ return false }
+
+  return (x.getElementsByTagName(tagName)[0].textContent.toLowerCase() > y.getElementsByTagName(tagName)[0].textContent.toLowerCase())
+}
+
+</script>

@@ -8,11 +8,36 @@ function sort(){
   }
 }
 
+//Sort Idea from https://www.w3schools.com/howto/howto_js_sort_table.asp
 function sortTable(table, sortOption){
-  var rows = table.getElementsByTagName("tr");
-  for(row of rows){
-    row.style.display = 'none';
+  var rows, switching, i, x, y, shouldSwitch;
+  switching = true;
+  while (switching) {
+    switching = false;
+    rows = table.rows;
+    for(i = 0; i < (rows.length - 1); i++){
+      shouldSwitch = false;
+      x = rows[i].getElementsByTagName("a")[0];
+      y = rows[i + 1].getElementsByTagName("a")[0];
+      if (switchCheck(x, y, sortOption)) {
+        shouldSwitch = true;
+        break;
+      }
+    }
+    if (shouldSwitch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+    }
   }
+}
+
+function switchCheck(x, y, sortOption){
+  var index = -1
+  if(sortOption == "first_name"){index = 0}
+  else if(sortOption == "last_name"){index = 1}
+  else { return false }
+
+  return ((x.text.trim().split(" "))[index].toLowerCase() > (y.text.trim().split(" "))[index].toLowerCase())
 }
 
 </script>

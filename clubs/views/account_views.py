@@ -43,7 +43,6 @@ class LogInView(LoginProhibitedMixin, FormView):
         messages.success(self.request, "Login Successful")
         return super().form_valid(form)
 
-
     def get_success_url(self):
         return reverse('dashboard')
 

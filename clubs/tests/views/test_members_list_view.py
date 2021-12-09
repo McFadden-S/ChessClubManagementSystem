@@ -55,62 +55,63 @@ class MembersListViewTestCase(TestCase):
         response = self.client.post(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-    def test_search_bar_to_filter_list(self):
-        self.client.login(email=self.user.email, password='Password123')
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'members_list.html')
-        self.assertContains(response, 'John Smith')
-        self.assertContains(response, 'Beth Smith')
-        search_bar = 'Beth'
-        response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'members_list.html')
-        self.assertContains(response, 'Beth Smith')
-        self.assertNotContains(response, 'John Smith')
-
-    def test_empty_search_bar(self):
-        self.client.login(email=self.user.email, password='Password123')
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'members_list.html')
-        self.assertContains(response, 'John Smith')
-        self.assertContains(response, 'Beth Smith')
-        search_bar = ''
-        response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'members_list.html')
-        self.assertContains(response, 'Beth Smith')
-        self.assertContains(response, 'John Smith')
-
-    def test_sorted_list_first_name(self):
-        sort_table = 'first_name'
-        second_list = list(self.create_ordered_list_by(sort_table))
-        self.client.login(email=self.user.email, password='Password123')
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'members_list.html')
-        #response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
-        response = self.client.post(self.url, {'sort_table': sort_table})
-        member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
-        members = list(User.objects.filter(id__in=member_list))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'members_list.html')
-        self.assertListEqual(members, second_list)
-
-    def test_sorted_list_last_name(self):
-        sort_table = 'last_name'
-        second_list = list(self.create_ordered_list_by(sort_table))
-        self.client.login(email=self.user.email, password='Password123')
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'members_list.html')
-        response = self.client.post(self.url, {'sort_table': sort_table})
-        member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
-        members = list(User.objects.filter(id__in=member_list))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'members_list.html')
-        self.assertListEqual(members, second_list)
+    # TODO Refactor tests to reflect javascript search/sort
+    # def test_search_bar_to_filter_list(self):
+    #     self.client.login(email=self.user.email, password='Password123')
+    #     response = self.client.get(self.url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertContains(response, 'John Smith')
+    #     self.assertContains(response, 'Beth Smith')
+    #     search_bar = 'Beth'
+    #     response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertContains(response, 'Beth Smith')
+    #     self.assertNotContains(response, 'John Smith')
+    #
+    # def test_empty_search_bar(self):
+    #     self.client.login(email=self.user.email, password='Password123')
+    #     response = self.client.get(self.url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertContains(response, 'John Smith')
+    #     self.assertContains(response, 'Beth Smith')
+    #     search_bar = ''
+    #     response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertContains(response, 'Beth Smith')
+    #     self.assertContains(response, 'John Smith')
+    #
+    # def test_sorted_list_first_name(self):
+    #     sort_table = 'first_name'
+    #     second_list = list(self.create_ordered_list_by(sort_table))
+    #     self.client.login(email=self.user.email, password='Password123')
+    #     response = self.client.get(self.url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     #response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
+    #     response = self.client.post(self.url, {'sort_table': sort_table})
+    #     member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
+    #     members = list(User.objects.filter(id__in=member_list))
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertListEqual(members, second_list)
+    #
+    # def test_sorted_list_last_name(self):
+    #     sort_table = 'last_name'
+    #     second_list = list(self.create_ordered_list_by(sort_table))
+    #     self.client.login(email=self.user.email, password='Password123')
+    #     response = self.client.get(self.url)
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     response = self.client.post(self.url, {'sort_table': sort_table})
+    #     member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
+    #     members = list(User.objects.filter(id__in=member_list))
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertListEqual(members, second_list)
 
     # TODO Once Log In redirects to another view members only decorator and this test can be UNCOMMENTED
     # def test_get_members_list_redirects_when_applicant(self):
