@@ -10,7 +10,7 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank = False)
-    bio = models.CharField(max_length=100, blank=True)
+    bio = models.CharField(max_length=720, blank=True)
 
     BEGINNER = 'BG'
     INTERMEDIATE = 'IM'
@@ -26,7 +26,7 @@ class User(AbstractUser):
         default=BEGINNER
     )
 
-    personal_statement = models.CharField(max_length=100, blank=True)
+    personal_statement = models.CharField(max_length=720, blank=True)
 
     objects = UserManager()
     USERNAME_FIELD = 'email'

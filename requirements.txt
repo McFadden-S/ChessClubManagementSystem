@@ -2,6 +2,7 @@ asgiref==3.4.1
 coverage==6.0.1
 Django==3.2.5
 django-widget-tweaks==1.4.8
+django-with-asserts==0.0.1
 Faker==8.10.3
 libgravatar==1.0.0
 numpy==1.21.4

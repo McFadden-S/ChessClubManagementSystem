@@ -47,5 +47,9 @@
         <a href="{% url 'apply_club' club.id%}" class="btn btn-outline-light text-white">Apply</a>
     {% endif %}
 
+    {% if my_authorization == 'Member' or my_authorization == 'Officer' %}
+        <a href="{% url 'leave_club' club.id user.id %}" class="btn btn-outline-light text-white">Leave club</a>
+    {% endif %}
+
   </div>
 {% endblock %}
