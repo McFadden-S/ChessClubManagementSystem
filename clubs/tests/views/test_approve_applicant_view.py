@@ -98,11 +98,7 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
-    def test_get_approve_applicant_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.url)
-        response = self.client.get(self.url)
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
-        self.assertFalse(self._is_logged_in())
+
 
 
     # # test if (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(applicant, club):
