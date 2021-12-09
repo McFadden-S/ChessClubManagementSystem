@@ -2,8 +2,9 @@ from django.test import TestCase
 from clubs.models import User, Club_Member, Club
 from clubs.forms import CreateClubForm
 from django.urls import reverse
+from clubs.tests.helpers import LogInTester
 
-class CreateClubViewTestCase(TestCase):
+class CreateClubViewTestCase(TestCase, LogInTester):
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -41,6 +42,7 @@ class CreateClubViewTestCase(TestCase):
 
     def test_get_create_club(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'create_club.html')
@@ -51,6 +53,7 @@ class CreateClubViewTestCase(TestCase):
     def test_succesful_create_club(self):
          # SAVE TO CLUB DB
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         before_count = Club.objects.count()
         before_count_clubmember = Club_Member.objects.count()
         response = self.client.post(self.url, self.valid_form_input, follow=True)
@@ -84,6 +87,7 @@ class CreateClubViewTestCase(TestCase):
 
     def test_unsuccesful_create_club(self):
          self.client.login(email=self.user.email, password='Password123')
+         self.assertTrue(self._is_logged_in())
          before_count = Club.objects.count()
          before_count_clubmember = Club_Member.objects.count()
          response = self.client.post(self.url, self.invalid_form_input, follow=True)

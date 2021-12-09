@@ -4,10 +4,11 @@ from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
+from clubs.tests.helpers import LogInTester
 
 
 # Used this from clucker project with some modifications
-class ApplicantListViewTestCase(TestCase):
+class ApplicantListViewTestCase(TestCase, LogInTester):
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -40,6 +41,7 @@ class ApplicantListViewTestCase(TestCase):
 
     def test_get_applicants_list_by_officer(self):
         self.client.login(email=self.officer.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         # self.assertContains()
@@ -49,6 +51,7 @@ class ApplicantListViewTestCase(TestCase):
 
     def test_get_applicants_list_by_owner(self):
         self.client.login(email=self.owner.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         # self.assertContains()
@@ -61,6 +64,7 @@ class ApplicantListViewTestCase(TestCase):
                                          password='Password123')
         club_member1 = Club_Member.objects.create(user=user1, authorization='ME', club=self.club)
         self.client.login(email=user1.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -80,6 +84,8 @@ class ApplicantListViewTestCase(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())
+
 
     def create_ordered_list_by(self, order_by_var):
         applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
