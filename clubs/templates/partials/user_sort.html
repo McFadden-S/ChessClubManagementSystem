@@ -1,0 +1,10 @@
+<script>
+
+function switchCheck(x, y, sortOption){
+  var index = 0
+  if(sortOption == "first_name"){index = 0}
+  else if(sortOption == "last_name"){index = 1}
+  return ((x.text.trim().split(" "))[index].toLowerCase() > (y.text.trim().split(" "))[index].toLowerCase())
+}
+
+</script>

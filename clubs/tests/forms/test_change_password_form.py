@@ -1,5 +1,4 @@
 from django.test import TestCase
-from clubs.models import User
 from clubs.forms import UserChangePasswordForm
 
 # Used this from clucker project with some modifications
