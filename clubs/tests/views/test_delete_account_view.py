@@ -30,6 +30,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_any_user_without_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         before_count_user = User.objects.count()
         response = self.client.get(self.url)
         after_count_user = User.objects.count()
@@ -43,6 +44,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_applicant_in_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         club_applicant = Club_Member.objects.create(
             user=self.user,
             authorization='AP',
@@ -68,6 +70,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_member_in_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         club_applicant = Club_Member.objects.create(
             user=self.user,
             authorization='ME',
@@ -92,6 +95,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_officer_in_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         club_applicant = Club_Member.objects.create(
             user=self.user,
             authorization='OF',
@@ -117,6 +121,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_owner_who_is_only_person_in_club_can_delete_account(self):
         self.client.login(email=self.owner.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         before_count_user = User.objects.count()
         before_count_club_member = Club_Member.objects.count()
         before_count_club = Club.objects.count()
@@ -136,6 +141,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_owner_who_only_has_applicants_in_club_can_delete_account(self):
         self.client.login(email=self.owner.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         club_applicant = Club_Member.objects.create(
             user=self.user,
             authorization='AP',
@@ -159,6 +165,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_owner_who_has_only_has_member_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         club_applicant = Club_Member.objects.create(
             user=self.user,
             authorization='ME',
@@ -183,7 +190,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_owner_who_has_only_has_officer_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
-
+        self.assertTrue(self._is_logged_in())
         club_officer = Club_Member.objects.create(
             user=self.user,
             authorization='OF',
@@ -208,7 +215,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_owner_who_has_applicant_and_officer_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
-
+        self.assertTrue(self._is_logged_in())
         club_applicant = Club_Member.objects.create(
             user=self.secondary_user,
             authorization='AP',
@@ -239,7 +246,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_owner_who_has_applicant_and_member_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
-
+        self.assertTrue(self._is_logged_in())
         club_member = Club_Member.objects.create(
             user=self.secondary_user,
             authorization='ME',
@@ -270,7 +277,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
 
     def test_owner_who_has_officer_and_member_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
-
+        self.assertTrue(self._is_logged_in())
         club_member = Club_Member.objects.create(
             user=self.secondary_user,
             authorization='ME',
