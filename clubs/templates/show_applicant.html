@@ -1,36 +1,17 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Applicant</title>
-  </head>
-
-  <body>
-    <h1>Applicant Info:</h1>
-    <table>
-        <tr>
-          <td>
-              Name: {{applicant.first_name }} {{applicant.last_name }}
-          </td>
-        </tr>
-        <tr>
-          <td>
-              Bio: {{ applicant.bio }}
-          </td>
-        </tr>
-        <tr>
-          <td>
-              Chess experience: {{ applicant.chess_experience }}
-          </td>
-        </tr>
-        <tr>
-          <td>
-              Personal statement: {{ applicant.personal_statement }}
-          </td>
-        </tr>
-      </table>
-      <td>
-          <a href="{%url 'approve_applicant' applicant.id%}">Approve applicant</a>
-      </td>
-      
-  </body>
-</html>
+{% extends 'partials/dark_card.html' %}
+{% block contents %}
+  <div class="card-header">
+    <h1 class="card-title">Application</h1>
+  </div>
+  <div class="card-body">
+    {% include 'partials/user_profile.html' %}
+    <div>
+      <a href="{%url 'approve_applicant' club_id user.id%}" class="btn btn-outline-light text-white">Approve Application</a>
+      <a href="{%url 'reject_applicant' club_id user.id%}" class="btn btn-outline-light text-white">Reject Application</a>
+    </div>
+    <div>
+      <br>
+      <a href="{% url 'applicants_list' club_id %}" class="btn btn-outline-light text-white">Back</a>
+    </div>
+  </div>
+{% endblock %}

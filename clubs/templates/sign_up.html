@@ -1,15 +1,23 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Sign Up</title>
-  </head>
-
-  <body>
-    <h1>Sign Up</h1>
-    <form action="{% url 'sign_up'%}" method="post">
+{% extends 'partials/dark_card.html' %}
+{% block contents %}
+  <div class="card-header">
+    <h1 class="card-title">Sign Up</h1>
+  </div>
+  <div class="card-body">
+    <p>To have a profile photo, sign up with a gravatar associated email or set up a gravatar <a href="https://en.gravatar.com/">here</a>.</p>
+    <form class="novalidate" action="{% url 'sign_up'%}" method="post">
       {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="Sign Up">
+      <ul class="list-group list-group-flush">
+        {% include 'partials/form.html' with form=form %}
+        <li class="list-group-item bg-dark text-white">
+          <input type="submit" value="Sign Up" class="btn btn-outline-light text-white">
+        </li>
+      </ul>
     </form>
-  </body>
-</html>
+  </div>
+  <div class="card-footer">
+    <p>
+      Already have an account? Log in <a href="{% url 'log_in' %}">here</a>
+    </p>
+  </div>
+{% endblock %}

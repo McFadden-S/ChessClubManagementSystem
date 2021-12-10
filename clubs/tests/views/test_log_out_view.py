@@ -2,30 +2,30 @@
 from django.test import TestCase
 from django.urls import reverse
 from clubs.models import User
-from .helpers import LogInTester
+from clubs.tests.helpers import LogInTester,reverse_with_next
 
 class LogOutViewTestCase(TestCase, LogInTester):
     """Tests of the log out view."""
+    fixtures = ['clubs/tests/fixtures/default_user.json']
 
     def setUp(self):
         self.url = reverse('log_out')
-        self.user = User.objects.create_user(
-            email='johndoe@example.org',
-            first_name='John',
-            last_name='Doe',
-            bio='Hello, I am John Doe.',
-            password='Password123',
-            is_active=True,
-        )
+        self.user = User.objects.get(email='bobsmith@example.org')
 
     def test_log_out_url(self):
         self.assertEqual(self.url,'/log_out/')
 
     def test_get_log_out(self):
-        self.client.login(email='johndoe@example.org', password='Password123')
+        self.client.login(email='bobsmith@example.org', password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url, follow=True)
         response_url = reverse('home')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'home.html')
+        self.assertFalse(self._is_logged_in())
+
+    def test_get_log_out_redirects_when_not_logged_in(self):
+        redirect_url = reverse_with_next('log_in', self.url)
+        response = self.client.get(self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
