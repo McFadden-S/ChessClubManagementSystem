@@ -23,6 +23,7 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.applicant = User.objects.get(email='harrysmith@example.org')
         self.another_applicant = User.objects.get(email='kellysmith@example.org')
         self.club = Club.objects.get(name='Flying Orangutans')
+
         Club_Member.objects.create(user=self.owner, authorization='OW', club=self.club)
         Club_Member.objects.create(user=self.officer, authorization='OF',club=self.club)
         Club_Member.objects.create(user=self.another_officer, authorization='OF',club=self.club)
@@ -30,6 +31,7 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         Club_Member.objects.create(user=self.another_member, authorization='ME', club=self.club)
         Club_Member.objects.create(user=self.applicant, authorization='AP',club=self.club)
         Club_Member.objects.create(user=self.another_applicant, authorization='AP',club=self.club)
+
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
 
     def test_promote_member_url(self):
@@ -52,6 +54,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
 
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_before_promotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -63,6 +67,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
 
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_before_promotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -74,6 +80,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
 
         self.client.login(email=self.another_member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_before_promotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -85,6 +93,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
 
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_before_promotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -96,6 +106,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
 
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_before_promotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -108,6 +120,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.owner.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_promotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -120,6 +134,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.another_officer.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_promotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -132,6 +148,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.member.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_promotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -144,6 +162,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.applicant.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_promotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -156,6 +176,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
+        auth_before_promotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_promotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -168,6 +190,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.owner.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.applicant).authorization
+        self.assertEqual(auth_before_promotion, 'AP')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -180,6 +204,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.officer.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.applicant).authorization
+        self.assertEqual(auth_before_promotion, 'AP')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -192,6 +218,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.member.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.applicant).authorization
+        self.assertEqual(auth_before_promotion, 'AP')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -204,6 +232,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.another_applicant.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.applicant).authorization
+        self.assertEqual(auth_before_promotion, 'AP')
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -216,6 +246,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
+        auth_before_promotion = Club_Member.objects.get(user=self.applicant).authorization
+        self.assertEqual(auth_before_promotion, 'AP')
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -228,6 +260,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.officer.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.owner).authorization
+        self.assertEqual(auth_before_promotion, 'OW')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -240,6 +274,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.member.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.owner).authorization
+        self.assertEqual(auth_before_promotion, 'OW')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -252,6 +288,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.applicant.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
         self.assertTrue(self._is_logged_in())
+        auth_before_promotion = Club_Member.objects.get(user=self.owner).authorization
+        self.assertEqual(auth_before_promotion, 'OW')
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -264,6 +302,8 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
+        auth_before_promotion = Club_Member.objects.get(user=self.owner).authorization
+        self.assertEqual(auth_before_promotion, 'OW')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
