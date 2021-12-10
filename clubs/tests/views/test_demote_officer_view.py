@@ -23,6 +23,7 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.another_member = User.objects.get(email='jamessmith@example.org')
         self.another_applicant = User.objects.get(email='kellysmith@example.org')
         self.club = Club.objects.get(name='Flying Orangutans')
+
         Club_Member.objects.create(user=self.owner, authorization='OW', club=self.club)
         Club_Member.objects.create(user=self.officer, authorization='OF', club=self.club)
         Club_Member.objects.create(user=self.member, authorization='ME', club=self.club)
@@ -30,6 +31,7 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         Club_Member.objects.create(user=self.another_officer, authorization='OF',club=self.club)
         Club_Member.objects.create(user=self.another_member, authorization='ME', club=self.club)
         Club_Member.objects.create(user=self.another_applicant, authorization='AP',club=self.club)
+
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
 
     def test_demote_officer_url(self):
@@ -41,6 +43,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         """Test for redirecting user when not logged in."""
 
         self.assertFalse(self._is_logged_in())
+        auth_before_demotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_demotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse_with_next('log_in', self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -52,6 +56,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
 
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
+        auth_before_demotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_demotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -64,6 +70,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_before_demotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -76,6 +84,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.applicant).authorization
+        self.assertEqual(auth_before_demotion, 'AP')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -88,6 +98,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.owner).authorization
+        self.assertEqual(auth_before_demotion, 'OW')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -100,6 +112,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.owner).authorization
+        self.assertEqual(auth_before_demotion, 'OW')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -111,6 +125,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
 
         self.client.login(email=self.another_officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
+        auth_before_demotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_demotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -123,6 +139,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_before_demotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -135,6 +153,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.applicant).authorization
+        self.assertEqual(auth_before_demotion, 'AP')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -147,6 +167,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_demotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -159,6 +181,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.owner).authorization
+        self.assertEqual(auth_before_demotion, 'OW')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -170,6 +194,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
 
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
+        auth_before_demotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_demotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -182,6 +208,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.another_member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_before_demotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -194,6 +222,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.applicant).authorization
+        self.assertEqual(auth_before_demotion, 'AP')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -206,6 +236,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_before_demotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -219,6 +251,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.owner).authorization
+        self.assertEqual(auth_before_demotion, 'OW')
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -230,6 +264,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
 
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
+        auth_before_demotion = Club_Member.objects.get(user=self.officer).authorization
+        self.assertEqual(auth_before_demotion, 'OF')
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -242,6 +278,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_before_demotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -254,6 +292,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.another_applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.applicant).authorization
+        self.assertEqual(auth_before_demotion, 'AP')
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -266,6 +306,8 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
+        auth_before_demotion = Club_Member.objects.get(user=self.applicant).authorization
+        self.assertEqual(auth_before_demotion, 'AP')
         response = self.client.get(self.url)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
