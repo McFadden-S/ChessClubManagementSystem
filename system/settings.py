@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from django.contrib.messages import constants as message_constants
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +40,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'clubs',
+    'django_countries',
+    'widget_tweaks'
 ]
+
+LOCATION_FIELD = {
+    "map.provider": "openstreetmap",
+    "search.provider": "nominatim",
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -134,3 +142,23 @@ AUTH_USER_MODEL = 'clubs.User'
 
 # Login URL for redirecting users from login protected views
 LOGIN_URL = 'log_in'
+
+# URL where @login_prohibited redirects to
+REDIRECT_URL_WHEN_LOGGED_IN = 'dashboard'
+
+# URL to Redirect when not apart of a club
+REDIRECT_URL_WHEN_NO_CLUB_AUTHORIZATION = 'dashboard'
+
+# URL to Redirect when an applicant
+REDIRECT_URL_WHEN_APPLICANT = 'waiting_list'
+
+# URL to Redirect when a member
+REDIRECT_URL_WHEN_MEMBER = 'members_list'
+
+# URL to Redirect when an officer
+REDIRECT_URL_WHEN_OFFICER = 'members_list'
+
+MESSAGE_TAGS = {
+    message_constants.DEBUG: 'dark',
+    message_constants.ERROR: 'danger',
+}

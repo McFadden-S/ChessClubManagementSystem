@@ -22,10 +22,12 @@ class UserManager(BaseUserManager):
         other_fields.setdefault('is_active', True)
 
         if other_fields.get('is_staff') is not True:
-            raise ValueError(_('Superuser must have is_staff=True.'))
+            raise ValueError('Superuser must have is_staff=True.')
         if other_fields.get('is_superuser') is not True:
-            raise ValueError(_('Superuser must have is_superuser=True.'))
+            raise ValueError('Superuser must have is_superuser=True.')
 
         user = self.create_user(email, password, **other_fields)
-        clubs.models.Club.objects.create(user=user, authorization='OW')
+        club = clubs.models.Club.objects.create(name=f'{user.first_name.lower()}{user.last_name.lower()}', description="Admin Club")
+        clubs.models.Club_Member.objects.create(user=user, club=club, authorization="OW")
+
         return user
