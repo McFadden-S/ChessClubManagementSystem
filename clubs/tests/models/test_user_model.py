@@ -51,56 +51,98 @@ class UserModelTestCase(TestCase):
         self.user.email = 'bobsmith@example'
         self.assert_user_is_invalid()
 
+    def test_email_must_not_contain_more_than_one_at(self):
+        self.user.email = 'johndoe@@example.org'
+        self.assert_user_is_invalid()
+
     """ Unit test for first name """
 
-    def test_first_name_must_not_be_longer_50_chars(self):
+    def test_first_name_must_not_be_longer_50_characters(self):
         self.user.first_name = 'j' * 51
-        self.assert_user_is_invalid();
+        self.assert_user_is_invalid()
 
-    def test_first_name_can_have_50_chars(self):
+    def test_first_name_can_have_50_characters(self):
         self.user.first_name = 'j' * 50
-        self.assert_user_is_valid();
+        self.assert_user_is_valid()
 
     def test_first_name_must_not_be_blank(self):
         self.user.first_name = ''
-        self.assert_user_is_invalid();
+        self.assert_user_is_invalid()
+
+    def test_first_name_need_not_be_unique(self):
+        second_user = User.objects.get(email='bobjone@example.org')
+        self.user.first_name = second_user.first_name
+        self.assert_user_is_valid()
 
     """ Unit test for last name """
 
     def test_last_name_must_not_be_longer_50_chars(self):
         self.user.first_name = 'j' * 51
-        self.assert_user_is_invalid();
+        self.assert_user_is_invalid()
 
     def test_last_name_can_have_50_chars(self):
         self.user.first_name = 'j' * 50
-        self.assert_user_is_valid();
+        self.assert_user_is_valid()
 
     def test_last_name_must_not_be_blank(self):
         self.user.first_name = ''
-        self.assert_user_is_invalid();
+        self.assert_user_is_invalid()
+
+    def test_last_name_need_not_be_unique(self):
+        second_user = User.objects.get(email='harrysmith@example.org')
+        self.user.last_name = second_user.last_name
+        self.assert_user_is_valid()
 
     """ Unit test for bio """
 
     def test_bio_could_be_blank(self):
         self.user.bio = ''
-        self.assert_user_is_valid();
+        self.assert_user_is_valid()
+
+    def test_bio_need_not_be_unique(self):
+        second_user = User.objects.get(email='harrysmith@example.org')
+        self.user.bio = second_user.bio
+        self.assert_user_is_valid()
+
+    def test_bio_may_contain_720_characters(self):
+        self.user.bio = 'x' * 720
+        self.assert_user_is_valid()
+
+    def test_bio_must_not_contain_more_than_720_characters(self):
+        self.user.bio = 'x' * 721
+        self.assert_user_is_invalid()
 
     """ Unit test for chess_experience """
 
     def test_chess_experience_must_not_be_blank(self):
         self.user.chess_experience = ''
-        self.assert_user_is_invalid();
+        self.assert_user_is_invalid()
 
     def test_chess_experience_does_not_have_to_be_unique(self):
         second_user = User.objects.get(email='bethsmith@example.org')
         self.user.chess_experience = second_user.chess_experience
-        self.assert_user_is_valid();
+        self.assert_user_is_valid()
 
     """ Unit test for personal_statement """
 
     def test_personal_statement_could_be_blank(self):
         self.user.personal_statement = ''
-        self.assert_user_is_valid();
+        self.assert_user_is_valid()
+
+    def test_personal_statement_need_not_be_unique(self):
+        second_user = User.objects.get(email='harrysmith@example.org')
+        self.user.personal_statement = second_user.personal_statement
+        self.assert_user_is_valid()
+
+    def test_personal_statement_may_contain_720_characters(self):
+        self.user.bio = 'x' * 720
+        self.assert_user_is_valid()
+
+    def test_personal_statement_must_not_contain_more_than_720_characters(self):
+        self.user.bio = 'x' * 721
+        self.assert_user_is_invalid()
+
+    """valid and invalid user"""
 
     def assert_user_is_valid(self):
         try:

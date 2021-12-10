@@ -5,9 +5,6 @@ from django.contrib import messages
 from clubs.helpers import *
 from .mixins import *
 
-from django.contrib.auth.decorators import login_required
-from clubs.decorators import *
-
 class ActionView(TemplateView):
 
     def get(self, request, *args, **kwargs):
@@ -109,6 +106,25 @@ class TransferOwnershipView(OwnersRequiredMixin, ActionView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
+class LeaveClubView(LoginRequiredMixin, ActionView):
+    """View that lets the user leave a club"""
+
+    redirect_location = 'dashboard'
+
+    # Only members and officers can leave a club
+    def is_actionable(self, current_user, club):
+        return is_member(current_user, club) or is_officer(current_user, club)
+
+    def action(self, current_user, club):
+        remove_user_from_club(current_user, club)
+
+    def get(self, request, *args, **kwargs):
+        club = get_club(kwargs['club_id'])
+        current_user = request.user
+        if (self.is_actionable(current_user, club)):
+            self.action(current_user, club)
+        return redirect(self.redirect_location)
+
 #Mainined ActionView REVIEW IF CAN BE AN ActionView
 class ApplyClubView(LoginRequiredMixin, TemplateView):
 
@@ -131,25 +147,7 @@ class ApplyClubView(LoginRequiredMixin, TemplateView):
             return redirect(self.redirect_location, kwargs['club_id'])
         return redirect(self.redirect_location)
 
-class LeaveClubView(LoginRequiredMixin, ActionView):
-    """View that lets the user leave a club"""
-
-    redirect_location = 'dashboard'
-
-    # Only members and officers can leave a club
-    def is_actionable(self, current_user, club):
-        return is_member(current_user, club) or is_officer(current_user, club)
-
-    def action(self, current_user, club):
-        remove_user_from_club(current_user, club)
-
-    def get(self, request, *args, **kwargs):
-        club = get_club(kwargs['club_id'])
-        current_user = request.user
-        if (self.is_actionable(current_user, club)):
-            self.action(current_user, club)
-        return redirect(self.redirect_location)
-
+#Mainined ActionView REVIEW IF CAN BE AN ActionView
 class DeleteAccountView(LoginRequiredMixin, TemplateView):
 
     redirect_location = 'members_list'
@@ -165,7 +163,7 @@ class DeleteAccountView(LoginRequiredMixin, TemplateView):
 
     def action(self, request, current_user):
         my_clubs = get_my_clubs(current_user)
-        messages.add_message(request, messages.ERROR, "You must transfer ownership before you delete account for club")
+        messages.add_message(request, messages.ERROR, "You must transfer ownership to a new owner")
         return remove_clubs(current_user, my_clubs)[1]
 
     def get(self, request, *args, **kwargs):

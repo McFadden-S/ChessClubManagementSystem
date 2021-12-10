@@ -4,13 +4,6 @@ from django.db.models import Value
 from django.contrib import messages
 from .models import Club, Club_Member, User
 
-#not being used
-# def get_all_users_except_applicants():
-#     applicants = (Club_Member.objects.filter(authorization='Applicant')
-#                                      .values_list('user__id', flat=True))
-#     members = User.objects.exclude(id__in=applicants)
-#     return members
-
 def get_clubs_search(searched_letters):
     searched_clubs = (Club.objects.filter(name__icontains = searched_letters))
     return get_all_clubs().filter(id__in=searched_clubs)
@@ -18,26 +11,14 @@ def get_clubs_search(searched_letters):
 def get_applicants(club):
     return get_users(club, 'AP')
 
-def get_applicants_search(search_club, searched_letters):
-    return get_users_search(search_club, 'AP', searched_letters)
-
 def get_members(club):
     return get_users(club, 'ME')
-
-def get_members_search(search_club, searched_letters):
-    return get_users_search(search_club, 'ME', searched_letters)
 
 def get_officers(club):
     return get_users(club, 'OF')
 
-def get_officers_search(search_club, searched_letters):
-    return get_users_search(search_club, 'OF', searched_letters)
-
 def get_owners(club):
     return get_users(club, 'OW')
-
-def get_owners_search(search_club, searched_letters):
-    return get_users_search(search_club, 'OW', searched_letters)
 
 def get_users(search_club, search_authorization):
     authorizationFilter = (Club_Member.objects
@@ -46,30 +27,12 @@ def get_users(search_club, search_authorization):
         .values_list('user__id', flat=True))
     return User.objects.filter(id__in=authorizationFilter)
 
-def get_users_search(search_club, search_authorization, searched_letters):
-    searched_members = (User.objects
-        .annotate(full_name=Concat('first_name', Value(' '), 'last_name'))
-        .filter(full_name__icontains = searched_letters))
-    result = get_users(search_club, search_authorization).filter(id__in=searched_members)
-    return result
-
 def get_user(user_id):
     try:
         user = User.objects.get(id=user_id)
     except ObjectDoesNotExist:
         return None
     return user
-
-# not being used  
-# def get_user_of_club(user_id, club):
-#     try:
-#         user = User.objects.get(id=user_id)
-#
-#         #below will through an ObjectDoesNotExist if not apart of club
-#         Club_Member.objects.filter(club=club).get(user=user)
-#     except ObjectDoesNotExist:
-#         return None
-#     return user
 
 def get_count_of_users_in_club(search_club):
     count = (Club_Member.objects

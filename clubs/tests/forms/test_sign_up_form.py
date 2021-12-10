@@ -1,3 +1,4 @@
+"""Unit Tests of the sign up form."""
 from django.test import TestCase
 from clubs.models import User
 from clubs.forms import SignUpForm
@@ -6,6 +7,7 @@ from django.contrib.auth.hashers import check_password
 
 
 class SignUpFormTestCase(TestCase):
+    """Unit Tests of the sign up form."""
     def setUp(self):
         self.valid_form_input = {
             'email': 'bobsmith@example.com',
@@ -18,11 +20,11 @@ class SignUpFormTestCase(TestCase):
             'password_confirmation': 'Orangutan123'
         }
 
-    def test_a_valid_signup_form(self):
+    def test_valid_form(self):
         form = SignUpForm(data=self.valid_form_input)
         self.assertTrue(form.is_valid())
 
-    def test_SignUp_form_uses_model_validation(self):
+    def test_form_uses_user_model_validation(self):
         self.valid_form_input['email'] = '@example.org'
         form = SignUpForm(data=self.valid_form_input)
         self.assertFalse(form.is_valid())
@@ -31,42 +33,38 @@ class SignUpFormTestCase(TestCase):
         form = SignUpForm()
         self.assertIn('first_name', form.fields)
         self.assertIn('last_name', form.fields)
-
         self.assertIn('email', form.fields)
         emailField = form.fields['email']
         self.assertTrue(isinstance(emailField, forms.EmailField))
-
         self.assertIn('bio', form.fields)
         self.assertIn('chess_experience', form.fields)
         self.assertIn('personal_statement', form.fields)
-
         self.assertIn('new_password', form.fields)
         newPasswordWidget = form.fields['new_password'].widget
         self.assertTrue(isinstance(newPasswordWidget, forms.PasswordInput))
-
         self.assertIn('password_confirmation', form.fields)
         newPasswordConfirm = form.fields['password_confirmation'].widget
         self.assertTrue(isinstance(newPasswordConfirm, forms.PasswordInput))
 
-    def tests_password_must_use_uppercase(self):
+    def test_passwords_must_use_uppercase(self):
         self.valid_form_input['new_password'] = "password123"
         self.valid_form_input['password_confirmation'] = "password123"
         form = SignUpForm(data=self.valid_form_input)
         self.assertFalse(form.is_valid())
 
-    def tests_password_must_use_lowercase(self):
+    def test_passwords_must_use_lowercase(self):
         self.valid_form_input['new_password'] = "PASSWORD123"
         self.valid_form_input['password_confirmation'] = "PASSWORD123"
         form = SignUpForm(data=self.valid_form_input)
         self.assertFalse(form.is_valid())
 
-    def tests_password_must_use_number(self):
+    def test_passwords_must_use_number(self):
         self.valid_form_input['new_password'] = "PasswordABC"
         self.valid_form_input['password_confirmation'] = "PasswordABC"
         form = SignUpForm(data=self.valid_form_input)
         self.assertFalse(form.is_valid())
 
-    def tests_password_must_match_confirmpassword(self):
+    def test_new_password_must_match_confirm_password(self):
         self.valid_form_input['password_confirmation'] = "WrongPassword123"
         form = SignUpForm(data=self.valid_form_input)
         self.assertFalse(form.is_valid())

@@ -4,9 +4,10 @@ from clubs.forms import UserUpdateForm
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
+from clubs.tests.helpers import LogInTester
 
 # Used this from clucker project with some modifications
-class userUpdateViewTestCase(TestCase):
+class userUpdateViewTestCase(TestCase, LogInTester):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -31,6 +32,7 @@ class userUpdateViewTestCase(TestCase):
 
     def test_get_user_update(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
@@ -41,14 +43,18 @@ class userUpdateViewTestCase(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())
 
     def test_post_user_update_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url, self.form_input)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())
+
 
     def test_succesful_user_update(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.post(self.url, self.form_input)
         self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
@@ -61,6 +67,7 @@ class userUpdateViewTestCase(TestCase):
 
     def test_unsuccesful_user_update_with_blank_first_name(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         self.form_input['first_name'] = ''
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -72,6 +79,7 @@ class userUpdateViewTestCase(TestCase):
 
     def test_unsuccesful_user_update_with_blank_last_name(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         self.form_input['last_name'] = ''
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -83,6 +91,7 @@ class userUpdateViewTestCase(TestCase):
 
     def test_unsuccesful_user_update_with_incorrect_email(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         self.form_input['email'] = 'notemail'
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -94,6 +103,7 @@ class userUpdateViewTestCase(TestCase):
 
     def test_unsuccesful_user_update_with_duplicate_email(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         self.form_input['email'] = self.user2.email
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)

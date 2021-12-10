@@ -3,8 +3,9 @@ from clubs.models import User,Club_Member, Club
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib import messages
+from clubs.tests.helpers import LogInTester
 
-class ShowApplicantViewTestCase(TestCase):
+class ShowApplicantViewTestCase(TestCase, LogInTester):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -31,6 +32,7 @@ class ShowApplicantViewTestCase(TestCase):
 
     def test_get_show_applicant(self):
         self.client.login(email=self.officer.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'show_applicant.html')
@@ -46,9 +48,12 @@ class ShowApplicantViewTestCase(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())
+
 
     def test_get_show_applicant_redirects_having_been_already_approved(self):
         self.client.login(username=self.officer.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         user1 = User.objects.create_user(email="a@example.com",first_name="a",last_name="a",chess_experience="BG",password='Password123')
         club_member1 = Club_Member.objects.create(user=user1, authorization='ME', club=self.club)
         target_user1 = User.objects.get(email='a@example.com')
@@ -61,6 +66,7 @@ class ShowApplicantViewTestCase(TestCase):
 
     def test_get_show_applicant_with_valid_id(self):
         self.client.login(username=self.officer.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'show_applicant.html')
@@ -68,6 +74,7 @@ class ShowApplicantViewTestCase(TestCase):
 
     def test_get_show_applicant_with_invalid_id(self):
         self.client.login(username=self.officer.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         url = reverse('show_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.applicant.id+9999})
         response = self.client.get(url, follow=True)
         response_url = reverse('applicants_list', kwargs={'club_id' : self.club.id})
