@@ -29,6 +29,8 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         self.url = reverse('reject_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.applicant.id})
 
     def test_reject_applicant_url(self):
+        """Test for the reject applicant url."""
+
         self.assertEqual(self.url,f'/{self.club.id}/reject_applicant/{self.applicant.id}')
 
     def test_get_reject_applicant_redirects_when_not_logged_in(self):

@@ -34,9 +34,13 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         self.remove_officer_url = reverse('remove_user', kwargs={'club_id': self.club.id, 'user_id': self.officer.id})
 
     def test_remove_member_url(self):
+        """Test for the remove member url."""
+
         self.assertEqual(self.remove_member_url,f'/{self.club.id}/remove_user/{self.member.id}')
 
     def test_remove_officer_url(self):
+        """Test for the remove officer url."""
+
         self.assertEqual(self.remove_officer_url,f'/{self.club.id}/remove_user/{self.officer.id}')
 
     def test_get_owner_remove_member(self):
@@ -424,13 +428,17 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
             self.fail('The user should not be removed')
 
     def test_get_remove_member_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.remove_member_url)
-        response = self.client.get(self.remove_member_url)
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        """Test that user is redirected to log in page if user is not logged in."""
+
         self.assertFalse(self._is_logged_in())
+        response = self.client.get(self.remove_member_url)
+        redirect_url = reverse_with_next('log_in', self.remove_member_url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_get_remove_officer_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.remove_officer_url)
-        response = self.client.get(self.remove_officer_url)
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        """Test that user is redirected to log in page if user is not logged in."""
+        
         self.assertFalse(self._is_logged_in())
+        response = self.client.get(self.remove_officer_url)
+        redirect_url = reverse_with_next('log_in', self.remove_officer_url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
