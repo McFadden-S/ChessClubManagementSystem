@@ -40,10 +40,12 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
     def test_get_promote_member_redirects_when_not_logged_in(self):
         """Test for redirecting user when not logged in."""
 
-        redirect_url = reverse_with_next('log_in', self.url)
-        response = self.client.get(self.url)
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
+        response = self.client.get(self.url)
+        redirect_url = reverse_with_next('log_in', self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        auth_after_promotion = Club_Member.objects.get(user=self.member).authorization
+        self.assertEqual(auth_after_promotion, 'ME')
 
     def test_get_owner_promote_member(self):
         """Test for the owner successfully promoting a member."""
