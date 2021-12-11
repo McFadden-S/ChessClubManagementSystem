@@ -22,7 +22,7 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
         self.member = User.objects.get(email='johnsmith@example.org')
         self.applicant = User.objects.get(email='bethsmith@example.org')
         self.club = Club.objects.get(name='Flying Orangutans')
-        self.wrong_club = Club.objects.get(name='Flying Monkeys')
+        self.wrong_club = Club.objects.get(name='Flying Orangutans 2')
 
         Club_Member.objects.create(user=self.owner, authorization='OW', club=self.club)
         Club_Member.objects.create(user=self.officer, authorization='OF', club=self.club)
