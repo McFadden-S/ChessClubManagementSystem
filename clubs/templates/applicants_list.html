@@ -1,0 +1,22 @@
+{% extends 'partials/dark_card.html' %}
+{% block contents %}
+{% include 'partials/user_search_script.html'%}
+{% include 'partials/user_sort_script.html'%}
+
+<div class="card-header">
+  <h1 class="card-title">Applicants List</h1>
+</div>
+
+<div class="card-body">
+
+  {% include 'partials/search_bar.html' %}
+
+  {% include 'partials/sort_select.html' with options='partials/user_table_sort_options.html'%}
+
+  <div class="row">
+    {% include 'partials/user_table.html' with table_title="Applicants" user_list=applicants size="col-12"%}
+  </div>
+
+</div>
+
+{% endblock %}

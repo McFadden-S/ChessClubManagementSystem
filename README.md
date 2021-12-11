@@ -51,3 +51,4 @@ $ python3 manage.py test
 The packages used by this application are specified in `requirements.txt`
 
 *Declare are other sources here.*
+"""The idea of filter members with full name is from https://stackoverflow.com/questions/17932152/auth-filter-full-name"""
