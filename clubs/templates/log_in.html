@@ -1,19 +1,25 @@
-<html>
-  <head>
-    <title>Chess Club | Log In</title>
-  </head>
-  <body>
-    <h1>Log in</h1>
+{% extends 'partials/dark_card.html' %}
+{% block contents %}
+  <div class="card-header">
+    <h1 class="card-title">Log In</h1>
+  </div>
+  <div class="card-body">
     {% for message in messages %}
       <p><b>{{ message }}</b><p>
     {% endfor %}
     <form action="{% url 'log_in' %}" method="post">
       {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="Log In">
+      <ul class="list-group list-group-flush">
+        {% include 'partials/form.html' with form=form %}
+        <li class="list-group-item bg-dark text-white">
+          <input type="submit" value="Log In" class="btn btn-outline-light text-white">
+        </li>
+      </ul>
     </form>
+  </div>
+  <div class="card-footer">
     <p>
       Don't have an account? Sign Up <a href="{% url 'sign_up' %}">here</a>
     </p>
-  </body>
-</html>
+  </div>
+{% endblock %}

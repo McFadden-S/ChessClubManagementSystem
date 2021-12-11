@@ -1,26 +1,34 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Members List</title>
-  </head>
+{% extends 'partials/dark_card.html' %}
+{% block contents %}
 
-  <body>
-    <h1>Member Info:</h1>
-    <table>
-        <tr>
-          <td>
-              {{ member.first_name }} {{member.last_name }}
-          </td>
-        </tr>
-        <tr>
-          <td>
-              {{ member.bio }}
-          </td>
-        </tr>
-        <tr>
-          <td>
-              {{ auth }}
-          </td>
-        </tr>
-  </body>
-</html>
+  <div class="card-header">
+    <h1 class="card-title">Member Info</h1>
+  </div>
+
+  <div class="card-body">
+    {% include 'partials/user_profile.html' %}
+    <div>
+    {% if my_authorization == 'Owner' %}
+      {% if authorizationText == 'Member' %}
+          <a href="{% url 'promote_member' club_id user.id%}" class="btn btn-outline-light text-white">Promote to officer</a>
+          <a href="{% url 'remove_user' club_id user.id%}" class="btn btn-outline-light text-white">Remove member</a>
+      {% elif authorizationText == 'Officer' %}
+          <a href="{% url 'demote_officer' club_id user.id%}" class="btn btn-outline-light text-white">Demote to member</a>
+          <a href="{% url 'transfer_ownership' club_id user.id%}" class="btn btn-outline-light text-white">Transfer ownership</a>
+          <a href="{% url 'remove_user' club_id user.id%}" class="btn btn-outline-light text-white">Remove officer</a>
+      {% endif %}
+    {% endif %}
+
+    {% if my_authorization == 'Officer' %}
+      {% if authorizationText == 'Member' %}
+          <a href="{% url 'remove_user' club_id user.id%}" class="btn btn-outline-light text-white">Remove member</a>
+      {% endif %}
+    {% endif %}
+    </div>
+
+    <div>
+      <br>
+      <a href="{% url 'members_list' club_id %}" class="btn btn-outline-light text-white">Back</a>
+    </div>
+  </div>
+{% endblock %}

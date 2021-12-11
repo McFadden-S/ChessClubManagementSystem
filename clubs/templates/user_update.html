@@ -1,15 +1,17 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Update User Information</title>
-  </head>
-
-  <body>
-    <h1>Update User Information</h1>
-    <form action="{% url 'update_user'%}" method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <input type="submit" value="Update Information">
-    </form>
-  </body>
-</html>
+{% extends 'partials/dark_card.html' %}
+{% block contents %}
+  <div class="card-header">
+    <h1 class="card-title">Update User Information</h1>
+  </div>
+  <div class="card-body">
+      <form class="novalidate" action="{% url 'update_user'%}" method="post">
+        {% csrf_token %}
+        <ul class="list-group list-group-flush">
+          {% include 'partials/form.html' with form=form %}
+          <li class="list-group-item bg-dark text-white">
+            <input type="submit" value="Update Information" class="btn btn-outline-light text-white">
+          </li>
+        </ul>
+      </form>
+  </div>
+{% endblock %}

@@ -1,24 +1,22 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Applicant List</title>
-  </head>
+{% extends 'partials/dark_card.html' %}
+{% block contents %}
+{% include 'partials/user_search_script.html'%}
+{% include 'partials/user_sort_script.html'%}
 
-  <body>
-    <h1>Applicant List</h1>
+<div class="card-header">
+  <h1 class="card-title">Applicants List</h1>
+</div>
 
-    <table>
-      {% for applicant in applicants %}
-        <tr>
-          <td>
-              <a href="{% url 'show_applicant' applicant.id %}">
-                {{ applicant.first_name }} {{applicant.last_name }}
-              </a>
-          </td>
+<div class="card-body">
 
-        </tr>
-      {% empty %}
-       EMPTY
-      {% endfor %}
-  </body>
-</html>
+  {% include 'partials/search_bar.html' %}
+
+  {% include 'partials/sort_select.html' with options='partials/user_table_sort_options.html'%}
+
+  <div class="row">
+    {% include 'partials/user_table.html' with table_title="Applicants" user_list=applicants size="col-12"%}
+  </div>
+
+</div>
+
+{% endblock %}
