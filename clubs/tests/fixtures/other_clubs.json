@@ -10,17 +10,5 @@
       "country": "GB",
       "description": "Our goal is to have all orangutans 2 rule the world."
     }
-  },
-  {
-    "model": "clubs.club",
-    "pk": 3,
-    "fields": {
-      "name": "Flying Monkeys",
-      "address": "Bush House",
-      "city": "London",
-      "postal_code": "WC2B 4BG",
-      "country": "GB",
-      "description": "Our goal is to have all monkeys rule the world."
-    }
   }
 ]
