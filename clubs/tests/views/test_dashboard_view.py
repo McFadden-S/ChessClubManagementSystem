@@ -72,13 +72,13 @@ class DashboardViewTestCase(TestCase, LogInTester):
     #     self.client.login(email=self.user.email, password='Password123')
     #     response = self.client.get(self.url)
     #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertTemplateUsed(response, 'dashboard.html')
     #     self.assertContains(response, 'John Smith')
     #     self.assertContains(response, 'Beth Smith')
     #     search_bar = 'Beth'
     #     response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
     #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertTemplateUsed(response, 'dashboard.html')
     #     self.assertContains(response, 'Beth Smith')
     #     self.assertNotContains(response, 'John Smith')
     #
@@ -86,49 +86,41 @@ class DashboardViewTestCase(TestCase, LogInTester):
     #     self.client.login(email=self.user.email, password='Password123')
     #     response = self.client.get(self.url)
     #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertTemplateUsed(response, 'dashboard.html')
     #     self.assertContains(response, 'John Smith')
     #     self.assertContains(response, 'Beth Smith')
     #     search_bar = ''
     #     response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
     #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertTemplateUsed(response, 'dashboard.html')
     #     self.assertContains(response, 'Beth Smith')
     #     self.assertContains(response, 'John Smith')
     #
-    # def test_sorted_list_first_name(self):
+    # def test_sorted_list_club_name(self):
     #     sort_table = 'first_name'
     #     second_list = list(self.create_ordered_list_by(sort_table))
     #     self.client.login(email=self.user.email, password='Password123')
     #     response = self.client.get(self.url)
     #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertTemplateUsed(response, 'dashboard.html')
     #     #response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
     #     response = self.client.post(self.url, {'sort_table': sort_table})
     #     member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
     #     members = list(User.objects.filter(id__in=member_list))
     #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertTemplateUsed(response, 'dashboard.html')
     #     self.assertListEqual(members, second_list)
     #
-    # def test_sorted_list_last_name(self):
+    # def test_sorted_list_city_name(self):
     #     sort_table = 'last_name'
     #     second_list = list(self.create_ordered_list_by(sort_table))
     #     self.client.login(email=self.user.email, password='Password123')
     #     response = self.client.get(self.url)
     #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertTemplateUsed(response, 'dashboard.html')
     #     response = self.client.post(self.url, {'sort_table': sort_table})
     #     member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
     #     members = list(User.objects.filter(id__in=member_list))
     #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'members_list.html')
+    #     self.assertTemplateUsed(response, 'dashboard.html')
     #     self.assertListEqual(members, second_list)
-
-    # TODO Once Log In redirects to another view members only decorator and this test can be UNCOMMENTED
-    # def test_get_members_list_redirects_when_applicant(self):
-    #     self.client.login(email=self.user.email, password='Password123')
-    #     self.club.authorization='AP'
-    #     redirect_url = reverse_with_next('home', self.url)
-    #     response = self.client.get(self.url)
-    #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
