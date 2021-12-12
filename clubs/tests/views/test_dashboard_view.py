@@ -1,9 +1,9 @@
 """Unit tests for dashboard view"""
-from django.test import TestCase
-from clubs.models import User, Club_Member, Club
-from django.urls import reverse
 from clubs.helpers import get_all_clubs, get_my_clubs, get_other_clubs
-from clubs.tests.helpers import reverse_with_next, LogInTester
+from clubs.models import User, Club, Club_Member
+from clubs.tests.helpers import LogInTester, reverse_with_next
+from django.test import TestCase
+from django.urls import reverse
 
 
 # Used this from Clucker project with some modifications
@@ -67,6 +67,14 @@ class DashboardViewTestCase(TestCase, LogInTester):
         response = self.client.post(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
+
+    def test_dashboard_navbar(self):
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertContains(response, 'My Clubs')
+        self.assertNotContains(response, 'Members')
+        self.assertNotContains(response, 'Applicants')
+
 
     # TODO Refactor tests to reflect javascript search/sort
     # def test_search_bar_to_filter_list(self):
