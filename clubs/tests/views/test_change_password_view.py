@@ -1,4 +1,4 @@
-"""Unit tests for changePassword view"""
+"""Unit tests for change_password view"""
 from clubs.forms import UserChangePasswordForm
 from clubs.models import User, Club_Member, Club
 from clubs.tests.helpers import LogInTester, reverse_with_next
@@ -8,7 +8,7 @@ from django.urls import reverse
 
 # Used this from clucker project with some modifications
 class userChangePasswordViewTestCase(TestCase, LogInTester):
-    """Unit tests for changePassword view"""
+    """Unit tests for change_password view"""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/default_club.json'
