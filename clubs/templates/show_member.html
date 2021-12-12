@@ -24,9 +24,6 @@
           <a href="{% url 'remove_user' club_id user.id%}" class="btn btn-outline-light text-white">Remove member</a>
       {% endif %}
     {% endif %}
-    {% if authorizationText == 'Applicant' %}
-          <a href="{% url 'approve_applicant' club_id user.id%}" class="btn btn-outline-light text-white">Approve applicant</a>
-    {% endif %}
     </div>
 
     <div>

@@ -2,6 +2,7 @@
 
   function search(){
     var searchedLetters = document.getElementById("searched_letters").value.toLowerCase();
+    document.getElementById("previous_search").textContent = 'Previous Search: ' + searchedLetters;
     var tables = document.getElementsByTagName("table");
     for(table of tables){
       searchTable(table, searchedLetters);

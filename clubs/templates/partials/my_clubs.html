@@ -2,9 +2,9 @@
     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
       My Clubs
     </a>
-    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+    <ul class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown">
       {% for club in my_clubs %}
-        <li><a class="dropdown-item" href="{% url 'show_club' club.id%}">{{club.name}}</a></li>
+        <li><a class="dropdown-item text-white" href="{% url 'show_club' club.id%}">{{club.name}}</a></li>
       {% endfor %}
     </ul>
   </li>

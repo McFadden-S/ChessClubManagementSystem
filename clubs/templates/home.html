@@ -1,21 +1,11 @@
-{% extends 'partials/base.html' %}
-{% block body %}
-<div id="cover-image">
-  <div class="container container-fluid vh-100">
-    <div class="row justify-content-center h-50">
-      <div class="col-6 my-auto">
-        <div class="card cover-card bg-dark text-white mt-5">
-          <div class="card-header">
-            <h1 class="card-title">Chess Club</h1>
-            <p class="cover-subtitle mb-2 text-muted">The place to organize your chess club</p>
-          </div>
-          <div class="card-body">
-            <p><a href='{% url 'sign_up' %}' class="btn btn-outline-light text-white">Sign Up</a></p>
-            <p><a href='{% url 'log_in' %}' class="btn btn-outline-light text-white">Log in</a></p>
-          </div>
-        </div>
-      </div>
-    </div>
+{% extends 'partials/external_dark_card.html' %}
+{% block contents %}
+  <div class="card-header">
+    <h1 class="card-title">Chess Club</h1>
+    <p class="cover-subtitle mb-2 text-muted">The place to organize your chess club</p>
   </div>
-</div>
+  <div class="card-body">
+    <p><a href='{% url 'sign_up' %}' class="btn btn-outline-light text-white">Sign Up</a></p>
+    <p><a href='{% url 'log_in' %}' class="btn btn-outline-light text-white">Log in</a></p>
+  </div>
 {% endblock %}
