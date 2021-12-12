@@ -1,13 +1,14 @@
+"""Unit tests for dashboard view"""
 from django.test import TestCase
 from clubs.models import User, Club_Member, Club
 from django.urls import reverse
 from clubs.helpers import get_all_clubs, get_my_clubs, get_other_clubs
-from django.contrib.auth.hashers import check_password
 from clubs.tests.helpers import reverse_with_next, LogInTester
 
 
 # Used this from Clucker project with some modifications
 class DashboardViewTestCase(TestCase, LogInTester):
+    """Unit tests for dashboard view"""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
