@@ -1,11 +1,11 @@
-"""Tests of the home view."""
-from django.test import TestCase
-from clubs.models import User,Club_Member, Club
+"""Unit tests for home view"""
+from clubs.models import User, Club, Club_Member
 from clubs.tests.helpers import LogInTester
+from django.test import TestCase
 from django.urls import reverse
 
 class HomeViewTestCase(TestCase, LogInTester):
-    """Tests of the home view."""
+    """Unit tests for home view"""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/default_club.json'
@@ -19,14 +19,11 @@ class HomeViewTestCase(TestCase, LogInTester):
             user=self.user, authorization='AP', club=self.club
         )
 
-
-
     def test_get_home_page(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'home.html')
         self.assertEqual(response.status_code, 200)
         self.assertFalse(self._is_logged_in())
-
 
     def test_home_url(self):
         self.assertEqual(self.url,'/')
@@ -38,3 +35,10 @@ class HomeViewTestCase(TestCase, LogInTester):
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
+
+    def test_home_navbar(self):
+        self.assertFalse(self._is_logged_in())
+        response = self.client.get(self.url)
+        self.assertNotContains(response, 'My Clubs')
+        self.assertNotContains(response, 'Members')
+        self.assertNotContains(response, 'Applicants')
