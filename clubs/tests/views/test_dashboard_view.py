@@ -1,10 +1,9 @@
 """Unit tests for dashboard view"""
-from django.http import response
-from django.test import TestCase
-from clubs.models import User, Club_Member, Club
-from django.urls import reverse
 from clubs.helpers import get_all_clubs, get_my_clubs, get_other_clubs
-from clubs.tests.helpers import reverse_with_next, LogInTester
+from clubs.models import User, Club, Club_Member
+from clubs.tests.helpers import LogInTester, reverse_with_next
+from django.test import TestCase
+from django.urls import reverse
 
 
 # Used this from Clucker project with some modifications
