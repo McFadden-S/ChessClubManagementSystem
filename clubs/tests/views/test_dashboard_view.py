@@ -1,4 +1,5 @@
 """Unit tests for dashboard view"""
+from django.http import response
 from django.test import TestCase
 from clubs.models import User, Club_Member, Club
 from django.urls import reverse
@@ -67,6 +68,14 @@ class DashboardViewTestCase(TestCase, LogInTester):
         response = self.client.post(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
+
+    def test_dashboard_navbar(self):
+        self.client.login(email=self.user.email, password='Password123')
+        response = self.client.get(self.url)
+        self.assertContains(response, 'My Clubs')
+        self.assertNotContains(response, 'Members')
+        self.assertNotContains(response, 'Applicants')
+
 
     # TODO Refactor tests to reflect javascript search/sort
     # def test_search_bar_to_filter_list(self):
