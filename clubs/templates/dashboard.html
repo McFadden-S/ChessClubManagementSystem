@@ -1,5 +1,8 @@
 {% extends 'partials/wide_dark_card.html' %}
 {% block contents %}
+{% include 'partials/club_search_script.html' %}
+{% include 'partials/club_sort_script.html' %}
+
 <div class="card-header">
   <h1 class="card-title">
     <i class="bi bi-speedometer2"></i> Dashboard
@@ -8,68 +11,60 @@
 
 <div class="card-body">
 
+  {% include 'partials/search_bar.html'%}
+
+  {% include 'partials/sort_select.html' with options='partials/club_table_sort_options.html'%}
+
   <div class="row justify-content-end">
     <div class="col"></div>
     <div class="col-auto">
-      <form action="{% url 'dashboard' %}" method="post">
-        {% csrf_token %}
-        <div class="input-group mb-3">
-          <input type="search" placeholder="Search current clubs" name="searched_letters" style="border: 1in;">
-          <button type="submit" name ="search_btn" class="btn btn-outline-light text-white">
-            Search <i class="bi bi-search"></i>
-          </button>
-        </div>
-      </form>
+      <a href="{% url 'create_club' %}" class="btn btn-outline-light">Create Club</a>
     </div>
   </div>
 
-  <div class="row justify-content-end">
-    <div class="col-auto">
-      <form action="{% url 'dashboard' %}" method="post" id="form_sort">
-          {% csrf_token %}
-        <select name="sort_table" class="btn btn-outline-light text-white" onchange="this.form.submit()">
-            <option disabled="true" selected>--Sort By--</option>
-            <option value="name">Club Name</option>
-            <option value="city">City</option>
-        </select>
-      </form>
-    </div>
-  </div>
-
-  <h2><i class="bi bi-people"></i> My Clubs</h2>
-  <a href="{% url 'create_club' %}" class="btn btn-outline-light">Create Club</a>
-
-  <div class="row">
-
-    {% for club,auth in club_auth %}
-      <div class="col-auto">
-        <div class="card bg-secondary text-end text-white mx-3 my-3" style="width: 18rem; height: 11rem;">
-          <div class="card-body">
-            <h5 class="card-title">{{club.name}}</h5>
-            <p class="card-text">{{club.city}}</p>
-            <p class="card-text">{{auth}}</p>
-            <a href="{% url 'show_club' club.id %}" class="btn btn-dark">View Club</a>
+  <table class="table table-dark">
+    <thead class="table-dark">
+      <h2><i class="bi bi-people"></i> My Clubs</h2>
+    </thead>
+    <tbody>
+      <div class="row">
+        {% for club,auth in club_auth %}
+          <div class="col-auto">
+            <div class="card bg-secondary text-end text-white mx-3 my-3" style="width: 18rem; height: 11rem;" name="myClubsData">
+              <div class="card-body" >
+                <h5 class="card-title">{{club.name}}</h5>
+                <p class="card-text">{{club.city}}</p>
+                <p class="card-text">{{auth}}</p>
+                <a href="{% url 'members_list' club.id %}" class="btn btn-dark">View Club</a>
+              </div>
+            </div>
           </div>
-        </div>
+        {% endfor %}
       </div>
-    {% endfor %}
+    </tbody>
+  </table>
 
-
-
-  </div>
-  <h2><i class="bi bi-patch-plus"></i> Other Clubs</h2>
-  <div class="row">
-    {% for club in other_clubs %}
-      <div class="col-auto">
-        <div class="card bg-secondary text-end text-white mx-3 my-3" style="width: 18rem; height: 10rem;">
-          <div class="card-body">
-            <h5 class="card-title">{{club.name}}</h5>
-            <p class="card-text">{{club.city}}</p>
-            <a href="{% url 'show_club' club.id %}" class="btn btn-dark">View Club</a>
+  <table class="table table-dark table-striped">
+    <thead class="table-dark">
+      <h2><i class="bi bi-patch-plus"></i> Other Clubs</h2>
+    </thead>
+    <tbody>
+      <div class="row">
+        {% for club in other_clubs %}
+          <div class="col-auto">
+            <div class="card bg-secondary text-end text-white mx-3 my-3" style="width: 18rem; height: 10rem;" name="otherClubsData">
+              <div class="card-body">
+                <h5 class="card-title">{{club.name}}</h5>
+                <p class="card-text">{{club.city}}</p>
+                <a href="{% url 'show_club' club.id %}" class="btn btn-dark">View Club</a>
+              </div>
+            </div>
           </div>
-        </div>
+        {% endfor %}
       </div>
-    {% endfor %}
+    </tbody>
+  </table>
+
   </div>
 </div>
 {% endblock %}

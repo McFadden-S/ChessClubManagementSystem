@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.conf import settings
-from .helpers import get_authorization, get_club
+from clubs.helpers import get_authorization, get_club
 from django.contrib import messages
 
 class LoginProhibitedMixin():
@@ -15,7 +15,7 @@ class ClubAuthorizationRequiredMixin(LoginRequiredMixin):
 
     def dispatch(self, *args, **kwargs):
         if get_authorization(self.request.user, get_club(self.kwargs['club_id'])) == None:
-            messages.add_message(self.request, messages.ERROR, "You are not apart of this club")
+            messages.add_message(self.request, messages.ERROR, "You are not a part of this club")
             return redirect(settings.REDIRECT_URL_WHEN_NO_CLUB_AUTHORIZATION)
         return super().dispatch(*args, **kwargs)
 

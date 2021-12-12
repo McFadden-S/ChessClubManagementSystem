@@ -4,9 +4,10 @@ from clubs.forms import UserChangePasswordForm
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
+from clubs.tests.helpers import LogInTester
 
 # Used this from clucker project with some modifications
-class userChangePasswordViewTestCase(TestCase):
+class userChangePasswordViewTestCase(TestCase, LogInTester):
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -33,6 +34,7 @@ class userChangePasswordViewTestCase(TestCase):
 
     def test_get_change_password(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'change_password.html')
@@ -48,6 +50,7 @@ class userChangePasswordViewTestCase(TestCase):
 
     def test_succesful_password_change(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.post(self.url, self.form_input)
         self.user.refresh_from_db()
         is_password_correct = check_password('NewPassword123', self.user.password)
@@ -58,6 +61,7 @@ class userChangePasswordViewTestCase(TestCase):
 
     def test_password_change_unsuccesful_without_correct_old_password(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         self.form_input['password'] = 'WrongPassword123'
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -73,6 +77,7 @@ class userChangePasswordViewTestCase(TestCase):
 
     def test_password_change_unsuccesful_without_password_confirmation(self):
         self.client.login(email=self.user.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         self.form_input['new_password_confirmation'] = 'WrongPassword123'
         response = self.client.post(self.url, self.form_input, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -90,3 +95,4 @@ class userChangePasswordViewTestCase(TestCase):
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url, self.form_input)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        self.assertFalse(self._is_logged_in())

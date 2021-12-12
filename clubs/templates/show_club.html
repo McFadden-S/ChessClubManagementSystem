@@ -1,25 +1,5 @@
 {% extends 'partials/dark_card.html' %}
 {% block contents %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
-  <div class="container">
-    <a class="navbar-brand" href="{% url 'show_club' club_id %}">
-      <i class="bi bi-people"></i> Club
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    {% if user.is_authenticated %}
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        {%if my_club_auth == "Owner" or my_club_auth == "Officer"%}
-          {% include 'partials/menu.html' %}
-        {%endif%}
-        {%if my_club_auth == "Member"%}
-          {% include 'partials/menu_member.html' %}
-        {%endif%}
-      </div>
-    {% endif %}
-  </div>
-</nav>
   <div class="card-header">
     <h1 class="card-title">Club Info</h1>
   </div>
@@ -66,6 +46,9 @@
         <a href="{% url 'apply_club' club.id%}" class="btn btn-outline-light text-white">Apply</a>
     {% endif %}
 
-    <a href="{% url 'dashboard' %}" class="btn btn-outline-light text-white">Back</a>
+    {% if my_authorization == 'Member' or my_authorization == 'Officer' %}
+        <a href="{% url 'leave_club' club.id user.id %}" class="btn btn-outline-light text-white">Leave club</a>
+    {% endif %}
+
   </div>
 {% endblock %}

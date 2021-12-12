@@ -37,5 +37,57 @@
       "personal_statement": "I am Orangutan too",
       "password": "pbkdf2_sha256$260000$sR8atw6tAGBlZBQLB0FnHP$d3eMuhprS8+3FUHAigrt2oQHFufoLLkhgQz33bPpEWk="
     }
+  },
+  {
+    "model": "clubs.user",
+    "pk": 5,
+    "fields": {
+      "first_name": "James",
+      "last_name": "Smith",
+      "email": "jamessmith@example.org",
+      "bio": "Hiya",
+      "chess_experience": "IM",
+      "personal_statement": "I am Orangutan too",
+      "password": "pbkdf2_sha256$260000$sR8atw6tAGBlZBQLB0FnHP$d3eMuhprS8+3FUHAigrt2oQHFufoLLkhgQz33bPpEWk="
+    }
+  },
+  {
+    "model": "clubs.user",
+    "pk": 6,
+    "fields": {
+      "first_name": "Marry",
+      "last_name": "Smith",
+      "email": "marrysmith@example.org",
+      "bio": "Hiya",
+      "chess_experience": "IM",
+      "personal_statement": "I am Orangutan too",
+      "password": "pbkdf2_sha256$260000$sR8atw6tAGBlZBQLB0FnHP$d3eMuhprS8+3FUHAigrt2oQHFufoLLkhgQz33bPpEWk="
+    }
+  },
+  {
+    "model": "clubs.user",
+    "pk": 7,
+    "fields": {
+      "first_name": "Kelly",
+      "last_name": "Smith",
+      "email": "kellysmith@example.org",
+      "bio": "Hiya",
+      "chess_experience": "IM",
+      "personal_statement": "I am Orangutan too",
+      "password": "pbkdf2_sha256$260000$sR8atw6tAGBlZBQLB0FnHP$d3eMuhprS8+3FUHAigrt2oQHFufoLLkhgQz33bPpEWk="
+    }
+  },
+  {
+    "model": "clubs.user",
+    "pk":8,
+    "fields": {
+      "first_name": "Bob",
+      "last_name": "Jone",
+      "email": "bobjone@example.org",
+      "bio": "Hiya",
+      "chess_experience": "IM",
+      "personal_statement": "I am Orangutan too",
+      "password": "pbkdf2_sha256$260000$sR8atw6tAGBlZBQLB0FnHP$d3eMuhprS8+3FUHAigrt2oQHFufoLLkhgQz33bPpEWk="
+    }
   }
 ]

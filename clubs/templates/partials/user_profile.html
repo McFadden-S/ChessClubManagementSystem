@@ -19,7 +19,7 @@
       </td>
     </tr>
 
-    {% if request_from_owner or request_from_officer %}
+    {% if my_authorization == 'Owner' or my_authorization == 'Officer' %}
 
     <tr>
       <td>
