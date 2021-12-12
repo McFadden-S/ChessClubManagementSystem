@@ -11,7 +11,7 @@
               <img src="{{ table_user.mini_gravatar }}" alt="Gravatar of {{ table_user.get_full_name }}">
             </td>
             <td>
-              <a href="{% url 'show_member' club_id table_user.id %}">
+              <a href="{% url redirect_url club_id table_user.id %}">
                 {{ table_user.get_full_name }}
               </a>
             </td>
