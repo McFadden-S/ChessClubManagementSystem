@@ -14,13 +14,13 @@
   {% include 'partials/sort_select.html' with options='partials/user_table_sort_options.html'%}
 
   <div class="row">
-    {% include 'partials/user_table.html' with table_title="Owner" user_list=owners size="col-12"%}
+    {% include 'partials/user_table.html' with redirect_url='show_member' table_title="Owner" user_list=owners size="col-12"%}
   </div>
 
   <div class="row">
-    {% include 'partials/user_table.html' with table_title="Members" user_list=members size="col-6"%}
+    {% include 'partials/user_table.html' with redirect_url='show_member' table_title="Members" user_list=members size="col-6"%}
 
-    {% include 'partials/user_table.html' with table_title="Officers" user_list=officers size="col-6"%}
+    {% include 'partials/user_table.html' with redirect_url='show_member' table_title="Officers" user_list=officers size="col-6"%}
   </div>
 
 </div>
