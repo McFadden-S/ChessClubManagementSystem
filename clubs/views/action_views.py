@@ -16,14 +16,16 @@ class ActionView(TemplateView):
         return redirect(self.redirect_location, kwargs['club_id'])
 
 class ApproveApplicantView(OfficersRequiredMixin, ActionView):
-
+    """Approve applicant and change authorization to member"""
     redirect_location = 'applicants_list'
     id_name = 'applicant_id'
 
     def is_actionable(self, current_user, user, club):
+        """Check if can promote"""
         return (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(user, club)
 
     def action(self, current_user, user, club):
+        """Change authorization from applicant to member"""
         set_authorization(user, club, "ME")
 
     def get(self, request, *args, **kwargs):
@@ -36,37 +38,43 @@ class RejectApplicantView(OfficersRequiredMixin, ActionView):
     id_name = 'applicant_id'
 
     def is_actionable(self, current_user, user, club):
+        """Check if can reject applicant"""
         return (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(user, club)
 
     def action(self, current_user, user, club):
+        """Remove applicant"""
         remove_user_from_club(user, club)
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
 class PromoteMemberView(OwnersRequiredMixin, ActionView):
-
+    """Promote the member to officer."""
     redirect_location = 'members_list'
     id_name = 'member_id'
 
     def is_actionable(self, current_user, user, club):
+        """Check if can promote member."""
         return is_owner(current_user, club) and is_member(user, club)
 
     def action(self, current_user, user, club):
+        """Promote member to officer."""
         set_authorization(user, club, "OF")
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
 class DemoteOfficerView(OwnersRequiredMixin, ActionView):
-
+    """Demote officer to member"""
     redirect_location = 'members_list'
     id_name = 'member_id'
 
     def is_actionable(self, current_user, user, club):
+        """Check if can demote officer"""
         return is_owner(current_user, club) and is_officer(user, club)
 
     def action(self, current_user, user, club):
+        """Demote the officer to member"""
         set_authorization(user, club, "ME")
 
     def get(self, request, *args, **kwargs):
@@ -86,20 +94,23 @@ class RemoveUserView(OfficersRequiredMixin, ActionView):
         return (cu_is_owner and (u_is_officer or u_is_member)) or (cu_is_officer and u_is_member)
 
     def action(self, current_user, user, club):
+        """Remove user from the club"""
         remove_user_from_club(user, club)
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
 class TransferOwnershipView(OwnersRequiredMixin, ActionView):
-
+    """Transfer ownership to another officer"""
     redirect_location = 'members_list'
     id_name = 'member_id'
 
     def is_actionable(self, current_user, user, club):
+        """Check if can transfer ownership to valid officer"""
         return is_owner(current_user, club) and is_officer(user, club)
 
     def action(self, current_user, user, club):
+        """Transfer ownership to officer and demote owner to officer."""
         set_authorization(user, club, "OW")
         set_authorization(current_user, club, "OF")
 

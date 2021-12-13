@@ -47,6 +47,7 @@ class LogInView(LoginProhibitedMixin, FormView):
         return reverse('dashboard')
 
 class LogOutView(LoginRequiredMixin, TemplateView):
+    """View to log out of the system."""
 
     def get(self, request, *args, **kwargs):
         logout(request)
@@ -82,6 +83,7 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
     form_class = UserChangePasswordForm
 
     def form_valid(self, form):
+        """Ensure form is valid"""
         current_user = self.request.user
         password = form.cleaned_data.get('password')
 

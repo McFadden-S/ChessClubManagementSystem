@@ -7,7 +7,7 @@ from clubs.helpers import *
 from .mixins import *
 
 class MembersListView(MembersRequiredMixin, TemplateView):
-
+    """View to display member list"""
     template_name = "members_list.html"
 
     def get_context_data(self, **kwargs):
@@ -25,6 +25,7 @@ class MembersListView(MembersRequiredMixin, TemplateView):
         return context
 
 class ApplicantsListView(OfficersRequiredMixin, TemplateView):
+    """View to display applicant list"""
 
     template_name = "applicants_list.html"
 
@@ -41,7 +42,7 @@ class ApplicantsListView(OfficersRequiredMixin, TemplateView):
         return context
 
 class DashboardView(LoginRequiredMixin, TemplateView):
-
+    """View to display  dashboard"""
     template_name = "dashboard.html"
 
     def get_context_data(self, **kwargs):

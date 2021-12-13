@@ -12,7 +12,7 @@ class LoginProhibitedMixin():
         return super().dispatch(*args, **kwargs)
 
 class ClubAuthorizationRequiredMixin(LoginRequiredMixin):
-
+    """Only allow user that belongs to this club"""
     def dispatch(self, *args, **kwargs):
         if get_authorization(self.request.user, get_club(self.kwargs['club_id'])) == None:
             messages.add_message(self.request, messages.ERROR, "You are not a part of this club")
@@ -20,7 +20,7 @@ class ClubAuthorizationRequiredMixin(LoginRequiredMixin):
         return super().dispatch(*args, **kwargs)
 
 class ApplicantsOnlyMixin(ClubAuthorizationRequiredMixin):
-
+    """Only applicants of this club allowed"""
     def dispatch(self, *args, **kwargs):
         if get_authorization(self.request.user, get_club(self.kwargs['club_id'])) != 'AP':
             messages.add_message(self.request, messages.ERROR, "You are not an applicant")
@@ -28,7 +28,7 @@ class ApplicantsOnlyMixin(ClubAuthorizationRequiredMixin):
         return super().dispatch(*args, **kwargs)
 
 class MembersRequiredMixin(ClubAuthorizationRequiredMixin):
-
+    """User has to be member of this club"""
     def dispatch(self, *args, **kwargs):
         if get_authorization(self.request.user, get_club(self.kwargs['club_id'])) == 'AP':
             messages.add_message(self.request, messages.ERROR, "You are not a member of this club")
@@ -36,7 +36,7 @@ class MembersRequiredMixin(ClubAuthorizationRequiredMixin):
         return super().dispatch(*args, **kwargs)
 
 class OfficersRequiredMixin(MembersRequiredMixin):
-
+    """User has to be officer of this club"""
     def dispatch(self, *args, **kwargs):
         if get_authorization(self.request.user, get_club(self.kwargs['club_id'])) == 'ME':
             messages.add_message(self.request, messages.ERROR, "You are not an officer of this club")
@@ -44,7 +44,7 @@ class OfficersRequiredMixin(MembersRequiredMixin):
         return super().dispatch(*args, **kwargs)
 
 class OwnersRequiredMixin(OfficersRequiredMixin):
-
+    """User has to be owner of this club"""
     def dispatch(self, *args, **kwargs):
         if get_authorization(self.request.user, get_club(self.kwargs['club_id'])) == 'OF':
             messages.add_message(self.request, messages.ERROR, "You are not the owner of this club")

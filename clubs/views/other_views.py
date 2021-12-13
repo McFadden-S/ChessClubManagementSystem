@@ -15,6 +15,7 @@ class HomeView(LoginProhibitedMixin, TemplateView):
     template_name = 'home.html'
 
 class CreateClubView(LoginRequiredMixin, FormView):
+    """View to create a club"""
     template_name = "create_club.html"
     form_class = CreateClubForm
 
