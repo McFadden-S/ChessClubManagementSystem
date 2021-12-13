@@ -45,13 +45,6 @@ class NavbarTesterMixin(AssertHTMLMixin):
         for url in self.main_navbar_urls:
             self.assertNotHTML(response, f'a[href="{url}"]')
 
-        self.assertNotContains(response, "Chess")
-        self.assertNotContains(response, "My Clubs")
-        self.assertNotContains(response, "Change profile")
-        self.assertNotContains(response, "Change password")
-        self.assertNotContains(response, "Delete account")
-        self.assertNotContains(response, "Log out")
-
     def assert_club_navbar(self, response, club_id):
         """Check if there is all the contents needed for the club navbar."""
 
@@ -65,9 +58,3 @@ class NavbarTesterMixin(AssertHTMLMixin):
 
         self.assertContains(response, "Club")
         self.assertContains(response, "Members")
-
-    def assert_no_club_navbar(self, response):
-        """Check if there is no club navbar."""
-
-        self.assertNotContains(response, "Club")
-        self.assertNotContains(response, "Members")
