@@ -44,7 +44,17 @@ class LogInView(LoginProhibitedMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
+        print(self.request.POST)
+        redirect_next = self.request.POST.get('next') or None
+        if(redirect_next):
+            return redirect_next
         return reverse('dashboard')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['next'] = self.request.GET.get('next') or None
+
+        return context
 
 class LogOutView(LoginRequiredMixin, TemplateView):
 

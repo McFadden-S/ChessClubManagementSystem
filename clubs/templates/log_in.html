@@ -6,6 +6,7 @@
   <div class="card-body">
     <form action="{% url 'log_in' %}" method="post">
       {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
       <ul class="list-group list-group-flush">
         {% include 'partials/form.html' with form=form %}
         <li class="list-group-item bg-dark text-white">
