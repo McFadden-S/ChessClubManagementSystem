@@ -1,0 +1,19 @@
+<script>
+
+  function search(){
+    var searchedLetters = document.getElementById("searched_letters").value.toLowerCase();
+    document.getElementById("previous_search").textContent = 'Previous Search: ' + searchedLetters;
+    document.getElementsByName("myClubsData").forEach(card => searchCard(card, searchedLetters));
+    document.getElementsByName("otherClubsData").forEach(card => searchCard(card, searchedLetters));
+  }
+
+  function searchCard(card, searchedLetters){
+    var data = card.getElementsByTagName("h5")[0].textContent;
+    if(data.toLowerCase().includes(searchedLetters)){
+      card.style.display = '';
+    }else {
+      card.style.display = 'none';
+    }
+  }
+
+</script>

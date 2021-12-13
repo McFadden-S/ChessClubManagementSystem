@@ -1,15 +1,19 @@
+"""Models in the clubs app."""
+
 from django.db import models
-from django.contrib.auth.models import AbstractUser,BaseUserManager
+from django.contrib.auth.models import AbstractUser
 from .managers import UserManager
 from libgravatar import Gravatar
+from django_countries.fields import CountryField
 
-# Create your models here.
 class User(AbstractUser):
+    """User model for authentication."""
+
     username = None
     first_name = models.CharField(max_length=50, blank=False)
     last_name = models.CharField(max_length=50, blank=False)
     email = models.EmailField(unique=True, blank = False)
-    bio = models.CharField(max_length=100, blank=True)
+    bio = models.CharField(max_length=720, blank=True)
 
     BEGINNER = 'BG'
     INTERMEDIATE = 'IM'
@@ -25,7 +29,7 @@ class User(AbstractUser):
         default=BEGINNER
     )
 
-    personal_statement = models.CharField(max_length=100, blank=True)
+    personal_statement = models.CharField(max_length=720, blank=True)
 
     objects = UserManager()
     USERNAME_FIELD = 'email'
@@ -33,17 +37,31 @@ class User(AbstractUser):
 
     def gravatar(self, size=100):
         """Return a URL to the user's gravatar."""
+
         gravatar_object = Gravatar(self.email)
         gravatar_url = gravatar_object.get_image(size=size, default='mp')
         return gravatar_url
 
     def mini_gravatar(self):
         """Return a URL to a smaller version of user's gravatar."""
+
         return self.gravatar(size=60)
 
+class Club(models.Model):
+    """Clubs created by users in chess club management system."""
+
+    name = models.CharField(max_length=50, unique=True, blank=False)
+    address = models.CharField(max_length=100)
+    city = models.CharField(max_length=50)
+    postal_code = models.CharField(max_length=20)
+    country = CountryField(blank_label='(select country)')
+    description = models.CharField(max_length=500, blank=False)
+
 class Club_Member(models.Model):
+    """Authorization for each member in a club."""
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
-    club_name = models.CharField(max_length=50, default="club", blank=False)
+    club = models.ForeignKey(Club, on_delete=models.CASCADE, blank=False)
 
     APPLICANT = 'AP'
     MEMBER = 'ME'
@@ -63,4 +81,6 @@ class Club_Member(models.Model):
     )
 
     class Meta:
-        unique_together = (("user", "club_name"),)
+        """Model options."""
+
+        unique_together = (("user", "club"),)

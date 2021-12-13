@@ -1,0 +1,54 @@
+{% extends 'partials/base_partials/dark_card.html' %}
+{% block contents %}
+  <div class="card-header">
+    <h1 class="card-title">Club Info</h1>
+  </div>
+
+  <div class="card-body">
+    <table class="table table-dark table-striped">
+
+      <thead class="table-dark">
+        <h2>{{ club.name }}</h2>
+      </thead>
+
+      <tbody>
+
+        <tr>
+          <td>
+              Address: {{ club.address }}, {{ club.city }}, {{ club.postal_code }}, {{ club.country.name }}
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+              Description: {{ club.description }}
+          </td>
+        </tr>
+
+        {% if owner != None %}
+        <tr>
+          <td>
+              <b>Owner</b>
+              <br>
+              <img src="{{ owner.gravatar }}" alt="Gravatar of {{ owner.get_full_name}}">
+              <br>
+              Name: {{ owner.get_full_name }}
+              <br>
+              Bio: {{ owner.bio }}
+          </td>
+        </tr>
+        {% endif %}
+
+      </tbody>
+    </table>
+
+    {% if not is_user_in_club %}
+        <a href="{% url 'apply_club' club.id%}" class="btn btn-outline-light text-white">Apply</a>
+    {% endif %}
+
+    {% if my_authorization == 'Member' or my_authorization == 'Officer' %}
+        <a href="{% url 'leave_club' club.id user.id %}" class="btn btn-outline-light text-white">Leave club</a>
+    {% endif %}
+
+  </div>
+{% endblock %}

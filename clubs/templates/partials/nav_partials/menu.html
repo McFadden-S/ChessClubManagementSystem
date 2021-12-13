@@ -1,0 +1,17 @@
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+  {%if my_authorization != "Applicant" %}
+    <li class="nav-item">
+        <a class="btn btn-secondary nav-link m-2 text-dark" href="{% url 'members_list' club_id %}"><i class="bi bi-people-fill"></i> Members</a>
+    </li>
+    <li class="nav-item">
+      {%if my_authorization == "Owner" or my_authorization == "Officer"%}
+        <a class="btn btn-secondary nav-link m-2 text-dark" href="{% url 'applicants_list' club_id %}"><i class="bi bi-person-plus-fill"></i> Applicants</a>
+      {%endif%}
+    </li>
+  {% else %}
+    <li class="nav-item">
+        <a class="btn btn-secondary nav-link m-2 text-dark" href="{% url 'waiting_list' club_id %}"><i class="bi bi-clock-history"></i> Waiting List</a>
+    </li>
+  {%endif%}
+
+</ul>

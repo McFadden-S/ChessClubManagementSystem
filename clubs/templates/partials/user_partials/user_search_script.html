@@ -1,0 +1,24 @@
+<script>
+
+  function search(){
+    var searchedLetters = document.getElementById("searched_letters").value.toLowerCase();
+    document.getElementById("previous_search").textContent = 'Previous Search: ' + searchedLetters;
+    var tables = document.getElementsByTagName("table");
+    for(table of tables){
+      searchTable(table, searchedLetters);
+    }
+  }
+
+  function searchTable(table, searchedLetters){
+    var rows = table.getElementsByTagName("tr");
+    for(row of rows){
+      var data = row.getElementsByTagName("a")[0].text;
+      if(data.toLowerCase().includes(searchedLetters)){
+        row.style.display = 'table-row';
+      }else {
+        row.style.display = 'none';
+      }
+    }
+  }
+
+</script>

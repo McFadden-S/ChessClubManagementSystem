@@ -1,0 +1,20 @@
+{% extends 'partials/base_partials/base.html' %}
+{% block body %}
+{% include 'partials/nav_partials/navbar.html' %}
+{% include 'partials/messages.html' %}
+  <div id="cover-image">
+    <div class="container container-fluid vh-100">
+      <div class="row justify-content-center h-50">
+        <div class="col-12 my-auto">
+          <div class="card cover-card bg-dark text-white scrollable mt-sm-7 mt-lg-7">
+            {% if club_id %}
+              {% include 'partials/nav_partials/club_navbar.html' %}
+            {% endif %}
+            {% block contents %}
+            {% endblock %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

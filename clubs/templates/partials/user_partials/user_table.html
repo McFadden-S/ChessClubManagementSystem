@@ -1,0 +1,22 @@
+
+  <div class={{size}}>
+    <table class="table table-dark table-striped">
+      <thead class="table-dark">
+        <h2>{{table_title}}</h2>
+      </thead>
+      <tbody>
+        {% for table_user in user_list %}
+          <tr>
+            <td>
+              <img src="{{ table_user.mini_gravatar }}" alt="Gravatar of {{ table_user.get_full_name }}">
+            </td>
+            <td>
+              <a href="{% url redirect_url club_id table_user.id %}">
+                {{ table_user.get_full_name }}
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
