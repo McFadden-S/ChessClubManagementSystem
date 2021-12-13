@@ -1,10 +1,10 @@
-{% extends 'partials/dark_card.html' %}
+{% extends 'partials/base_partials/dark_card.html' %}
 {% block contents %}
   <div class="card-header">
     <h1 class="card-title">Application</h1>
   </div>
   <div class="card-body">
-    {% include 'partials/user_profile.html' %}
+    {% include 'partials/user_partials/user_profile.html' %}
     <div>
       <a href="{% url 'approve_applicant' club_id user.id %}" class="btn btn-outline-light text-white">Approve Application</a>
       <a href="{% url 'reject_applicant' club_id user.id %}" class="btn btn-outline-light text-white">Reject Application</a>
