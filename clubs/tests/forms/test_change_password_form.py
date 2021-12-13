@@ -1,8 +1,10 @@
-from django.test import TestCase
+"""Unit tests for the change password form."""
 from clubs.forms import UserChangePasswordForm
+from django.test import TestCase
 
 # Used this from clucker project with some modifications
 class userChangePasswordFormTestCase(TestCase):
+    """Unit tests for the change password form."""
     def setUp(self):
         self.valid_form_input = {
             'email': 'bobsmith@example.org',

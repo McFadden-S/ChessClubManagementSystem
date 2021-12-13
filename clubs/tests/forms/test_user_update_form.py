@@ -1,10 +1,12 @@
+"""Unit tests for the user update form."""
+from clubs.forms import SignUpForm, UserUpdateForm
+from clubs.models import User
 from django import forms
 from django.test import TestCase
-from clubs.models import User
-from clubs.forms import UserUpdateForm, SignUpForm
 
 # Used this from clucker project with some modifications
 class userUpdateFormTestCase(TestCase):
+    """Unit tests for the user update form."""
     def setUp(self):
         self.valid_form_input = {
             'email': 'bobsmith@example.org',

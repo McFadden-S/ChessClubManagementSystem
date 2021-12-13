@@ -1,9 +1,10 @@
-from django.test import TestCase
-from clubs.models import Club
+"""Unit tests for the create club form."""
 from clubs.forms import CreateClubForm
-from django import forms
+from clubs.models import Club
+from django.test import TestCase
 
 class CreateClubFormTestCase(TestCase):
+    """Unit tests for the create club form."""
     def setUp(self):
         self.valid_form_input = {
             'name': 'Orangutan',

@@ -1,10 +1,10 @@
-"""Unit tests of the log in form"""
+"""Unit tests for the log in form."""
+from clubs.forms import LogInForm
 from django import forms
 from django.test import TestCase
-from clubs.forms import LogInForm
 
 class LogInFormTestCase(TestCase):
-    """Unit tests of the log in form"""
+    """Unit tests for the log in form."""
     def setUp(self):
         self.form_input = {'email': 'orangutan@example.org', 'password': 'CorrectPassword123'}
 
