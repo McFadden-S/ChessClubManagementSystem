@@ -77,9 +77,9 @@ class LogOutView(LoginRequiredMixin, TemplateView):
 class UpdateUserView(LoginRequiredMixin, UpdateView):
     """View to update logged-in user's profile."""
 
-    model = UserUpdateForm
+    model = UpdateUserForm
     template_name = "user_update.html"
-    form_class = UserUpdateForm
+    form_class = UpdateUserForm
 
     def get_object(self):
         """Return the object (user) to be updated."""

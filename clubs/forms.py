@@ -52,7 +52,7 @@ class SignUpForm(forms.ModelForm):
         return user
 
 # Used this from clucker project with some modifications
-class UserUpdateForm(forms.ModelForm):
+class UpdateUserForm(forms.ModelForm):
     """Form to update user's profiles."""
 
     class Meta:
