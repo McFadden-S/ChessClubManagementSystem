@@ -38,6 +38,7 @@ class WaitingListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
 
     def test_waiting_list_url(self):
         """"Test for the waiting list url."""
+        
         self.assertEqual(self.url, f'/{self.club.id}/waiting_list/')
 
     """Unit tests for different authorisations in a club trying to access waiting list"""
