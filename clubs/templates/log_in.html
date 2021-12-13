@@ -4,9 +4,6 @@
     <h1 class="card-title">Log In</h1>
   </div>
   <div class="card-body">
-    {% for message in messages %}
-      <p><b>{{ message }}</b><p>
-    {% endfor %}
     <form action="{% url 'log_in' %}" method="post">
       {% csrf_token %}
       <ul class="list-group list-group-flush">
