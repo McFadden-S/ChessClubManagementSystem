@@ -100,28 +100,28 @@ def set_authorization(user, club, authorization):
         messages.add_message(request, messages.ERROR, "Cannot set authorization on a user that isnt apart of this club")
 
 def is_owner(user, club):
-    """Checks if a user is an owner in the given club."""
+    """Check if a user is an owner in the given club."""
 
     if get_authorization(user, club) == 'OW':
         return True
     return False
 
 def is_officer(user, club):
-    """Checks if a user is an officer in the given club."""
+    """Check if a user is an officer in the given club."""
 
     if get_authorization(user, club) == 'OF':
         return True
     return False
 
 def is_member(user, club):
-    """Checks if a user is a member in the given club."""
+    """Check if a user is a member in the given club."""
 
     if get_authorization(user, club) == 'ME':
         return True
     return False
 
 def is_applicant(user, club):
-    """Checks if a user is an applicant in the given club."""
+    """Check if a user is an applicant in the given club."""
 
     if get_authorization(user, club) == 'AP':
         return True
@@ -171,7 +171,7 @@ def get_club_to_auth(user, my_clubs):
     return club_auth
 
 def is_user_in_club(user, club):
-    """Checks if the given user is in the given club."""
+    """Check if the given user is in the given club."""
 
     try:
         club_member = Club_Member.objects.get(user=user, club=club)
@@ -192,7 +192,7 @@ def remove_user_from_club(user, club):
 
 def remove_clubs(user, clubs):
     """Try to remove all the clubs the given user is in."""
-    
+
     for club in clubs:
         # In club table, delete all the request.users clubs where they are the only "person"
         count_all_users_in_club = get_count_of_users_in_club(club)

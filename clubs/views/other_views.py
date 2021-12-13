@@ -38,7 +38,7 @@ class CreateClubView(LoginRequiredMixin, FormView):
             return render(self.request,'create_club.html',{'form': form_new})
 
     def get_success_url(self):
-        """Redirect the user to the dashboard after creating a club successfully."""
+        """Return redirect URL to dashboard after creating a club successfully."""
 
         return reverse('dashboard')
 
