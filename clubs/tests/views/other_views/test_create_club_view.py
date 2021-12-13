@@ -37,11 +37,13 @@ class CreateClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin, AssertHTM
         self.url = reverse('create_club')
 
     def test_create_club_url(self):
-        """Unit tests for the create club url"""
+        """Test for the create club url"""
+
         self.assertEqual(self.url,'/create_club/')
 
-    def test_get_create_club_by_any_user_when_logged_ini(self):
-        """Unit tests to get create club form by logged in user"""
+    def test_get_create_club_by_any_user_when_logged_in(self):
+        """Test to get create club form by logged in user"""
+
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assert_main_navbar(response)
@@ -57,9 +59,9 @@ class CreateClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin, AssertHTM
             self.assertEqual(button.value, "Create Club")
             self.assertEqual(header.text, "Create Club")
 
-
     def test_succesful_create_club(self):
-        """Unit tests for post successful create club form by any user"""
+        """Test for post successful create club form by any user"""
+
         self.client.login(email=self.user.email, password='Password123')
         before_count = Club.objects.count()
         before_count_clubmember = Club_Member.objects.count()
@@ -85,7 +87,6 @@ class CreateClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin, AssertHTM
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
-
 
     """Unit tests to post unsuccessful create club form by any user"""
 

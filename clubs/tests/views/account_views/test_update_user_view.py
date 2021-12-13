@@ -1,14 +1,14 @@
+"""Unit tests for the user update view."""
 from django.test import TestCase
 from clubs.models import User
 from clubs.forms import UpdateUserForm
 from django.urls import reverse
-from clubs.tests.helpers import reverse_with_next
+from clubs.tests.helpers import reverse_with_next,LogInTester, NavbarTesterMixin
 from django.contrib.auth.hashers import check_password
-from clubs.tests.helpers import LogInTester, NavbarTesterMixin
+from django.contrib import messages
 
-# Used this from clucker project with some modifications
-class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
-
+class UserUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
+    """Unit tests for the user update view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json'
@@ -28,11 +28,13 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         }
 
     def test_user_update_url(self):
-        """"Test for the user update url."""
+        """Test for the user update url."""
+
         self.assertEqual(self.url, '/update_user/')
 
     def test_get_user_update(self):
-        """Test get updated user"""
+        """Test for getting the user update form"""
+
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
@@ -42,7 +44,7 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         form = response.context['form']
         self.assertTrue(isinstance(form, UpdateUserForm))
 
-    """Unit tests for redirecting when not logged in"""
+    """Unit tests for redirecting user when not logged in"""
 
     def test_get_user_update_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
@@ -57,10 +59,15 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertFalse(self._is_logged_in())
 
     def test_successful_user_update(self):
-        """Test to check correct user update"""
+        """Test to check successful user update"""
+
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.post(self.url, self.form_input)
+        response2 = self.client.get(reverse('dashboard'))
+        messages_list = list(response2.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         self.assertEqual(response.status_code, 302)
         self.user.refresh_from_db()
         self.assertTrue(self.user.first_name, self.form_input['first_name'])
@@ -70,7 +77,7 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertTrue(self.user.chess_experience, self.form_input['chess_experience'])
         self.assertTrue(self.user.personal_statement, self.form_input['personal_statement'])
 
-    """Unit tests for unsuccessful user updates"""
+    """Unit tests for unsuccessful user updates via name"""
 
     def test_unsuccessful_user_update_with_blank_first_name(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -98,7 +105,9 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.user.refresh_from_db()
         self.assertFalse(self.user.last_name == '')
 
-    def test_unsuccessful_user_update_with_incorrect_email(self):
+    """Unit tests for unsuccessful user updates via email"""
+
+    def test_unsuccessful_user_update_with_incorrect_email_format(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.form_input['email'] = 'notemail'
@@ -111,7 +120,7 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.user.refresh_from_db()
         self.assertFalse(self.user.email == 'notemail')
 
-    def test_unsuccessful_user_update_with_duplicate_email(self):
+    def test_unsuccessful_user_update_with_another_users_email(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.form_input['email'] = self.user2.email
