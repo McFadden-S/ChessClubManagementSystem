@@ -1,11 +1,14 @@
-"""Unit tests for the waiting list view."""
-from clubs.models import Club, Club_Member, User
 from django.test import TestCase
 from django.urls import reverse
+from clubs.models import User, Club_Member, Club
+from clubs.tests.helpers import LogInTester, NavbarTesterMixin
+from clubs.tests.helpers import reverse_with_next
+from django.contrib.auth.hashers import check_password
+from django.contrib import messages
+
 
 # Used this from clucker project with some modifications
-class WaitingListViewTestCase(TestCase):
-    """Unit tests for the waiting list view."""
+class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -13,57 +16,68 @@ class WaitingListViewTestCase(TestCase):
     ]
 
     def setUp(self):
-        # this is the officer
+        self.owner = User.objects.get(email='harrysmith@example.org')
         self.officer = User.objects.get(email='bobsmith@example.org')
-        self.secondary_user = User.objects.get(email='bethsmith@example.org')
-        self.tertiary_user = User.objects.get(email='johnsmith@example.org')
+        self.applicant = User.objects.get(email='bethsmith@example.org')
+        self.member = User.objects.get(email='johnsmith@example.org')
         self.club = Club.objects.get(name='Flying Orangutans')
+
+        self.club_owner = Club_Member.objects.create(
+            user=self.owner, authorization='OW', club=self.club
+        )
         self.club_officer = Club_Member.objects.create(
             user=self.officer, authorization='OF', club=self.club
         )
-        Club_Member.objects.create(
-            user=self.secondary_user, authorization='AP', club=self.club
+        self.club_member = Club_Member.objects.create(
+            user=self.member, authorization='ME', club=self.club
         )
-        Club_Member.objects.create(
-            user=self.tertiary_user, authorization='AP', club=self.club
+        self.club_applicant = Club_Member.objects.create(
+            user=self.applicant, authorization='AP', club=self.club
         )
-        self.owner = User.objects.get(email='harrysmith@example.org')
-        Club_Member.objects.create(
-            user=self.owner, authorization='OW', club=self.club
-        )
+
         self.url = reverse('waiting_list', kwargs={'club_id': self.club.id})
 
-    def test_applicants_list_url(self):
+    def test_waiting_list_url(self):
+        """"Test for the waiting list url."""
         self.assertEqual(self.url, f'/{self.club.id}/waiting_list/')
 
-
-    def test_get_applicants_list_redirects_member_list_when_authorization_is_applicant(self):
-        user1 = User.objects.create_user(email="a@example.com", first_name="a", last_name="a", chess_experience="BG",
-                                         password='Password123')
-        club_member1 = Club_Member.objects.create(user=user1, authorization='AP', club=self.club)
-        self.client.login(email=user1.email, password='Password123')
+    def test_waiting_list_content_when_signed_in_as_applicant(self):
+        """"Test content of waiting list for applicant"""
+        self.client.login(email=self.applicant.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
-        redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
+        self.assertTemplateUsed(response, 'waiting_list.html')
+        self.assert_main_navbar(response)
         self.assertEqual(response.status_code, 200)
 
-    # def test_if_auth_is_none(self):
-    #     user1 = User.objects.create_user(email="a@example.com", first_name="a", last_name="a", chess_experience="BG",
-    #                                      password='Password123')
-    #     club_member1 = Club_Member.objects.create(user=user1, authorization=None, club=self.club)
-    #     self.client.login(email=user1.email, password='Password123')
-    #     redirect_url = reverse_with_next('log_in', self.url)
-    #     response = self.client.get(self.url)
-    #     # self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+    """Test waiting list redirects to members list when signed in as user"""
 
-    # def test_if_auth_is_none(self):
-    ## cant test this?
-    #     user1 = User.objects.create_user(email="a@example.com", first_name="a", last_name="a", chess_experience="BG",
-    #                                      password='Password123')
-    #     club_member1 = Club_Member.objects.create(user=user1, authorization=None, club=self.club)
-    #     self.client.login(email=user1.email, password='Password123')
-    #     response = self.client.get(self.url)
-    #     response_url = reverse('dashboard')
-    #     self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
-    #     self.assertTemplateUsed(response, 'dashboard.html')
-    #     messages_list = list(response.context['messages'])
-    #     self.assertEqual(len(messages_list), 0)
+    def test_waiting_list_redirects_to_members_list_when_signed_in_as_member(self):
+        self.client.login(email=self.member.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
+        response = self.client.get(self.url)
+        redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        # messages_list = list(response.context['messages'])
+        # self.assertEqual(len(messages_list), 1)
+        # self.assertEqual(messages_list[0].level, messages.ERROR)
+
+    def test_waiting_list_redirects_to_members_list_when_signed_in_as_officer(self):
+        self.client.login(email=self.officer.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
+        response = self.client.get(self.url)
+        redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        # messages_list = list(response.context['messages'])
+        # self.assertEqual(len(messages_list), 1)
+        # self.assertEqual(messages_list[0].level, messages.ERROR)
+
+    def test_waiting_list_redirects_to_members_list_when_signed_in_as_owner(self):
+        self.client.login(email=self.owner.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
+        response = self.client.get(self.url)
+        redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
+        # messages_list = list(response.context['messages'])
+        # self.assertEqual(len(messages_list), 1)
+        # self.assertEqual(messages_list[0].level, messages.ERROR)
