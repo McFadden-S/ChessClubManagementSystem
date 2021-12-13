@@ -36,7 +36,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
-    """ 3) Tests delete account for single user in club """
+    """ 3) Tests delete account for user without club """
     def test_any_user_without_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -50,7 +50,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertEqual(after_count_user, before_count_user-1)
         self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
 
-    """ 3.1) Tests delete account for applicant in club """
+    """ 4) Tests delete account for only applicant in club """
     def test_applicant_in_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -72,12 +72,11 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         after_count_club = Club.objects.count()
         self.assertEqual(after_count_user, before_count_user-1)
         self.assertEqual(after_count_club_member, before_count_club_member-1)
-        #club still exists because owner still present
         self.assertEqual(after_count_club, before_count_club)
         self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
 
 
-    """ 3.2) Tests delete account for member in club """
+    """ 4.1) Tests delete account for member in club """
     def test_member_in_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -99,11 +98,10 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         after_count_club = Club.objects.count()
         self.assertEqual(after_count_user, before_count_user-1)
         self.assertEqual(after_count_club_member, before_count_club_member-1)
-        #club still exists because owner still present
         self.assertEqual(after_count_club, before_count_club)
         self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
 
-    """ 3.3) Tests delete account for officer in club """
+    """ 4.2 Tests delete account for officer in club """
     def test_officer_in_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -125,11 +123,10 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         after_count_club = Club.objects.count()
         self.assertEqual(after_count_user, before_count_user-1)
         self.assertEqual(after_count_club_member, before_count_club_member-1)
-        #club still exists because owner still present
         self.assertEqual(after_count_club, before_count_club)
         self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
 
-    """ 3.4) Tests delete account for owner in club """
+    """ 4.3) Tests delete account for owner in club """
     def test_owner_who_is_only_person_in_club_can_delete_account(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -150,7 +147,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
 
 
-    """4) Tests owner with single user of another type in club"""
+    """ 5) Tests owner with only applicant in club"""
     def test_owner_who_only_has_applicants_in_club_can_delete_account(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -175,7 +172,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertEqual(after_count_club, before_count_club-1)
         self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
 
-    """4.1) Tests owner with single user of member in club"""
+    """ 5.1) Tests owner with member in club"""
     def test_owner_who_has_only_has_member_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -219,7 +216,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertEqual(after_count_club_member, before_count_club_member-1)
         self.assertEqual(after_count_club, before_count_club)
 
-    """4.2) Tests owner with single user of officer in club"""
+    """ 5.2) Tests owner with officer in club"""
     def test_owner_who_has_only_has_officer_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -261,7 +258,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertEqual(after_count_club, before_count_club)
 
 
-    """4.3) Tests for owner who has applicant and officer users"""
+    """ 6) Tests for owner who has applicant and officer users"""
     def test_owner_who_has_applicant_and_officer_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -304,7 +301,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertEqual(after_count_club_member, before_count_club_member-1)
         self.assertEqual(after_count_club, before_count_club)
 
-    """4.4) Tests for owner who has applicant and member as users"""
+    """ 6.1) Tests for owner who has applicant and member as users"""
     def test_owner_who_has_applicant_and_member_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -354,7 +351,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertEqual(after_count_club_member, before_count_club_member-1)
         self.assertEqual(after_count_club, before_count_club)
 
-    """4.5) Tests for owner who has officer and member as users"""
+    """ 6.2) Tests for owner who has officer and member as users"""
     def test_owner_who_has_officer_and_member_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
