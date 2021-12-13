@@ -1,9 +1,11 @@
+"""Unit tests for user model."""
+from clubs.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from clubs.models import User
 
 
 class UserModelTestCase(TestCase):
+    """Unit tests for user model."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json'
@@ -11,7 +13,7 @@ class UserModelTestCase(TestCase):
 
     def setUp(self):
         self.user = User.objects.get(email='bobsmith@example.org')
-        self.client = User.objects.create_superuser(
+        self.superuser = User.objects.create_superuser(
             first_name="Bob",
             last_name="Smith",
             email="email@gmail.com",
@@ -54,6 +56,15 @@ class UserModelTestCase(TestCase):
     def test_email_must_not_contain_more_than_one_at(self):
         self.user.email = 'johndoe@@example.org'
         self.assert_user_is_invalid()
+    
+    def test_email_must_not_be_none(self):
+        with self.assertRaises(TypeError):
+            self.newuser = User.objects.create_user(
+                first_name="Bob",
+                last_name="Smith",
+                email=None,
+                password="Password123",
+            )
 
     """ Unit test for first name """
 
@@ -154,27 +165,30 @@ class UserModelTestCase(TestCase):
         with self.assertRaises(ValidationError):
             self.user.full_clean()
 
-    #########
+    """ –––––––––––––––––––––––––––––––––––––––––– """
+    """ –––––––– Unit tests for superuser –––––––– """
+    """ –––––––––––––––––––––––––––––––––––––––––– """
+
     def test_valid_superuser(self):
         self.assert_superuser_is_valid()
 
-    """ Unit test for email """
+    """ Unit test for superuser email """
 
     def test_email_must_not_be_blank_superuser(self):
-        self.client.email = ''
+        self.superuser.email = ''
         self.assert_superuser_is_invalid()
 
     def test_email_must_have_before_at_symbol_superuser(self):
-        self.client.email = '@example.org'
+        self.superuser.email = '@example.org'
         self.assert_superuser_is_invalid()
 
     def test_email_must_have_at_symbol_superuser(self):
-        self.client.email = 'emailgmail.com'
+        self.superuser.email = 'emailgmail.com'
         self.assert_superuser_is_invalid()
 
     def test_email_is_unique_superuser(self):
         second_person = User.objects.get(email='bethsmith@example.org')
-        self.client.email = second_person.email
+        self.superuser.email = second_person.email
         self.assert_superuser_is_invalid()
 
     def test_is_staff_false(self):
@@ -189,7 +203,7 @@ class UserModelTestCase(TestCase):
                 is_active=True,
             )
 
-    def test_test_is_superuser_false(self):
+    def test_is_superuser_false(self):
         with self.assertRaises(ValueError):
             self.superuser = User.objects.create_superuser(
                 first_name="Bob",
@@ -203,19 +217,10 @@ class UserModelTestCase(TestCase):
 
     def assert_superuser_is_valid(self):
         try:
-            self.client.full_clean()
+            self.superuser.full_clean()
         except (ValidationError):
             self.fail('Test user needs to be made valid')
 
     def assert_superuser_is_invalid(self):
         with self.assertRaises(ValidationError):
-            self.client.full_clean()
-
-    def test_user_if_email_is_none(self):
-        with self.assertRaises(TypeError):
-            self.newuser = User.objects.create_user(
-                first_name="Bob",
-                last_name="Smith",
-                email=None,
-                password="Password123",
-            )
+            self.superuser.full_clean()

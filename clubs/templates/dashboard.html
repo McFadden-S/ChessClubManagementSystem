@@ -1,7 +1,7 @@
-{% extends 'partials/wide_dark_card.html' %}
+{% extends 'partials/base_partials/wide_dark_card.html' %}
 {% block contents %}
-{% include 'partials/club_search_script.html' %}
-{% include 'partials/club_sort_script.html' %}
+{% include 'partials/club_partials/club_search_script.html' %}
+{% include 'partials/club_partials/club_sort_script.html' %}
 
 <div class="card-header">
   <h1 class="card-title">
@@ -13,8 +13,8 @@
 
   {% include 'partials/search_bar.html'%}
 
-  {% include 'partials/sort_select.html' with options='partials/club_table_sort_options.html'%}
-  
+  {% include 'partials/sort_select.html' with options='partials/club_partials/club_table_sort_options.html'%}
+
   <table class="table table-dark">
     <thead class="table-dark">
       <h2>

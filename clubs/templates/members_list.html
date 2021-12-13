@@ -1,7 +1,7 @@
-{% extends 'partials/wide_dark_card.html' %}
+{% extends 'partials/base_partials/wide_dark_card.html' %}
 {% block contents %}
-{% include 'partials/user_search_script.html' %}
-{% include 'partials/user_sort_script.html' %}
+{% include 'partials/user_partials/user_search_script.html' %}
+{% include 'partials/user_partials/user_sort_script.html' %}
 
 <div class="card-header">
   <h1 class="card-title"><i class="bi bi-people-fill"></i> Members List</h1>
@@ -11,16 +11,16 @@
 
   {% include 'partials/search_bar.html' %}
 
-  {% include 'partials/sort_select.html' with options='partials/user_table_sort_options.html'%}
+  {% include 'partials/sort_select.html' with options='partials/user_partials/user_table_sort_options.html'%}
 
   <div class="row">
-    {% include 'partials/user_table.html' with redirect_url='show_member' table_title="Owner" user_list=owners size="col-12"%}
+    {% include 'partials/user_partials/user_table.html' with redirect_url='show_member' table_title="Owner" user_list=owners size="col-12"%}
   </div>
 
   <div class="row">
-    {% include 'partials/user_table.html' with redirect_url='show_member' table_title="Members" user_list=members size="col-6"%}
+    {% include 'partials/user_partials/user_table.html' with redirect_url='show_member' table_title="Members" user_list=members size="col-6"%}
 
-    {% include 'partials/user_table.html' with redirect_url='show_member' table_title="Officers" user_list=officers size="col-6"%}
+    {% include 'partials/user_partials/user_table.html' with redirect_url='show_member' table_title="Officers" user_list=officers size="col-6"%}
   </div>
 
 </div>

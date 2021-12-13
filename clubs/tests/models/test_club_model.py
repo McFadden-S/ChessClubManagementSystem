@@ -1,26 +1,18 @@
+"""Unit tests for Club model."""
+from clubs.models import Club
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from clubs.models import Club
 
 class ClubModelTestCase(TestCase):
-
+    """Unit tests for Club model."""
+    fixtures = [
+        'clubs/tests/fixtures/default_club.json',
+        'clubs/tests/fixtures/other_clubs.json',
+    ]
+    
     def setUp(self):
-        self.club = Club.objects.create(
-            name='Orangutan',
-            address='Bush House',
-            city='London',
-            postal_code='WC2B 4BG',
-            country='GB',
-            description='Aim to get the best orangutans out there'
-        )
-        self.second_club = Club.objects.create(
-            name='Monkeys',
-            address='Stand Building',
-            city='London',
-            postal_code='WC2R 2LS',
-            country='GB',
-            description='Aim to get the best monkeys out there'
-        )
+        self.club = Club.objects.get(name='Flying Orangutans')
+        self.second_club = Club.objects.get(name='Flying Orangutans 2')
 
     def test_valid_club(self):
         self.assert_club_is_valid()

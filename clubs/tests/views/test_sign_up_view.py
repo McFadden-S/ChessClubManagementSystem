@@ -1,15 +1,15 @@
-"""Tests of the sign up view."""
-from django.test import TestCase
-from clubs.models import User, Club_Member, Club
+"""Unit tests for the sign up view."""
 from clubs.forms import SignUpForm
-from django.urls import reverse
-from django.contrib.auth.hashers import check_password
-from django.contrib import messages
+from clubs.models import Club, Club_Member, User
 from clubs.tests.helpers import LogInTester
+from django.contrib import messages
+from django.contrib.auth.hashers import check_password
+from django.test import TestCase
+from django.urls import reverse
 from with_asserts.mixin import AssertHTMLMixin
 
 class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
-    """Tests of the sign up view."""
+    """Unit tests for the sign up view."""
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',

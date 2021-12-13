@@ -1,4 +1,4 @@
-{% extends 'partials/dark_card.html' %}
+{% extends 'partials/base_partials/dark_card.html' %}
 {% block contents %}
 
   <div class="card-header">
@@ -6,7 +6,7 @@
   </div>
 
   <div class="card-body">
-    {% include 'partials/user_profile.html' %}
+    {% include 'partials/user_partials/user_profile.html' %}
     <div>
     {% if my_authorization == 'Owner' %}
       {% if authorizationText == 'Member' %}

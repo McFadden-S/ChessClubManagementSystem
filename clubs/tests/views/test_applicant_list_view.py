@@ -1,14 +1,13 @@
+"""Unit tests for the applicant list view."""
+from clubs.models import Club, Club_Member, User
+from clubs.tests.helpers import LogInTester, NavbarTesterMixin, reverse_with_next
 from django.test import TestCase
-from clubs.models import User, Club_Member, Club
 from django.urls import reverse
-from clubs.tests.helpers import reverse_with_next
-from django.contrib.auth.hashers import check_password
-from django.contrib import messages
-from clubs.tests.helpers import LogInTester
 
 
 # Used this from clucker project with some modifications
-class ApplicantListViewTestCase(TestCase, LogInTester):
+class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
+    """Unit tests for the applicant list view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -16,56 +15,61 @@ class ApplicantListViewTestCase(TestCase, LogInTester):
     ]
 
     def setUp(self):
-        # this is the officer
+        self.owner = User.objects.get(email='harrysmith@example.org')
         self.officer = User.objects.get(email='bobsmith@example.org')
-        self.secondary_user = User.objects.get(email='bethsmith@example.org')
-        self.tertiary_user = User.objects.get(email='johnsmith@example.org')
+        self.member = User.objects.get(email='bethsmith@example.org')
+        self.applicant = User.objects.get(email='johnsmith@example.org')
         self.club = Club.objects.get(name='Flying Orangutans')
+
+        Club_Member.objects.create(
+            user=self.owner, authorization='OW', club=self.club
+        )
         self.club_officer = Club_Member.objects.create(
             user=self.officer, authorization='OF', club=self.club
         )
         Club_Member.objects.create(
-            user=self.secondary_user, authorization='AP', club=self.club
+            user=self.member, authorization='ME', club=self.club
         )
         Club_Member.objects.create(
-            user=self.tertiary_user, authorization='AP', club=self.club
+            user=self.applicant, authorization='AP', club=self.club
         )
-        self.owner = User.objects.get(email='harrysmith@example.org')
-        Club_Member.objects.create(
-            user=self.owner, authorization='OW', club=self.club
-        )
+
         self.url = reverse('applicants_list', kwargs={'club_id': self.club.id})
 
     def test_applicants_list_url(self):
+        """Test for the applicant list url."""
         self.assertEqual(self.url, f'/{self.club.id}/applicants_list/')
 
-    def test_get_applicants_list_by_officer(self):
-        self.client.login(email=self.officer.email, password='Password123')
-        self.assertTrue(self._is_logged_in())
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        # self.assertContains()
-        self.assertTemplateUsed(response, 'applicants_list.html')
-        messages_list = list(response.context['messages'])
-        self.assertEqual(len(messages_list), 0)
+    """Unit tests for showing applicant list"""
 
     def test_get_applicants_list_by_owner(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        # self.assertContains()
+        self.assert_main_navbar(response)
         self.assertTemplateUsed(response, 'applicants_list.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
-    def test_get_applicants_list_redirects_member_list_when_authorization_is_member(self):
-        user1 = User.objects.create_user(email="a@example.com", first_name="a", last_name="a", chess_experience="BG",
-                                         password='Password123')
-        club_member1 = Club_Member.objects.create(user=user1, authorization='ME', club=self.club)
-        self.client.login(email=user1.email, password='Password123')
+    def test_get_applicants_list_by_officer(self):
+        self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assert_main_navbar(response)
+        self.assertTemplateUsed(response, 'applicants_list.html')
+        messages_list = list(response.context['messages'])
+        self.assertEqual(len(messages_list), 0)
+
+    """Redirects"""
+
+    def test_get_applicants_list_redirects_member_list_when_authorization_is_member(self):
+        """Test for redirecting member to member list from applicant list"""
+        self.client.login(email=self.member.email, password='Password123')
+        self.assertTrue(self._is_logged_in())
+        response = self.client.get(self.url)
+        # self.assert_main_navbar(response)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
@@ -81,13 +85,14 @@ class ApplicantListViewTestCase(TestCase, LogInTester):
     #     self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_get_applicants_list_redirects_when_not_logged_in(self):
+        """Test for redirecting when not logged in"""
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
-
     def create_ordered_list_by(self, order_by_var):
+        """Test for creating ordered applicant list by var"""
         applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
         sorted_list = User.objects.filter(id__in=applicants_list).order_by(order_by_var)
         return sorted_list
@@ -103,7 +108,6 @@ class ApplicantListViewTestCase(TestCase, LogInTester):
     #     members1 = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
     #     members = list(User.objects.exclude(id__in=members1))
     #     self.assertListEqual(second_list, members)
-
 
     # TODO Refactor tests to reflect javascript search/sort
     # def test_sorted_list_first_name(self):

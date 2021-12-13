@@ -1,10 +1,11 @@
 """Unit tests for home view"""
 from clubs.models import User, Club, Club_Member
-from clubs.tests.helpers import LogInTester
+from clubs.tests.helpers import LogInTester, NavbarTesterMixin
 from django.test import TestCase
 from django.urls import reverse
 
-class HomeViewTestCase(TestCase, LogInTester):
+
+class HomeViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for home view"""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -26,17 +27,21 @@ class HomeViewTestCase(TestCase, LogInTester):
         self.assertFalse(self._is_logged_in())
 
     def test_home_url(self):
-        self.assertEqual(self.url,'/')
+        """Test for the home url."""
+        self.assertEqual(self.url, '/')
 
     def test_get_home_redirects_when_logged_in(self):
+        """Test get redirects when not logged in"""
         self.client.login(email=self.user.email, password="Password123")
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url, follow=True)
+        self.assert_main_navbar(response)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
 
     def test_home_navbar(self):
+        """Test home navbar contents"""
         self.assertFalse(self._is_logged_in())
         response = self.client.get(self.url)
         self.assertNotContains(response, 'My Clubs')

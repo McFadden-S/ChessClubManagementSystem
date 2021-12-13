@@ -1,14 +1,15 @@
-from django.views.generic.edit import FormView, UpdateView
-from django.views.generic import TemplateView
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.hashers import check_password
-from django.shortcuts import redirect, reverse
-from django.contrib import messages
-
+"""Views for account-related purposes."""
 from clubs.forms import *
 from clubs.helpers import *
-from .mixins import *
+from clubs.views.mixins import *
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect, reverse
+from django.views.generic import TemplateView
+from django.views.generic.edit import FormView, UpdateView
+
 
 class SignUpView(LoginProhibitedMixin, FormView):
     """View that signs up user."""
@@ -17,12 +18,16 @@ class SignUpView(LoginProhibitedMixin, FormView):
     template_name = "sign_up.html"
 
     def form_valid(self, form):
+        """Proccess the form."""
+
         self.object = form.save()
         login(self.request, self.object)
         messages.success(self.request, f"Your account was created successfully")
         return super().form_valid(form)
 
     def get_success_url(self):
+        """Return redirect URL to dashboard after successfully registering an account."""
+
         return reverse('dashboard')
 
 class LogInView(LoginProhibitedMixin, FormView):
@@ -32,6 +37,8 @@ class LogInView(LoginProhibitedMixin, FormView):
     form_class = LogInForm
 
     def form_valid(self, form):
+        """Proccess the form."""
+
         email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
         user = authenticate(email=email, password=password)
@@ -44,34 +51,55 @@ class LogInView(LoginProhibitedMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
+        """Return redirect URL to dashboard after logging in successfully."""
+
+        redirect_next = self.request.POST.get('next') or None
+        if(redirect_next):
+            return redirect_next
         return reverse('dashboard')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        redirect_next = self.request.GET.get('next') or None
+        if(redirect_next):
+            context['next'] = redirect_next
+
+        return context
+
 class LogOutView(LoginRequiredMixin, TemplateView):
+    """View to log out of the system."""
 
     def get(self, request, *args, **kwargs):
+        """Handle get request."""
+
         logout(request)
+        messages.success(self.request, "Logged out successfully")
         return redirect('home')
 
 class UpdateUserView(LoginRequiredMixin, UpdateView):
     """View to update logged-in user's profile."""
 
-    model = UserUpdateForm
+    model = UpdateUserForm
     template_name = "user_update.html"
-    form_class = UserUpdateForm
+    form_class = UpdateUserForm
 
     def get_object(self):
         """Return the object (user) to be updated."""
+
         user = self.request.user
         return user
 
     def get_context_data(self, **kwargs):
+        """Generate context data to be shown in the template."""
+
         context = super().get_context_data(**kwargs)
         context['my_clubs'] = get_my_clubs(self.request.user)
 
         return context
 
     def get_success_url(self):
-        """Return redirect URL after successful update."""
+        """Return redirect URL to dashboard after successful update."""
+
         messages.success(self.request, "User Information Updated Successfully")
         return reverse('dashboard')
 
@@ -82,6 +110,8 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
     form_class = UserChangePasswordForm
 
     def form_valid(self, form):
+        """Ensure form is valid"""
+
         current_user = self.request.user
         password = form.cleaned_data.get('password')
 
@@ -98,10 +128,14 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
             return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
+        """Generate context data to be shown in the template."""
+
         context = super().get_context_data(**kwargs)
         context['my_clubs'] = get_my_clubs(self.request.user)
 
         return context
 
     def get_success_url(self):
+        """Return redirect URL to dashboard after changing the password successfully."""
+
         return reverse('dashboard')

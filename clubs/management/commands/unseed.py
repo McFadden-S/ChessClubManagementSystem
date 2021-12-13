@@ -1,5 +1,6 @@
-from django.core.management.base import BaseCommand, CommandError
-from clubs.models import User, Club_Member, Club
+"""The database unseeder."""
+from clubs.models import Club, Club_Member, User
+from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
     """The database unseeder."""

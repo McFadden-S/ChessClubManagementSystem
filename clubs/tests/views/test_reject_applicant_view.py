@@ -1,13 +1,12 @@
-"""Tests of the reject applicant view."""
-from django.test import TestCase
-from django.urls import reverse
-from clubs.models import User, Club_Member, Club
+"""Unit tests for the reject applicant view."""
+from clubs.models import Club, Club_Member, User
 from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.core.exceptions import ObjectDoesNotExist
+from django.test import TestCase
+from django.urls import reverse
 
 class RejectApplicantViewTestCase(TestCase, LogInTester):
-    """Tests of the reject applicant view."""
-
+    """Unit tests for the reject applicant view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -51,9 +50,9 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         except (ObjectDoesNotExist):
             self.fail('The user should not be removed')
 
-    def test_get_owner_reject_applicant(self):
-        """Test for the owner successfully reject an applicant"""
+    """Unit tests for successfully rejecting an applicant"""
 
+    def test_get_owner_reject_applicant(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -69,8 +68,6 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
             Club_Member.objects.get(user=self.applicant, club=self.club)
 
     def test_get_officer_reject_applicant(self):
-        """Test for the officer successfully reject an applicant"""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -85,9 +82,9 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         with self.assertRaises(ObjectDoesNotExist):
             Club_Member.objects.get(user=self.applicant, club=self.club)
 
-    def test_get_member_reject_applicant(self):
-        """Test for member not being able to reject an applicant."""
+        """Unit tests for user not being able to reject an applicant"""
 
+    def test_get_member_reject_applicant(self):
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -106,8 +103,6 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
             self.fail('The user should not be removed')
 
     def test_get_another_applicant_reject_applicant(self):
-        """Test for another applicant not being able to reject an applicant."""
-
         self.client.login(email=self.another_applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
