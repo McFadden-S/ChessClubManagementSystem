@@ -1,6 +1,6 @@
 from django.test import TestCase
 from clubs.models import User
-from clubs.forms import UserUpdateForm
+from clubs.forms import UpdateUserForm
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
@@ -40,7 +40,7 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
-        self.assertTrue(isinstance(form, UserUpdateForm))
+        self.assertTrue(isinstance(form, UpdateUserForm))
 
     """Unit tests for redirecting when not logged in"""
 
@@ -81,7 +81,7 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
-        self.assertTrue(isinstance(form, UserUpdateForm))
+        self.assertTrue(isinstance(form, UpdateUserForm))
         self.user.refresh_from_db()
         self.assertFalse(self.user.first_name == '')
 
@@ -94,7 +94,7 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
-        self.assertTrue(isinstance(form, UserUpdateForm))
+        self.assertTrue(isinstance(form, UpdateUserForm))
         self.user.refresh_from_db()
         self.assertFalse(self.user.last_name == '')
 
@@ -107,7 +107,7 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
-        self.assertTrue(isinstance(form, UserUpdateForm))
+        self.assertTrue(isinstance(form, UpdateUserForm))
         self.user.refresh_from_db()
         self.assertFalse(self.user.email == 'notemail')
 
@@ -120,6 +120,6 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
-        self.assertTrue(isinstance(form, UserUpdateForm))
+        self.assertTrue(isinstance(form, UpdateUserForm))
         self.user.refresh_from_db()
         self.assertFalse(self.user.email == self.user2.email)
