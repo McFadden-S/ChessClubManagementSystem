@@ -49,8 +49,6 @@ class SignUpForm(forms.ModelForm):
             password=self.cleaned_data.get('new_password'),
         )
 
-        # Club_Member.objects.create(user=user)
-
         return user
 
 # Used this from clucker project with some modifications
@@ -122,7 +120,5 @@ class CreateClubForm(forms.ModelForm):
             country=self.cleaned_data.get('country'),
             description=self.cleaned_data.get('description'),
         )
-
-        # Club_Member.objects.create(user=user)
 
         return club
