@@ -52,8 +52,6 @@ class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'waiting_list.html')
         self.assert_main_navbar(response)
-        # add test for message
-        # add test mixin to check logout
         self.assertEqual(response.status_code, 200)
 
     # Redirects
@@ -68,8 +66,6 @@ class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-        # doesnt work with assertRedirects
-        # self.assert_main_navbar(response)
         # messages_list = list(response.context['messages'])
         # self.assertEqual(len(messages_list), 1)
         # self.assertEqual(messages_list[0].level, messages.ERROR)
@@ -83,7 +79,6 @@ class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-        # self.assert_main_navbar(response)
         # messages_list = list(response.context['messages'])
         # self.assertEqual(len(messages_list), 1)
         # self.assertEqual(messages_list[0].level, messages.ERROR)
@@ -97,7 +92,6 @@ class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-        # self.assert_main_navbar(response)
         # messages_list = list(response.context['messages'])
         # self.assertEqual(len(messages_list), 1)
         # self.assertEqual(messages_list[0].level, messages.ERROR)
