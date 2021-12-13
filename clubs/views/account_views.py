@@ -51,7 +51,9 @@ class LogInView(LoginProhibitedMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['next'] = self.request.GET.get('next') or None
+        redirect_next = self.request.GET.get('next') or None
+        if(redirect_next):
+            context['next'] = redirect_next
 
         return context
 
