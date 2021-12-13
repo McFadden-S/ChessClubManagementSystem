@@ -6,6 +6,7 @@ from clubs.tests.helpers import reverse_with_next, LogInTester
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 
+
 # Used this from clucker project with some modifications
 
 class ApproveApplicantTestCase(TestCase, LogInTester):
@@ -30,10 +31,10 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         Club_Member.objects.create(user=self.owner, authorization='OW', club=self.club)
         Club_Member.objects.create(user=self.officer, authorization='OF', club=self.club)
         Club_Member.objects.create(user=self.member, authorization='ME', club=self.club)
-        Club_Member.objects.create(user=self.applicant, authorization='AP',club=self.club)
-        Club_Member.objects.create(user=self.another_officer, authorization='OF',club=self.club)
+        Club_Member.objects.create(user=self.applicant, authorization='AP', club=self.club)
+        Club_Member.objects.create(user=self.another_officer, authorization='OF', club=self.club)
         Club_Member.objects.create(user=self.another_member, authorization='ME', club=self.club)
-        Club_Member.objects.create(user=self.another_applicant, authorization='AP',club=self.club)
+        Club_Member.objects.create(user=self.another_applicant, authorization='AP', club=self.club)
 
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.applicant.id})
 
@@ -54,9 +55,9 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         auth_after_approve = Club_Member.objects.get(user=self.applicant).authorization
         self.assertEqual(auth_after_approve, 'AP')
 
-    def test_approve_applicant_with_owner(self):
-        """Test for the owner successfully approving an applicant."""
+    """Unit tests for successfully approving applicant"""
 
+    def test_approve_applicant_with_owner(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_approve = Club_Member.objects.get(user=self.applicant).authorization
@@ -68,8 +69,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'ME')
 
     def test_approve_applicant_with_officer(self):
-        """Test for the officer successfully approving an applicant."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_approve = Club_Member.objects.get(user=self.applicant).authorization
@@ -80,9 +79,9 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         auth_after_approve = Club_Member.objects.get(user=self.applicant).authorization
         self.assertEqual(auth_after_approve, 'ME')
 
-    def test_approve_applicant_with_member(self):
-        """Test for the member not being able to approve an applicant."""
+    """Unit tests for not being able to approve applicant"""
 
+    def test_approve_applicant_with_member(self):
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_approve = Club_Member.objects.get(user=self.applicant).authorization
@@ -94,8 +93,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'AP')
 
     def test_approve_applicant_with_another_applicant(self):
-        """Test for another applicant not being able to approve an applicant."""
-
         self.client.login(email=self.another_applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_approve = Club_Member.objects.get(user=self.applicant).authorization
@@ -107,8 +104,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'AP')
 
     def test_approve_applicant_with_themselves(self):
-        """Test for the applicant not being able to approve themselves."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_approve = Club_Member.objects.get(user=self.applicant).authorization
@@ -119,9 +114,9 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         auth_after_approve = Club_Member.objects.get(user=self.applicant).authorization
         self.assertEqual(auth_after_approve, 'AP')
 
-    def test_approve_member_with_owner(self):
-        """Test for the owner not being able to approve a member."""
+    """Unit tests for not being able to approve member"""
 
+    def test_approve_member_with_owner(self):
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.member.id})
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -134,8 +129,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'ME')
 
     def test_approve_member_with_officer(self):
-        """Test for the officer not being able to approve a member."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.member.id})
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -148,8 +141,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'ME')
 
     def test_approve_member_with_another_member(self):
-        """Test for another member not being able to approve a member."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.member.id})
         self.client.login(email=self.another_member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -162,8 +153,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'ME')
 
     def test_approve_member_with_applicant(self):
-        """Test for the applicant not being able to approve a member."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.member.id})
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -176,8 +165,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'ME')
 
     def test_approve_member_with_themselves(self):
-        """Test for the member not being able to approve themselves."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.member.id})
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -189,9 +176,9 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         auth_after_approve = Club_Member.objects.get(user=self.member).authorization
         self.assertEqual(auth_after_approve, 'ME')
 
-    def test_approve_officer_with_owner(self):
-        """Test for the owner not being able to approve an officer."""
+    """Unit tests for not being able to approve officer"""
 
+    def test_approve_officer_with_owner(self):
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.officer.id})
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -204,8 +191,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'OF')
 
     def test_approve_officer_with_another_officer(self):
-        """Test for another officer not being able to approve an officer."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.officer.id})
         self.client.login(email=self.another_officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -218,8 +203,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'OF')
 
     def test_approve_officer_with_member(self):
-        """Test for the member not being able to approve an officer."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.officer.id})
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -232,8 +215,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'OF')
 
     def test_approve_officer_with_applicant(self):
-        """Test for the applicant not being able to approve an officer."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.officer.id})
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -246,8 +227,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'OF')
 
     def test_approve_officer_with_themselves(self):
-        """Test for the officer not being able to approve themselves."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.officer.id})
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -259,9 +238,9 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         auth_after_approve = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(auth_after_approve, 'OF')
 
-    def test_approve_owner_with_officer(self):
-        """Test for the officer not being able to approve an owner."""
+    """Unit tests for not being able to approve owner"""
 
+    def test_approve_owner_with_officer(self):
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.owner.id})
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -274,8 +253,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'OW')
 
     def test_approve_owner_with_member(self):
-        """Test for the member not being able to approve an owner."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.owner.id})
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -288,8 +265,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'OW')
 
     def test_approve_owner_with_applicant(self):
-        """Test for the applicant not being able to approve an owner."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.owner.id})
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -302,8 +277,6 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_approve, 'OW')
 
     def test_approve_owner_with_themselves(self):
-        """Test for the owner not being able to approve themselves."""
-
         self.url = reverse('approve_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.owner.id})
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())

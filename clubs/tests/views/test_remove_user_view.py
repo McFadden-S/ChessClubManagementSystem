@@ -43,9 +43,9 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
         self.assertEqual(self.remove_officer_url,f'/{self.club.id}/remove_user/{self.officer.id}')
 
-    def test_get_owner_remove_member(self):
-        """Test for the owner successfully removing a member."""
+    """Unit tests for owner successfully removing a user"""
 
+    def test_get_owner_remove_member(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -62,8 +62,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_owner_remove_officer(self):
-        """Test for the owner successfully removing an officer."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -78,10 +76,9 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         with self.assertRaises(ObjectDoesNotExist):
             Club_Member.objects.get(user=self.officer, club=self.club)
 
+    """Unit tests for owner not being able to remove user"""
 
     def test_get_owner_remove_applicant(self):
-        """Test for the owner not being able to remove an applicant."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -101,8 +98,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_owner_remove_themselves(self):
-        """Test for the owner not being able to remove themselves."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -119,7 +114,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
             Club_Member.objects.get(user=self.owner, club=self.club)
         except (ObjectDoesNotExist):
             self.fail('The user should not be removed')
-
 
     def test_get_officer_remove_member(self):
         """Test for the officer successfully removing a member."""
@@ -138,10 +132,9 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         with self.assertRaises(ObjectDoesNotExist):
             Club_Member.objects.get(user=self.member, club=self.club)
 
+    """Unit tests for officer not able to remove a user"""
 
     def test_get_officer_remove_owner(self):
-        """Test for the officer not being able to remove an owner."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -161,8 +154,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_officer_remove_applicant(self):
-        """Test for the officer not being able to remove an applicant."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -182,8 +173,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_officer_remove_themselves(self):
-        """Test for the officer not being able to remove themselves."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -202,8 +191,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_officer_remove_another_officer(self):
-        """Test for the officer not being able to remove another officer."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -221,10 +208,9 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         except (ObjectDoesNotExist):
             self.fail('The user should not be removed')
 
+    """Unit tests for member not able to remove a user"""
 
     def test_get_member_remove_applicant(self):
-        """Test for the member not being able to remove an applicant."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -244,8 +230,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_member_remove_officer(self):
-        """Test for the member not being able to remove an officer."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -264,8 +248,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_member_remove_owner(self):
-        """Test for the member not being able to remove an owner."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -285,8 +267,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_member_remove_themselves(self):
-        """Test for the member not being able to remove themselves."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -305,8 +285,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_member_remove_another_member(self):
-        """Test for the member not being able to remove another member."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -324,10 +302,9 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         except (ObjectDoesNotExist):
             self.fail('The user should not be removed')
 
+    """Unit tests for applicant not able to remove a user"""
 
     def test_get_applicant_remove_member(self):
-        """Test for the applicant not being able to remove a member."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -346,8 +323,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_applicant_remove_officer(self):
-        """Test for the applicant not being able to remove an officer."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -366,8 +341,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_applicant_remove_owner(self):
-        """Test for the applicant not being able to remove an owner."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -387,8 +360,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_applicant_remove_themselves(self):
-        """Test for the applicant not being able to remove themselves."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -408,8 +379,6 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
 
     def test_get_applicant_remove_another_applicant(self):
-        """Test for the applicant not being able to remove another applicant."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -427,17 +396,15 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         except (ObjectDoesNotExist):
             self.fail('The user should not be removed')
 
-    def test_get_remove_member_redirects_when_not_logged_in(self):
-        """Test that user is redirected to log in page if user is not logged in."""
+    """Unit tests for redirecting when not logged in"""
 
+    def test_get_remove_member_redirects_when_not_logged_in(self):
         self.assertFalse(self._is_logged_in())
         response = self.client.get(self.remove_member_url)
         redirect_url = reverse_with_next('log_in', self.remove_member_url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_get_remove_officer_redirects_when_not_logged_in(self):
-        """Test that user is redirected to log in page if user is not logged in."""
-        
         self.assertFalse(self._is_logged_in())
         response = self.client.get(self.remove_officer_url)
         redirect_url = reverse_with_next('log_in', self.remove_officer_url)

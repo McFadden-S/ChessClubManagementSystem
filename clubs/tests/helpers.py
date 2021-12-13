@@ -51,13 +51,7 @@ class NavbarTesterMixin(AssertHTMLMixin):
         self.assertContains(response, "Club")
         self.assertContains(response, "Members")
 
-    def assert_no_club_navbar(self, response, club_id):
-        club_navbar_urls = [
-            reverse('show_club', kwargs={'club_id': club_id}),
-            reverse('members_list', kwargs={'club_id': club_id}),
-        ]
-        for url in club_navbar_urls:
-            self.assertNotHTML(response, f'a[href="{url}"]')
+    def assert_no_club_navbar(self, response):
 
         self.assertNotContains(response, "Club")
         self.assertNotContains(response, "Members")

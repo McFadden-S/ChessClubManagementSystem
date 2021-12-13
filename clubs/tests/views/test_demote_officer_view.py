@@ -64,9 +64,9 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         auth_after_demotion = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(auth_after_demotion, 'ME')
 
-    def test_get_owner_demote_member(self):
-        """Test for the owner not being able to demote a member."""
+    """Unit tests for owner not being able to demote user"""
 
+    def test_get_owner_demote_member(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
@@ -79,8 +79,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'ME')
 
     def test_get_owner_demote_applicant(self):
-        """Test for the owner not being able to demote an applicant."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
@@ -93,8 +91,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'AP')
 
     def test_get_owner_demote_themselves(self):
-        """Test for the owner not being able to demote themselves."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
@@ -106,9 +102,9 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         auth_after_demotion = Club_Member.objects.get(user=self.owner).authorization
         self.assertEqual(auth_after_demotion, 'OW')
 
-    def test_get_officer_demote_owner(self):
-        """Test for the officer not being able to demote an owner."""
+    """Unit tests for officer not being able to demote user"""
 
+    def test_get_officer_demote_owner(self):
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
@@ -121,8 +117,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'OW')
 
     def test_get_another_officer_demote_officer(self):
-        """Test for another officer not being able to demote an officer."""
-
         self.client.login(email=self.another_officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_demotion = Club_Member.objects.get(user=self.officer).authorization
@@ -134,8 +128,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'OF')
 
     def test_get_officer_demote_member(self):
-        """Test for the officer not being able to demote a member."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
@@ -148,8 +140,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'ME')
 
     def test_get_officer_demote_applicant(self):
-        """Test for the officer not being able to demote an applicant."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
@@ -162,8 +152,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'AP')
 
     def test_get_officer_demote_themselves(self):
-        """Test for the officer not being able to demote themselves."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
@@ -175,9 +163,9 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         auth_after_demotion = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(auth_after_demotion, 'OF')
 
-    def test_get_member_demote_owner(self):
-        """Test for the member not being able to demote an owner."""
+    """Unit tests for member not being able to demote user"""
 
+    def test_get_member_demote_owner(self):
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
@@ -190,8 +178,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'OW')
 
     def test_get_member_demote_officer(self):
-        """Test for member not being able to demote an officer."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_demotion = Club_Member.objects.get(user=self.officer).authorization
@@ -203,8 +189,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'OF')
 
     def test_get_another_member_demote_member(self):
-        """Test for another member not being able to demote a member."""
-
         self.client.login(email=self.another_member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
@@ -217,8 +201,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'ME')
 
     def test_get_member_demote_applicant(self):
-        """Test for the member not being able to demote an applicant."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
@@ -231,8 +213,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'AP')
 
     def test_get_member_demote_themselves(self):
-        """Test for the member not being able to demote themselves."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
@@ -244,10 +224,9 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         auth_after_demotion = Club_Member.objects.get(user=self.member).authorization
         self.assertEqual(auth_after_demotion, 'ME')
 
+    """Unit tests for applicant not being able to demote user"""
 
     def test_get_applicant_demote_owner(self):
-        """Test for the applicant not being able to demote an owner."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
@@ -260,8 +239,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'OW')
 
     def test_get_applicant_demote_officer(self):
-        """Test for applicant not being able to demote an officer."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_demotion = Club_Member.objects.get(user=self.officer).authorization
@@ -273,8 +250,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'OF')
 
     def test_get_applicant_demote_member(self):
-        """Test for the applicant not being able to demote a member."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
@@ -287,8 +262,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'ME')
 
     def test_get_another_applicant_demote_applicant(self):
-        """Test for another applicant not being able to demote an applicant."""
-
         self.client.login(email=self.another_applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
@@ -301,8 +274,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_demotion, 'AP')
 
     def test_get_applicant_demote_themselves(self):
-        """Test for the applicant not being able to demote themselves."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('demote_officer', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})

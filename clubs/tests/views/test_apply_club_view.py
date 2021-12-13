@@ -53,9 +53,9 @@ class ApplyClubViewTestCase(TestCase, LogInTester):
         auth_after_applying = Club_Member.objects.get(user=self.user).authorization
         self.assertEqual(auth_after_applying, 'AP')
 
-    def test_get_owner_apply_same_club(self):
-        """Test for owner trying to apply for the same club."""
+    """Unit tests for user trying to apply for the same club"""
 
+    def test_get_owner_apply_same_club(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url, follow=True)
@@ -65,8 +65,6 @@ class ApplyClubViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth, 'OW')
 
     def test_get_officer_apply_same_club(self):
-        """Test for officer trying to apply for the same club."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url, follow=True)
@@ -76,8 +74,6 @@ class ApplyClubViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth, 'OF')
 
     def test_get_member_apply_same_club(self):
-        """Test for member trying to apply for the same club."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url, follow=True)
@@ -87,8 +83,6 @@ class ApplyClubViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth, 'ME')
 
     def test_get_applicant_apply_same_club(self):
-        """Test for applicant trying to apply for the same club."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url, follow=True)

@@ -51,9 +51,9 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         except (ObjectDoesNotExist):
             self.fail('The user should not be removed')
 
-    def test_get_owner_reject_applicant(self):
-        """Test for the owner successfully reject an applicant"""
+    """Unit tests for successfully rejecting an applicant"""
 
+    def test_get_owner_reject_applicant(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -69,8 +69,6 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
             Club_Member.objects.get(user=self.applicant, club=self.club)
 
     def test_get_officer_reject_applicant(self):
-        """Test for the officer successfully reject an applicant"""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -85,9 +83,9 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         with self.assertRaises(ObjectDoesNotExist):
             Club_Member.objects.get(user=self.applicant, club=self.club)
 
-    def test_get_member_reject_applicant(self):
-        """Test for member not being able to reject an applicant."""
+        """Unit tests for user not being able to reject an applicant"""
 
+    def test_get_member_reject_applicant(self):
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -106,8 +104,6 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
             self.fail('The user should not be removed')
 
     def test_get_another_applicant_reject_applicant(self):
-        """Test for another applicant not being able to reject an applicant."""
-
         self.client.login(email=self.another_applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()

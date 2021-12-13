@@ -1,13 +1,14 @@
+"""Unit tests for members list"""
 from django.test import TestCase
 from clubs.models import User, Club_Member, Club
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
-from clubs.tests.helpers import LogInTester
+from clubs.tests.helpers import LogInTester, NavbarTesterMixin
 
 
 # Used this from clucker project with some modifications
-class MembersListViewTestCase(TestCase, LogInTester):
+class MembersListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -31,23 +32,28 @@ class MembersListViewTestCase(TestCase, LogInTester):
         self.url = reverse('members_list', kwargs={'club_id': self.club.id})
 
     def create_ordered_list_by(self, order_by_var):
+        """Create ordered list to compare with in other tests"""
         member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
         sorted_list = User.objects.filter(id__in=member_list).order_by(order_by_var)
         return sorted_list
 
     def test_members_list_url(self):
+        """Test for the members list url"""
         self.assertEqual(self.url, f'/{self.club.id}/members_list/')
 
     def test_get_members_list(self):
+        """Test to get the members list"""
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
+        self.assert_main_navbar(response)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'members_list.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
     def test_get_members_list_redirects_when_not_logged_in(self):
+        """Test get redirect when not logged in"""
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -55,6 +61,7 @@ class MembersListViewTestCase(TestCase, LogInTester):
 
 
     def test_post_members_list_redirects_when_not_logged_in(self):
+        """Test post redirect when not logged in"""
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)

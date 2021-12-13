@@ -42,22 +42,21 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         form = response.context['form']
         self.assertTrue(isinstance(form, UserUpdateForm))
 
+    """Unit tests for redirecting when not logged in"""
+
     def test_get_user_update_redirects_when_not_logged_in(self):
-        """Test get user update redirect when not logged in"""
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
     def test_post_user_update_redirects_when_not_logged_in(self):
-        """Test post user update redirect when not logged in"""
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url, self.form_input)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
-
-    def test_succesful_user_update(self):
+    def test_successful_user_update(self):
         """Test to check correct user update"""
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
@@ -71,8 +70,9 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertTrue(self.user.chess_experience, self.form_input['chess_experience'])
         self.assertTrue(self.user.personal_statement, self.form_input['personal_statement'])
 
-    def test_unsuccesful_user_update_with_blank_first_name(self):
-        """Test to check that user has not updated if first name is blank"""
+    """Unit tests for unsuccessful user updates"""
+
+    def test_unsuccessful_user_update_with_blank_first_name(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.form_input['first_name'] = ''
@@ -85,8 +85,7 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.user.refresh_from_db()
         self.assertFalse(self.user.first_name == '')
 
-    def test_unsuccesful_user_update_with_blank_last_name(self):
-        """Test to check that user has not updated if last name is blank"""
+    def test_unsuccessful_user_update_with_blank_last_name(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.form_input['last_name'] = ''
@@ -99,8 +98,7 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.user.refresh_from_db()
         self.assertFalse(self.user.last_name == '')
 
-    def test_unsuccesful_user_update_with_incorrect_email(self):
-        """Test to check that user has not updated if email is incorrect"""
+    def test_unsuccessful_user_update_with_incorrect_email(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.form_input['email'] = 'notemail'
@@ -113,8 +111,7 @@ class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.user.refresh_from_db()
         self.assertFalse(self.user.email == 'notemail')
 
-    def test_unsuccesful_user_update_with_duplicate_email(self):
-        """Test to check that user has not updated if email is duplicate"""
+    def test_unsuccessful_user_update_with_duplicate_email(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.form_input['email'] = self.user2.email
