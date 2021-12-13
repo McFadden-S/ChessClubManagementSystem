@@ -2,8 +2,10 @@ from django.contrib.auth.base_user import BaseUserManager
 import clubs.models
 
 class UserManager(BaseUserManager):
+    """Manager for the user model."""
 
     def create_user(self, email, password=None, **other_fields):
+        """Create a new user."""
 
         if email is None:
             raise TypeError('Users must have an email address.')
@@ -16,6 +18,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password, **other_fields):
+        """Create a superuser."""
 
         other_fields.setdefault('is_staff', True)
         other_fields.setdefault('is_superuser', True)
