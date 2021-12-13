@@ -202,7 +202,6 @@ class ApplyClubView(LoginRequiredMixin, TemplateView):
             return redirect(self.redirect_location, kwargs['club_id'])
         return redirect(self.redirect_location)
 
-#Mainined ActionView REVIEW IF CAN BE AN ActionView
 class DeleteAccountView(LoginRequiredMixin, TemplateView):
     """View to allow user to delete their account."""
 
