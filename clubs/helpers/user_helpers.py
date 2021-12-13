@@ -1,4 +1,4 @@
-"Helper methods for User-related needs."
+"Helper methods for user-related purposes."
 from clubs.models import User, Club_Member
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
