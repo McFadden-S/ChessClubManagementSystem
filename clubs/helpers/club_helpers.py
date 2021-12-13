@@ -1,3 +1,4 @@
+"Helper methods for Club-related needs."
 from clubs.helpers.user_helpers import *
 from clubs.models import Club, Club_Member
 from django.core.exceptions import ObjectDoesNotExist
