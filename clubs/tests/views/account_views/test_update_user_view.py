@@ -9,6 +9,7 @@ from django.contrib import messages
 
 class UserUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for the user update view."""
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json'
@@ -38,25 +39,25 @@ class UserUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
-        self.assert_main_navbar(response)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, UpdateUserForm))
+        self.assert_main_navbar(response)
 
     """Unit tests for redirecting user when not logged in"""
 
     def test_get_user_update_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.url)
-        response = self.client.get(self.url)
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
+        response = self.client.get(self.url)
+        redirect_url = reverse_with_next('log_in', self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_post_user_update_redirects_when_not_logged_in(self):
-        redirect_url = reverse_with_next('log_in', self.url)
-        response = self.client.post(self.url, self.form_input)
-        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
+        response = self.client.post(self.url, self.form_input)
+        redirect_url = reverse_with_next('log_in', self.url)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
     def test_successful_user_update(self):
         """Test to check successful user update"""
@@ -64,11 +65,12 @@ class UserUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.post(self.url, self.form_input)
-        response2 = self.client.get(reverse('dashboard'))
-        messages_list = list(response2.context['messages'])
+        redirect_url = reverse('dashboard')
+        response_message = self.client.get(redirect_url)
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.user.refresh_from_db()
         self.assertTrue(self.user.first_name, self.form_input['first_name'])
         self.assertTrue(self.user.last_name, self.form_input['last_name'])
