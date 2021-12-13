@@ -1,3 +1,4 @@
+"""Forms for the clubs app."""
 from django import forms
 from .models import User, Club_Member, Club
 from django.core.validators import RegexValidator
