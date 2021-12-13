@@ -1,10 +1,12 @@
+"""Unit tests for the update user form."""
+from clubs.forms import SignUpForm, UpdateUserForm
+from clubs.models import User
 from django import forms
 from django.test import TestCase
-from clubs.models import User
-from clubs.forms import UserUpdateForm, SignUpForm
 
 # Used this from clucker project with some modifications
-class userUpdateFormTestCase(TestCase):
+class UpdateUserFormTestCase(TestCase):
+    """Unit tests for the update user form."""
     def setUp(self):
         self.valid_form_input = {
             'email': 'bobsmith@example.org',
@@ -27,7 +29,7 @@ class userUpdateFormTestCase(TestCase):
         }
 
     def test_form_has_necessary_fields(self):
-        form = UserUpdateForm()
+        form = UpdateUserForm()
         self.assertIn('first_name', form.fields)
         self.assertIn('last_name', form.fields)
         self.assertIn('email', form.fields)
@@ -37,12 +39,12 @@ class userUpdateFormTestCase(TestCase):
         self.assertIn('personal_statement', form.fields)
 
     def test_form_is_valid(self):
-        form = UserUpdateForm(data=self.valid_update_form_input)
+        form = UpdateUserForm(data=self.valid_update_form_input)
         self.assertTrue(form.is_valid())
 
     def test_form_uses_model_validation(self):
         self.valid_update_form_input['first_name'] = ''
-        form = UserUpdateForm(data=self.valid_update_form_input)
+        form = UpdateUserForm(data=self.valid_update_form_input)
         self.assertFalse(form.is_valid())
 
     def test_form_saves_correctly(self):
@@ -50,7 +52,7 @@ class userUpdateFormTestCase(TestCase):
         sign_up_form.save()
         user = User.objects.get(email='bobsmith@example.org')
 
-        form = UserUpdateForm(instance=user, data=self.valid_update_form_input)
+        form = UpdateUserForm(instance=user, data=self.valid_update_form_input)
         before_count = User.objects.count()
         form.save()
         after_count = User.objects.count()

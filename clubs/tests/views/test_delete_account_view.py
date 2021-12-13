@@ -1,12 +1,12 @@
-"""Tests of the delete account view."""
+"""Unit tests for the delete account view."""
+from clubs.models import Club, Club_Member, User
+from clubs.tests.helpers import LogInTester, NavbarTesterMixin, reverse_with_next
+from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
-from clubs.models import User, Club_Member, Club
-from clubs.tests.helpers import LogInTester,reverse_with_next,NavbarTesterMixin
-from django.contrib import messages
 
 class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
-    """Tests of the delete account view."""
+    """Unit tests for the delete account view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',

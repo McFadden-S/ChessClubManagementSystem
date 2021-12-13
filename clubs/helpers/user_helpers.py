@@ -1,6 +1,7 @@
+"Helper methods for user-related purposes."
+from clubs.models import User, Club_Member
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
-from clubs.models import User, Club_Member
 
 def get_user(user_id):
     """Get the user from the given user id."""

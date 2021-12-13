@@ -1,12 +1,12 @@
-"""Tests of the transfer ownership view."""
-from django.test import TestCase
-from django.urls import reverse
-from clubs.models import User, Club_Member, Club
+"""Unit tests for the transfer ownership view."""
+from clubs.models import Club, Club_Member, User
 from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.core.exceptions import ObjectDoesNotExist
+from django.test import TestCase
+from django.urls import reverse
 
-class DemoteOfficerViewTestCase(TestCase, LogInTester):
-    """Tests of the transfer ownership view."""
+class TransferOwnershipViewTestCase(TestCase, LogInTester):
+    """Unit tests for the transfer ownership view."""
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
