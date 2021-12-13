@@ -72,6 +72,7 @@ class LogOutView(LoginRequiredMixin, TemplateView):
         """Handle get request."""
 
         logout(request)
+        messages.success(self.request, "Logged out successfully")
         return redirect('home')
 
 class UpdateUserView(LoginRequiredMixin, UpdateView):
