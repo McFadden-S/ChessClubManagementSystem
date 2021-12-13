@@ -20,9 +20,11 @@ class ShowClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.url = reverse('show_club', kwargs={'club_id': self.club.id})
 
     def test_show_club_url(self):
+        """Test for the show club url."""
         self.assertEqual(self.url, f'/show_club/{self.club.id}')
 
     def test_get_show_club_by_any_user(self):
+        """Test for getting show club by any user"""
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
@@ -37,12 +39,14 @@ class ShowClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
 
     """ Redirect tests"""
     def test_get_show_club_redirects_when_not_logged_in(self):
+        """Test get show club to redirect when not logged in"""
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
     def test_post_show_club_redirects_when_not_logged_in(self):
+        """Test post show club to redirect when not logged in"""
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -51,6 +55,7 @@ class ShowClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """ Clubs which exist"""
 
     def test_get_show_club_with_valid_id(self):
+        """Test get show club when club has valid id"""
         self.client.login(username=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
@@ -60,6 +65,7 @@ class ShowClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertContains(response, "Flying Orangutans")
 
     def test_get_show_club_with_invalid_id(self):
+        """Test get show club when club has invalid id"""
         self.client.login(username=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         url = reverse('show_club', kwargs={'club_id': self.club.id+9999})
