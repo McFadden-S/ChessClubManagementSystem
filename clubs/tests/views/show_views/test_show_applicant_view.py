@@ -37,7 +37,7 @@ class ShowApplicantViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
 
         self.assertEqual(self.url, f'/{self.club.id}/show_applicant/{self.target_user.id}')
 
-    """Unit tests for getting the show applicant page """
+    """Unit tests for getting the show applicant page"""
 
     def test_get_show_applicant_by_officer_in_club(self):
         self.client.login(email=self.officer.email, password='Password123')
