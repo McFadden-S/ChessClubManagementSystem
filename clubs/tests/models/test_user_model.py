@@ -1,11 +1,11 @@
-"""Unit tests for user model"""
+"""Unit tests for user model."""
 from clubs.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 
 class UserModelTestCase(TestCase):
-    """Unit tests for user model"""
+    """Unit tests for user model."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json'

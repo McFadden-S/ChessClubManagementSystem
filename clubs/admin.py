@@ -1,7 +1,7 @@
+"""Django-admin page contents registered here."""
+from clubs.models import Club, Club_Member, User
 from django.contrib import admin
-from .models import User, Club_Member, Club
 
-# Register your models here.
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     """Configuration of the admin interface for users."""

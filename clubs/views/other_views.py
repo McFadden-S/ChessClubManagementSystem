@@ -1,14 +1,14 @@
+"""Views for other purposes."""
+from clubs.forms import *
+from clubs.helpers import *
+from clubs.models import *
+from clubs.views.mixins import *
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
+from django.views.generic.edit import FormView
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic.edit import FormView
-from django.views.generic import TemplateView
-
-from clubs.forms import *
-from clubs.models import *
-from clubs.helpers import *
-from .mixins import *
 
 class HomeView(LoginProhibitedMixin, TemplateView):
     """View that allows user to choose to sign up or log in."""

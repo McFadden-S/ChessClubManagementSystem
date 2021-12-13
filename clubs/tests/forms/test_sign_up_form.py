@@ -1,13 +1,13 @@
-"""Unit Tests of the sign up form."""
-from django.test import TestCase
-from clubs.models import User
+"""Unit Tests for the sign up form."""
 from clubs.forms import SignUpForm
+from clubs.models import User
 from django import forms
 from django.contrib.auth.hashers import check_password
+from django.test import TestCase
 
 
 class SignUpFormTestCase(TestCase):
-    """Unit Tests of the sign up form."""
+    """Unit Tests for the sign up form."""
     def setUp(self):
         self.valid_form_input = {
             'email': 'bobsmith@example.com',

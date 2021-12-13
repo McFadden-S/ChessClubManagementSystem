@@ -1,14 +1,12 @@
-"""Unit tests for show club"""
+"""Unit tests for show club view."""
+from clubs.models import Club, User
+from clubs.tests.helpers import LogInTester, NavbarTesterMixin, reverse_with_next
 from django.test import TestCase
-from clubs.models import User, Club_Member, Club
 from django.urls import reverse
-from clubs.tests.helpers import reverse_with_next
-from django.contrib.auth.hashers import check_password
-from clubs.tests.helpers import LogInTester, NavbarTesterMixin
 
 # Used this from clucker project with some modifications
 class ShowClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
-    """Unit tests for show club"""
+    """Unit tests for show club view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/default_club.json'

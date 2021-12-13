@@ -1,13 +1,12 @@
+"""Unit tests for the members list view."""
+from clubs.models import Club, Club_Member, User
+from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.test import TestCase
-from clubs.models import User, Club_Member, Club
 from django.urls import reverse
-from clubs.tests.helpers import reverse_with_next
-from django.contrib.auth.hashers import check_password
-from clubs.tests.helpers import LogInTester
-
 
 # Used this from clucker project with some modifications
 class MembersListViewTestCase(TestCase, LogInTester):
+    """Unit tests for the members list view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',

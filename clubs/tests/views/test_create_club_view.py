@@ -1,14 +1,14 @@
-"""Tests of the create club view."""
-from django.test import TestCase
-from clubs.models import User, Club_Member, Club
+"""Unit tests for the create club view."""
 from clubs.forms import CreateClubForm
-from django.urls import reverse
+from clubs.models import Club, Club_Member, User
 from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.contrib import messages
+from django.test import TestCase
+from django.urls import reverse
 from with_asserts.mixin import AssertHTMLMixin
 
 class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
-    """Tests of the create club view."""
+    """Unit tests for the create club view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',

@@ -1,13 +1,12 @@
-"""Tests of the apply club view."""
+"""Unit tests for the apply club view."""
+from clubs.models import Club, Club_Member, User
+from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
-from clubs.models import User, Club_Member, Club
-from clubs.tests.helpers import LogInTester, reverse_with_next
 
 
 class ApplyClubViewTestCase(TestCase, LogInTester):
-    """Tests of the apply club view."""
-
+    """Unit tests for the apply club view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
