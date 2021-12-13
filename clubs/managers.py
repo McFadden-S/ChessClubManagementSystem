@@ -1,5 +1,6 @@
-from django.contrib.auth.base_user import BaseUserManager
+"""Managers for models."""
 import clubs.models
+from django.contrib.auth.base_user import BaseUserManager
 
 class UserManager(BaseUserManager):
     """Manager for the user model."""

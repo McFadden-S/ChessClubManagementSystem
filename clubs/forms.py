@@ -1,9 +1,10 @@
 """Forms for the clubs app."""
+from clubs.models import Club, User
 from django import forms
-from .models import User, Club_Member, Club
 from django.core.validators import RegexValidator
 import requests
 import urllib.parse
+
 # Used this from clucker project with some modifications
 class SignUpForm(forms.ModelForm):
     """Form enabling users to sign up if they do not have an account."""

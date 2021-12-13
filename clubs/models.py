@@ -1,10 +1,9 @@
 """Models in the clubs app."""
-
-from django.db import models
+from clubs.managers import UserManager
 from django.contrib.auth.models import AbstractUser
-from .managers import UserManager
-from libgravatar import Gravatar
 from django_countries.fields import CountryField
+from django.db import models
+from libgravatar import Gravatar
 
 class User(AbstractUser):
     """User model for authentication."""
