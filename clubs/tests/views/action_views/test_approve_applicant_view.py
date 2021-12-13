@@ -4,9 +4,6 @@ from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
 
-
-# Used this from clucker project with some modifications
-
 class ApproveApplicantTestCase(TestCase, LogInTester):
     """Unit tests for the approve applicant view."""
     fixtures = [
