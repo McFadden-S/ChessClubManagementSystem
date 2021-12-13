@@ -17,12 +17,16 @@ class SignUpView(LoginProhibitedMixin, FormView):
     template_name = "sign_up.html"
 
     def form_valid(self, form):
+        """Proccess the form."""
+
         self.object = form.save()
         login(self.request, self.object)
         messages.success(self.request, f"Your account was created successfully")
         return super().form_valid(form)
 
     def get_success_url(self):
+        """Return redirect URL to dashboard after successfully registering an account."""
+
         return reverse('dashboard')
 
 class LogInView(LoginProhibitedMixin, FormView):
@@ -32,6 +36,8 @@ class LogInView(LoginProhibitedMixin, FormView):
     form_class = LogInForm
 
     def form_valid(self, form):
+        """Proccess the form."""
+
         email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
         user = authenticate(email=email, password=password)
@@ -44,12 +50,16 @@ class LogInView(LoginProhibitedMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
+        """Return redirect URL to dashboard after logging in successfully."""
+
         return reverse('dashboard')
 
 class LogOutView(LoginRequiredMixin, TemplateView):
     """View to log out of the system."""
 
     def get(self, request, *args, **kwargs):
+        """Handle get request."""
+
         logout(request)
         return redirect('home')
 
@@ -62,17 +72,21 @@ class UpdateUserView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         """Return the object (user) to be updated."""
+
         user = self.request.user
         return user
 
     def get_context_data(self, **kwargs):
+        """Generate context data to be shown in the template."""
+
         context = super().get_context_data(**kwargs)
         context['my_clubs'] = get_my_clubs(self.request.user)
 
         return context
 
     def get_success_url(self):
-        """Return redirect URL after successful update."""
+        """Return redirect URL to dashboard after successful update."""
+
         messages.success(self.request, "User Information Updated Successfully")
         return reverse('dashboard')
 
@@ -84,6 +98,7 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         """Ensure form is valid"""
+
         current_user = self.request.user
         password = form.cleaned_data.get('password')
 
@@ -100,10 +115,14 @@ class ChangePasswordView(LoginRequiredMixin, FormView):
             return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
+        """Generate context data to be shown in the template."""
+
         context = super().get_context_data(**kwargs)
         context['my_clubs'] = get_my_clubs(self.request.user)
 
         return context
 
     def get_success_url(self):
+        """Return redirect URL to dashboard after changing the password successfully."""
+
         return reverse('dashboard')
