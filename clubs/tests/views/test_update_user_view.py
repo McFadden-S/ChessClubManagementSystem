@@ -1,13 +1,14 @@
-"""Unit tests for the update user view."""
-from clubs.forms import UpdateUserForm
-from clubs.models import User
-from clubs.tests.helpers import LogInTester, NavbarTesterMixin, reverse_with_next
 from django.test import TestCase
+from clubs.models import User
+from clubs.forms import UserUpdateForm
 from django.urls import reverse
+from clubs.tests.helpers import reverse_with_next
+from django.contrib.auth.hashers import check_password
+from clubs.tests.helpers import LogInTester, NavbarTesterMixin
 
 # Used this from clucker project with some modifications
-class UpdateUserViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
-    """Unit tests for the update user view."""
+class userUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json'
@@ -27,7 +28,7 @@ class UpdateUserViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         }
 
     def test_user_update_url(self):
-        """"Test for the update user url."""
+        """"Test for the user update url."""
         self.assertEqual(self.url, '/update_user/')
 
     def test_get_user_update(self):
@@ -39,25 +40,24 @@ class UpdateUserViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
-        self.assertTrue(isinstance(form, UpdateUserForm))
+        self.assertTrue(isinstance(form, UserUpdateForm))
+
+    """Unit tests for redirecting when not logged in"""
 
     def test_get_user_update_redirects_when_not_logged_in(self):
-        """Test get update user redirect when not logged in"""
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
     def test_post_user_update_redirects_when_not_logged_in(self):
-        """Test post update user redirect when not logged in"""
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.post(self.url, self.form_input)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
-
-    def test_succesful_user_update(self):
-        """Test to check correct update user"""
+    def test_successful_user_update(self):
+        """Test to check correct user update"""
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.post(self.url, self.form_input)
@@ -70,8 +70,9 @@ class UpdateUserViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertTrue(self.user.chess_experience, self.form_input['chess_experience'])
         self.assertTrue(self.user.personal_statement, self.form_input['personal_statement'])
 
-    def test_unsuccesful_user_update_with_blank_first_name(self):
-        """Test to check that user has not updated if first name is blank"""
+    """Unit tests for unsuccessful user updates"""
+
+    def test_unsuccessful_user_update_with_blank_first_name(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.form_input['first_name'] = ''
@@ -80,12 +81,11 @@ class UpdateUserViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
-        self.assertTrue(isinstance(form, UpdateUserForm))
+        self.assertTrue(isinstance(form, UserUpdateForm))
         self.user.refresh_from_db()
         self.assertFalse(self.user.first_name == '')
 
-    def test_unsuccesful_user_update_with_blank_last_name(self):
-        """Test to check that user has not updated if last name is blank"""
+    def test_unsuccessful_user_update_with_blank_last_name(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.form_input['last_name'] = ''
@@ -94,12 +94,11 @@ class UpdateUserViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
-        self.assertTrue(isinstance(form, UpdateUserForm))
+        self.assertTrue(isinstance(form, UserUpdateForm))
         self.user.refresh_from_db()
         self.assertFalse(self.user.last_name == '')
 
-    def test_unsuccesful_user_update_with_incorrect_email(self):
-        """Test to check that user has not updated if email is incorrect"""
+    def test_unsuccessful_user_update_with_incorrect_email(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.form_input['email'] = 'notemail'
@@ -108,12 +107,11 @@ class UpdateUserViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
-        self.assertTrue(isinstance(form, UpdateUserForm))
+        self.assertTrue(isinstance(form, UserUpdateForm))
         self.user.refresh_from_db()
         self.assertFalse(self.user.email == 'notemail')
 
-    def test_unsuccesful_user_update_with_duplicate_email(self):
-        """Test to check that user has not updated if email is duplicate"""
+    def test_unsuccessful_user_update_with_duplicate_email(self):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.form_input['email'] = self.user2.email
@@ -122,6 +120,6 @@ class UpdateUserViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'user_update.html')
         form = response.context['form']
-        self.assertTrue(isinstance(form, UpdateUserForm))
+        self.assertTrue(isinstance(form, UserUpdateForm))
         self.user.refresh_from_db()
         self.assertFalse(self.user.email == self.user2.email)

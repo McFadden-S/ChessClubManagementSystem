@@ -30,9 +30,11 @@ class LogInViewTestCase(TestCase, LogInTester):
         )
 
     def test_log_in_url(self):
+        """"Test for the log in url."""
         self.assertEqual(self.url, '/log_in/')
 
     def test_get_log_in(self):
+        """Test to get log in"""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
@@ -45,6 +47,7 @@ class LogInViewTestCase(TestCase, LogInTester):
 
 
     def test_unsuccessful_log_in(self):
+        """Test for unsuccessful log in"""
         form_input = {'email': 'bobsmith@example.org', 'password': 'WrongPassword123'}
         response = self.client.post(self.url, form_input)
         self.assertEqual(response.status_code, 200)
@@ -55,6 +58,8 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertFalse(self._is_logged_in())
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
+
+    """Unit tests for successful user log in"""
 
     def test_successful_applicant_log_in(self):
         form_input = {'email': 'bethsmith@example.org', 'password': 'Password123'}
@@ -76,6 +81,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
 
+    """Unit tests to redirect when logged in"""
 
     def test_get_log_in_redirects_when_logged_in(self):
         self.client.login(email=self.user.email, password="Password123")

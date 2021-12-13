@@ -42,8 +42,9 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         """"Test for the show member url."""
         self.assertEqual(self.url, f'/{self.club.id}/show_member/{self.target_user.id}')
 
+    """Unit tests to show member when logged in as user of club"""
+
     def test_get_show_member_by_owner_in_club(self):
-        """"Test to show member when logged in as owner of club."""
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
@@ -54,7 +55,6 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(len(messages_list), 0)
 
     def test_get_show_member_by_officer_in_club(self):
-        """"Test to show member when logged in as officer of club."""
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
@@ -65,7 +65,6 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(len(messages_list), 0)
 
     def test_get_show_member_by_members_own_profile_in_club(self):
-        """"Test to show member when logged in as member of club."""
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
@@ -76,7 +75,6 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(len(messages_list), 0)
 
     def test_get_show_member_by_member_who_looks_at_another_member_in_club(self):
-        """"Test to show another member when logged in as member of club."""
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         member2 = User.objects.get(email='marrysmith@example.org')
@@ -89,7 +87,6 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(len(messages_list), 0)
 
     def test_get_show_member_by_applicant_in_club(self):
-        """"Test to show member when logged in as applicant of club."""
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         target_user1 = User.objects.get(email=self.applicant.email)
@@ -103,8 +100,9 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
+    """Unit tests for user not being able to access another member in different club"""
+
     def test_owner_cannot_access_another_member_profile_in_different_club(self):
-        """Test for owner not being able to access another member in a different club"""
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         target_user1 = User.objects.get(email=self.different_applicant.email)
@@ -119,7 +117,6 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
     def test_officer_cannot_access_another_member_profile_in_different_club(self):
-        """Test for officer not being able to access another member in a different club"""
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         target_user1 = User.objects.get(email=self.different_applicant.email)
@@ -134,7 +131,6 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
     def test_applicant_cannot_access_another_member_show_member_profile_in_different_club(self):
-        """Test for applicant not being able to access another member in a different club"""
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         target_user1 = User.objects.get(email=self.different_applicant.email)
@@ -149,7 +145,6 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
     def test_member_cannot_access_another_member_profile_in_different_club(self):
-        """Test for member not being able to access another member in a different club"""
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         target_user1 = User.objects.get(email=self.different_applicant.email)
@@ -162,6 +157,8 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
+
+    """Unit tests for redirecting when not logged in"""
 
     def test_get_show_member_redirects_when_not_logged_in(self):
         """Test get show member redirects when not logged in"""
@@ -178,8 +175,9 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
+    """Unit tests for show member with id"""
+
     def test_get_show_member_with_valid_id(self):
-        """Test show valid member"""
         self.client.login(username=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
@@ -189,7 +187,6 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertContains(response, "James Smith")
 
     def test_get_show_member_with_invalid_id(self):
-        """Test show invalid member"""
         self.client.login(username=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         url = reverse('show_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id+9999})

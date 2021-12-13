@@ -1,14 +1,14 @@
-"""Unit tests for the create club view."""
-from clubs.forms import CreateClubForm
-from clubs.models import Club, Club_Member, User
-from clubs.tests.helpers import LogInTester, reverse_with_next
-from django.contrib import messages
+"""Tests of the create club view."""
 from django.test import TestCase
+from clubs.models import User, Club_Member, Club
+from clubs.forms import CreateClubForm
 from django.urls import reverse
+from clubs.tests.helpers import LogInTester, reverse_with_next, NavbarTesterMixin
+from django.contrib import messages
 from with_asserts.mixin import AssertHTMLMixin
 
-class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
-    """Unit tests for the create club view."""
+class CreateClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin, AssertHTMLMixin):
+    """Tests of the create club view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -37,11 +37,14 @@ class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         self.url = reverse('create_club')
 
     def test_create_club_url(self):
+        """Test for the create club url"""
         self.assertEqual(self.url,'/create_club/')
 
     def test_get_create_club_by_any_user_when_logged_ini(self):
+        """Test to create club with any user when logged in"""
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
+        self.assert_main_navbar(response)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'create_club.html')
         form = response.context['form']
@@ -61,6 +64,7 @@ class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         before_count = Club.objects.count()
         before_count_clubmember = Club_Member.objects.count()
         response = self.client.post(self.url, self.valid_form_input, follow=True)
+        self.assert_main_navbar(response)
         after_count = Club.objects.count()
         self.assertEqual(after_count, before_count+1)
         after_count_clubmember = Club_Member.objects.count()
@@ -91,6 +95,7 @@ class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
          before_count_clubmember = Club_Member.objects.count()
          self.valid_form_input['address'] ="AAAAAAAAAAAAAAAAAbdadress"
          response = self.client.post(self.url, self.valid_form_input, follow=True)
+         self.assert_main_navbar(response)
          after_count_club = Club.objects.count()
          self.assertEqual(after_count_club, before_count_club)
          after_count_clubmember = Club_Member.objects.count()
@@ -105,6 +110,7 @@ class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
          before_count_clubmember = Club_Member.objects.count()
          self.valid_form_input['city'] ="ldn"
          response = self.client.post(self.url, self.valid_form_input, follow=True)
+         self.assert_main_navbar(response)
          after_count_club = Club.objects.count()
          self.assertEqual(after_count_club, before_count_club)
          after_count_clubmember = Club_Member.objects.count()
@@ -119,6 +125,7 @@ class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
          before_count_clubmember = Club_Member.objects.count()
          self.valid_form_input['postal_code'] ="badpostalcode"
          response = self.client.post(self.url, self.valid_form_input, follow=True)
+         self.assert_main_navbar(response)
          after_count_club = Club.objects.count()
          self.assertEqual(after_count_club, before_count_club)
          after_count_clubmember = Club_Member.objects.count()
@@ -133,6 +140,7 @@ class CreateClubViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
          before_count_clubmember = Club_Member.objects.count()
          self.valid_form_input['country'] ="BadCountry"
          response = self.client.post(self.url, self.valid_form_input, follow=True)
+         self.assert_main_navbar(response)
          after_count_club = Club.objects.count()
          self.assertEqual(after_count_club, before_count_club)
          after_count_clubmember = Club_Member.objects.count()

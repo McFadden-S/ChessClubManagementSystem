@@ -1,13 +1,13 @@
-"""Unit tests for the leave club view."""
-from clubs.models import Club, Club_Member, User
-from clubs.tests.helpers import LogInTester, reverse_with_next
-from django.core.exceptions import ObjectDoesNotExist
+"""Tests of the leave club view."""
 from django.test import TestCase
 from django.urls import reverse
+from clubs.models import User, Club_Member, Club
+from clubs.tests.helpers import LogInTester, reverse_with_next
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class LeaveClubViewTestCase(TestCase, LogInTester):
-    """Unit tests for the leave club view."""
+    """Tests of the leave club view."""
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -34,7 +34,7 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
     def test_leave_club_url(self):
         """Test for the leave club url."""
 
-        self.assertEqual(self.url,f'/{self.club.id}/leave_club/{self.member.id}')
+        self.assertEqual(self.url, f'/{self.club.id}/leave_club/{self.member.id}')
 
     def test_get_leave_club_redirects_when_not_logged_in(self):
         """Test for redirecting user when not logged in."""
@@ -44,9 +44,9 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
         redirect_url = reverse_with_next('log_in', self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
 
-    def test_get_member_leave_club(self):
-        """Test for a member successfully leaving a club."""
+    """Unit tests for successfully leaving a club"""
 
+    def test_get_member_leave_club(self):
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
@@ -55,15 +55,13 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if the member has been removed
-        self.assertEqual(before_count, after_count+1)
+        self.assertEqual(before_count, after_count + 1)
 
         # Checks if the member does not exist in the Club
         with self.assertRaises(ObjectDoesNotExist):
             Club_Member.objects.get(user=self.member, club=self.club)
 
     def test_get_officer_leave_club(self):
-        """Test for an officer successfully leaving a club."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('leave_club', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
@@ -73,15 +71,15 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if the officer has been removed
-        self.assertEqual(before_count, after_count+1)
+        self.assertEqual(before_count, after_count + 1)
 
         # Checks if the officer does not exist in the Club
         with self.assertRaises(ObjectDoesNotExist):
             Club_Member.objects.get(user=self.officer, club=self.club)
 
-    def test_get_applicant_leave_club(self):
-        """Test for an applicant not being able to leave a club."""
+    """Unit tests for not being able to leave a club"""
 
+    def test_get_applicant_leave_club(self):
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('leave_club', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
@@ -100,8 +98,6 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
             self.fail('The user is not allowed to leave the club as applicant')
 
     def test_get_owner_leave_club(self):
-        """Test for an owner not being able to leave a club."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('leave_club', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
@@ -119,9 +115,9 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
         except (ObjectDoesNotExist):
             self.fail('The owner is not allowed to leave the club')
 
-    def test_get_member_leave_wrong_club(self):
-        """Test for a member not being able to leave a club that the member is not in."""
+    """Unit tests for leaving club user is not in"""
 
+    def test_get_member_leave_wrong_club(self):
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('leave_club', kwargs={'club_id': self.wrong_club.id, 'member_id': self.member.id})
@@ -134,8 +130,6 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
         self.assertEqual(before_count, after_count)
 
     def test_get_officer_leave_wrong_club(self):
-        """Test for an officer not being able to leave a club that the officer is not in."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('leave_club', kwargs={'club_id': self.wrong_club.id, 'member_id': self.officer.id})
@@ -148,8 +142,6 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
         self.assertEqual(before_count, after_count)
 
     def test_get_applicant_leave_wrong_club(self):
-        """Test for an applicant not being able to leave a club that the applicant is not in."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('leave_club', kwargs={'club_id': self.wrong_club.id, 'member_id': self.applicant.id})
@@ -162,8 +154,6 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
         self.assertEqual(before_count, after_count)
 
     def test_get_owner_leave_wrong_club(self):
-        """Test for an owner not being able to leave a club that the owner is not in."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('leave_club', kwargs={'club_id': self.wrong_club.id, 'member_id': self.owner.id})

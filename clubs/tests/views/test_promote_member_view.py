@@ -60,9 +60,9 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         auth_after_promotion = Club_Member.objects.get(user=self.member).authorization
         self.assertEqual(auth_after_promotion, 'OF')
 
-    def test_get_officer_promote_member(self):
-        """Test for the officer not being able to promote a member."""
+    """Unit tests for user not being able to promote a member"""
 
+    def test_get_officer_promote_member(self):
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_promotion = Club_Member.objects.get(user=self.member).authorization
@@ -74,8 +74,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'ME')
 
     def test_get_another_member_promote_member(self):
-        """Test for the a member not being able to promote a member."""
-
         self.client.login(email=self.another_member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_promotion = Club_Member.objects.get(user=self.member).authorization
@@ -87,8 +85,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'ME')
 
     def test_get_applicant_promote_member(self):
-        """Test for the applicant not being able to promote a member."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_promotion = Club_Member.objects.get(user=self.member).authorization
@@ -100,8 +96,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'ME')
 
     def test_get_member_promote_themselves(self):
-        """Test for the member not being able to promote themselves."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         auth_before_promotion = Club_Member.objects.get(user=self.member).authorization
@@ -112,9 +106,9 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         auth_after_promotion = Club_Member.objects.get(user=self.member).authorization
         self.assertEqual(auth_after_promotion, 'ME')
 
-    def test_get_owner_promote_officer(self):
-        """Test for the owner not being able to promote an officer."""
+    """Unit tests for user not being able to promote an officer"""
 
+    def test_get_owner_promote_officer(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
         self.assertTrue(self._is_logged_in())
@@ -127,8 +121,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'OF')
 
     def test_get_another_officer_promote_officer(self):
-        """Test for another officer not being able to promote an officer."""
-
         self.client.login(email=self.another_officer.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
         self.assertTrue(self._is_logged_in())
@@ -141,8 +133,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'OF')
 
     def test_get_member_promote_officer(self):
-        """Test for the member not being able to promote an officer."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
         self.assertTrue(self._is_logged_in())
@@ -155,8 +145,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'OF')
 
     def test_get_applicant_promote_officer(self):
-        """Test for the applicant not being able to promote an officer."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
         self.assertTrue(self._is_logged_in())
@@ -169,8 +157,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'OF')
 
     def test_get_officer_promote_themselves(self):
-        """Test for the officer not being able to promote themselves."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
@@ -182,9 +168,9 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         auth_after_promotion = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(auth_after_promotion, 'OF')
 
-    def test_get_owner_promote_applicant(self):
-        """Test for the owner not being able to promote an applicant."""
+    """Unit tests for user not being able to promote an applicant"""
 
+    def test_get_owner_promote_applicant(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
         self.assertTrue(self._is_logged_in())
@@ -197,8 +183,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'AP')
 
     def test_get_officer_promote_applicant(self):
-        """Test for officer not being able to promote an applicant."""
-
         self.client.login(email=self.officer.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
         self.assertTrue(self._is_logged_in())
@@ -211,8 +195,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'AP')
 
     def test_get_member_promote_applicant(self):
-        """Test for the member not being able to promote an applicant."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
         self.assertTrue(self._is_logged_in())
@@ -225,8 +207,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'AP')
 
     def test_get_another_applicant_promote_applicant(self):
-        """Test for another applicant not being able to promote an applicant."""
-
         self.client.login(email=self.another_applicant.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
         self.assertTrue(self._is_logged_in())
@@ -239,8 +219,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'AP')
 
     def test_get_applicant_promote_themselves(self):
-        """Test for the applicant not being able to promote themselves."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
@@ -252,9 +230,9 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         auth_after_promotion = Club_Member.objects.get(user=self.applicant).authorization
         self.assertEqual(auth_after_promotion, 'AP')
 
-    def test_get_officer_promote_owner(self):
-        """Test for officer not being able to promote an owner."""
+    """Unit tests for user not being able to promote an owner"""
 
+    def test_get_officer_promote_owner(self):
         self.client.login(email=self.officer.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
         self.assertTrue(self._is_logged_in())
@@ -267,8 +245,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'OW')
 
     def test_get_member_promote_owner(self):
-        """Test for the member not being able to promote an owner."""
-
         self.client.login(email=self.member.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
         self.assertTrue(self._is_logged_in())
@@ -281,8 +257,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'OW')
 
     def test_get_applicant_promote_owner(self):
-        """Test for applicant not being able to promote an owner."""
-
         self.client.login(email=self.applicant.email, password='Password123')
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
         self.assertTrue(self._is_logged_in())
@@ -295,8 +269,6 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_after_promotion, 'OW')
 
     def test_get_owner_promote_themselves(self):
-        """Test for the owner not being able to promote themselves."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id})
