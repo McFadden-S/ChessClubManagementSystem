@@ -12,7 +12,7 @@ class Command(BaseCommand):
         self.AUTHORIZATION_CHOICES = ['AP', 'ME', 'OF']
         self.counter = 0
 
-    def seedRandomUser(self):
+    def seed_random_user(self):
         first_name=self.faker.first_name()
         last_name=self.faker.last_name()
         email = f'{first_name.lower()}{last_name.lower()}{self.counter}@example.org'
@@ -33,7 +33,7 @@ class Command(BaseCommand):
         self.counter += 1
         return randUser
 
-    def seedRandomClub(self):
+    def seed_random_club(self):
         name = self.faker.text(max_nb_chars=20)
         address = self.faker.street_address()
         city = self.faker.city()
@@ -52,10 +52,79 @@ class Command(BaseCommand):
 
         return newClub
 
+    def seed_test_users(self):
+        jeb = User.objects.create_user(
+            first_name='Jebediah',
+            last_name='Kerman',
+            email='jeb@example.org',
+            bio='I am Test User 1',
+            personal_statement='I Like Chess',
+            chess_experience= 'Beginner',
+            password = 'Password123',
+        )
+
+        val = User.objects.create_user(
+            first_name='Valentina',
+            last_name='Kerman',
+            email='val@example.org',
+            bio='I am Test User 2',
+            personal_statement='I Like Chess',
+            chess_experience= 'Beginner',
+            password = 'Password123',
+        )
+
+        bil = User.objects.create_user(
+            first_name='Billie',
+            last_name='Kerman',
+            email='billie@example.org',
+            bio='I am Test User 3',
+            personal_statement='I Like Chess',
+            chess_experience= 'Beginner',
+            password = 'Password123',
+        )
+
+        return [jeb, val, bil]
+
     def handle(self, *args, **options):
-        for i in range(0, 10):
-            owner = self.seedRandomUser()
-            newClub = self.seedRandomClub()
+        test_users = self.seed_test_users()
+
+        for i in range(0, 5):
+            owner = self.seed_random_user()
+            newClub = self.seed_random_club()
+
+            # if structure to ensure data is set up to non-functional requirement
+            if(i == 0):
+                Club.objects.filter(id=newClub.id).update(name='Kerbal Chess Club')
+                Club_Member.objects.create(
+                    user=test_users[0],
+                    club=newClub,
+                    authorization='ME',
+                )
+                Club_Member.objects.create(
+                    user=test_users[1],
+                    club=newClub,
+                    authorization='ME',
+                )
+                Club_Member.objects.create(
+                    user=test_users[2],
+                    club=newClub,
+                    authorization='ME',
+                )
+            elif(i==1):
+                Club_Member.objects.create(
+                    user=test_users[0],
+                    club=newClub,
+                    authorization='OF',
+                )
+            elif(i==2):
+                owner = test_users[1]
+            elif(i==3):
+                Club_Member.objects.create(
+                    user=test_users[2],
+                    club=newClub,
+                    authorization='ME',
+                )
+
 
             Club_Member.objects.create(
                 user=owner,
@@ -63,8 +132,8 @@ class Command(BaseCommand):
                 authorization='OW',
             )
 
-            for j in range(0, 50):
-                randUser = self.seedRandomUser()
+            for j in range(0, 20):
+                randUser = self.seed_random_user()
                 Club_Member.objects.create(
                     user=randUser,
                     club=newClub,
