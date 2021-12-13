@@ -1,12 +1,12 @@
-"""Tests of the transfer ownership view."""
-from django.test import TestCase
-from django.urls import reverse
-from clubs.models import User, Club_Member, Club
+"""Unit tests for the transfer ownership view."""
+from clubs.models import Club, Club_Member, User
 from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.core.exceptions import ObjectDoesNotExist
+from django.test import TestCase
+from django.urls import reverse
 
-class DemoteOfficerViewTestCase(TestCase, LogInTester):
-    """Tests of the transfer ownership view."""
+class TransferOwnershipViewTestCase(TestCase, LogInTester):
+    """Unit tests for the transfer ownership view."""
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -59,9 +59,9 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         officer_auth_after_transfer = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(officer_auth_after_transfer, 'OW')
 
-    def test_get_owner_transfer_ownership_to_member(self):
-        """Test for the owner not being able to transfer ownership to a member."""
+    """Unit tests for not being able to transfer ownership"""
 
+    def test_get_owner_transfer_ownership_to_member(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('transfer_ownership', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
@@ -74,8 +74,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(member_auth_after_transfer, 'ME')
 
     def test_get_owner_transfer_ownership_to_applicant(self):
-        """Test for the owner not being able to transfer ownership to an applicant."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('transfer_ownership', kwargs={'club_id': self.club.id, 'member_id': self.applicant.id})
@@ -88,8 +86,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(applicant_auth_after_transfer, 'AP')
 
     def test_get_owner_transfer_ownership_to_user_from_other_club(self):
-        """Test for the owner not being able to transfer ownership to a user from other club."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('transfer_ownership', kwargs={'club_id': self.club.id, 'member_id': self.user_from_other_club.id})
@@ -102,8 +98,6 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         self.assertEqual(user_from_other_club_auth_after_transfer, 'OF')
 
     def test_get_owner_transfer_ownership_to_clubless_user(self):
-        """Test for the owner not being able to transfer ownership to a clubless user."""
-
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         self.url = reverse('transfer_ownership', kwargs={'club_id': self.club.id, 'member_id': self.clubless_user.id})

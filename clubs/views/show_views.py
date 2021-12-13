@@ -1,10 +1,8 @@
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
-
+"""Views for showing-detail-related purposes."""
 from clubs.helpers import *
-from .mixins import *
-
+from clubs.views.mixins import *
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 
 class ShowView(TemplateView):
     """Abstract Class for Views that show an object in the application."""

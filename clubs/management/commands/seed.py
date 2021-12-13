@@ -1,7 +1,8 @@
-from django.core.management.base import BaseCommand, CommandError
+"""The database seeder."""
+from clubs.models import Club, Club_Member, User
+from django.core.management.base import BaseCommand
 from faker import Faker
 import numpy
-from clubs.models import User, Club_Member, Club
 
 class Command(BaseCommand):
     """The database seeder."""

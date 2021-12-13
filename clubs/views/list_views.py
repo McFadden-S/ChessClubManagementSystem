@@ -1,8 +1,8 @@
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-
+"""Views for list-related purposes."""
 from clubs.helpers import *
-from .mixins import *
+from clubs.views.mixins import *
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 
 class MembersListView(MembersRequiredMixin, TemplateView):
     """View to display member list"""

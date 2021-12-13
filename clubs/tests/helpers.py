@@ -1,3 +1,4 @@
+"""Helper methods for the unit tests"""
 from django.urls import reverse
 from with_asserts.mixin import AssertHTMLMixin
 

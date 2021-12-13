@@ -1,15 +1,13 @@
+"""Unit tests for the applicant list view."""
+from clubs.models import Club, Club_Member, User
+from clubs.tests.helpers import LogInTester, NavbarTesterMixin, reverse_with_next
 from django.test import TestCase
-from clubs.models import User, Club_Member, Club
 from django.urls import reverse
-from clubs.tests.helpers import reverse_with_next
-from django.contrib.auth.hashers import check_password
-from django.contrib import messages
-from clubs.tests.helpers import LogInTester, NavbarTesterMixin
 
 
 # Used this from clucker project with some modifications
 class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
-    """Tests of the applicant list view."""
+    """Unit tests for the applicant list view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -42,8 +40,9 @@ class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         """Test for the applicant list url."""
         self.assertEqual(self.url, f'/{self.club.id}/applicants_list/')
 
+    """Unit tests for showing applicant list"""
+
     def test_get_applicants_list_by_owner(self):
-        """Test for showing applicant list when logged in by owner"""
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
@@ -54,7 +53,6 @@ class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(len(messages_list), 0)
 
     def test_get_applicants_list_by_officer(self):
-        """Test for showing applicant list when logged in by officer"""
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
@@ -63,6 +61,8 @@ class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertTemplateUsed(response, 'applicants_list.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
+
+    """Redirects"""
 
     def test_get_applicants_list_redirects_member_list_when_authorization_is_member(self):
         """Test for redirecting member to member list from applicant list"""
@@ -91,7 +91,6 @@ class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
-
     def create_ordered_list_by(self, order_by_var):
         """Test for creating ordered applicant list by var"""
         applicants_list = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
@@ -109,7 +108,6 @@ class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     #     members1 = Club_Member.objects.filter(authorization='AP').values_list('user__id', flat=True)
     #     members = list(User.objects.exclude(id__in=members1))
     #     self.assertListEqual(second_list, members)
-
 
     # TODO Refactor tests to reflect javascript search/sort
     # def test_sorted_list_first_name(self):

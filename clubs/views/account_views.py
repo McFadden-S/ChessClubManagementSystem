@@ -1,14 +1,15 @@
-from django.views.generic.edit import FormView, UpdateView
-from django.views.generic import TemplateView
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.hashers import check_password
-from django.shortcuts import redirect, reverse
-from django.contrib import messages
-
+"""Views for account-related purposes."""
 from clubs.forms import *
 from clubs.helpers import *
-from .mixins import *
+from clubs.views.mixins import *
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect, reverse
+from django.views.generic import TemplateView
+from django.views.generic.edit import FormView, UpdateView
+
 
 class SignUpView(LoginProhibitedMixin, FormView):
     """View that signs up user."""
@@ -72,14 +73,15 @@ class LogOutView(LoginRequiredMixin, TemplateView):
         """Handle get request."""
 
         logout(request)
+        messages.success(self.request, "Logged out successfully")
         return redirect('home')
 
 class UpdateUserView(LoginRequiredMixin, UpdateView):
     """View to update logged-in user's profile."""
 
-    model = UserUpdateForm
+    model = UpdateUserForm
     template_name = "user_update.html"
-    form_class = UserUpdateForm
+    form_class = UpdateUserForm
 
     def get_object(self):
         """Return the object (user) to be updated."""

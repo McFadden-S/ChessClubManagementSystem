@@ -1,9 +1,9 @@
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib import messages
-
+"""Views for action-related purposes."""
 from clubs.helpers import *
-from .mixins import *
+from clubs.views.mixins import *
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
 
 class ActionView(TemplateView):
     """Abstract Class for Views that make an action in the application."""

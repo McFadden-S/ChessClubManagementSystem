@@ -1,7 +1,7 @@
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib import messages
-from clubs.models import Club, Club_Member
+"Helper methods for club-related purposes."
 from clubs.helpers.user_helpers import *
+from clubs.models import Club, Club_Member
+from django.core.exceptions import ObjectDoesNotExist
 
 def get_club(club_id):
     """Get the club from the given club id."""

@@ -4,9 +4,9 @@ from clubs.models import User,Club_Member, Club
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib import messages
-from clubs.tests.helpers import LogInTester
+from clubs.tests.helpers import LogInTester, NavbarTesterMixin
 
-class ShowApplicantViewTestCase(TestCase, LogInTester):
+class ShowApplicantViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for show applicant"""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
@@ -36,12 +36,16 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         self.url = reverse('show_applicant', kwargs={'club_id' : self.club.id, 'applicant_id': self.target_user.id})
 
     def test_show_applicant_url(self):
+        """Test for the show applicant url"""
         self.assertEqual(self.url, f'/{self.club.id}/show_applicant/{self.target_user.id}')
+
+    """Unit tests for show applicant with owner and officer"""
 
     def test_get_show_applicant_by_officer_in_club(self):
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
+        self.assert_main_navbar(response)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'show_applicant.html')
         self.assertContains(response, "Bob Smith")
@@ -55,6 +59,7 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
+        self.assert_main_navbar(response)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'show_applicant.html')
         self.assertContains(response, "Bob Smith")
@@ -65,10 +70,13 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 0)
 
     def test_get_show_applicant_redirects_when_not_logged_in(self):
+        """Unit test for redirecting when not logged in"""
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
+
+    """Unit tests for redirecting if applicant is already approved"""
 
     def test_get_show_applicant_by_officer_redirects_having_been_already_approved(self):
         self.client.login(email=self.officer.email, password='Password123')
@@ -78,6 +86,7 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         target_user1 = User.objects.get(email='a@example.com')
         url1 = reverse('show_applicant', kwargs={'club_id': self.club.id, 'applicant_id': target_user1.id})
         response = self.client.get(url1, follow=True)
+        self.assert_main_navbar(response)
         response_url = reverse('applicants_list', kwargs={'club_id' : self.club.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'applicants_list.html')
@@ -90,9 +99,12 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         target_user1 = User.objects.get(email='a@example.com')
         url1 = reverse('show_applicant', kwargs={'club_id': self.club.id, 'applicant_id': target_user1.id})
         response = self.client.get(url1, follow=True)
+        self.assert_main_navbar(response)
         response_url = reverse('applicants_list', kwargs={'club_id' : self.club.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'applicants_list.html')
+
+    """Unit tests for not being able to access show applicant in same club"""
 
     def test_applicant_cannot_access_his_own_show_applicant_profile_in_club(self):
         self.client.login(email=self.applicant.email, password='Password123')
@@ -100,6 +112,7 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         target_user1 = User.objects.get(email=self.applicant.email)
         url1 = reverse('show_applicant', kwargs={'club_id': self.club.id, 'applicant_id': target_user1.id})
         response = self.client.get(url1, follow=True)
+        self.assert_main_navbar(response)
         response_url = reverse('waiting_list', kwargs={'club_id' : self.club.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'waiting_list.html')
@@ -118,6 +131,7 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         target_user1 = User.objects.get(email=applicant2.email)
         url1 = reverse('show_applicant', kwargs={'club_id': self.club.id, 'applicant_id': target_user1.id})
         response = self.client.get(url1, follow=True)
+        self.assert_main_navbar(response)
         response_url = reverse('waiting_list', kwargs={'club_id' : self.club.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'waiting_list.html')
@@ -131,12 +145,15 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         target_user1 = User.objects.get(email=self.applicant.email)
         url1 = reverse('show_applicant', kwargs={'club_id': self.club.id, 'applicant_id': target_user1.id})
         response = self.client.get(url1, follow=True)
+        self.assert_main_navbar(response)
         response_url = reverse('members_list', kwargs={'club_id' : self.club.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'members_list.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
+
+    """Unit tests for accessing applicant profile in a different club"""
 
     def test_owner_cannot_access_another_applicant_profile_in_different_club(self):
         self.client.login(email=self.owner.email, password='Password123')
@@ -145,6 +162,7 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         url1 = reverse('show_applicant', kwargs={'club_id': self.different_club.id, 'applicant_id': target_user1.id})
         response = self.client.get(url1, follow=True)
         response_url = reverse('dashboard')
+        self.assert_main_navbar(response)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
         messages_list = list(response.context['messages'])
@@ -158,6 +176,7 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         url1 = reverse('show_applicant', kwargs={'club_id': self.different_club.id, 'applicant_id': target_user1.id})
         response = self.client.get(url1, follow=True)
         response_url = reverse('dashboard')
+        self.assert_main_navbar(response)
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
         messages_list = list(response.context['messages'])
@@ -170,6 +189,7 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         target_user1 = User.objects.get(email=self.different_applicant.email)
         url1 = reverse('show_applicant', kwargs={'club_id': self.different_club.id, 'applicant_id': target_user1.id})
         response = self.client.get(url1, follow=True)
+        self.assert_main_navbar(response)
         response_url = reverse('dashboard')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
@@ -183,6 +203,7 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         target_user1 = User.objects.get(email=self.different_applicant.email)
         url1 = reverse('show_applicant', kwargs={'club_id': self.different_club.id, 'applicant_id': target_user1.id})
         response = self.client.get(url1, follow=True)
+        self.assert_main_navbar(response)
         response_url = reverse('dashboard')
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
@@ -190,11 +211,13 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
 
+    """Unit tests for applicant id"""
 
     def test_get_show_applicant_with_valid_id(self):
         self.client.login(email=self.officer.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
+        self.assert_main_navbar(response)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'show_applicant.html')
         self.assertContains(response, "Bob Smith")
@@ -204,6 +227,7 @@ class ShowApplicantViewTestCase(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in())
         url = reverse('show_applicant', kwargs={'club_id': self.club.id, 'applicant_id': self.applicant.id+9999})
         response = self.client.get(url, follow=True)
+        self.assert_main_navbar(response)
         response_url = reverse('applicants_list', kwargs={'club_id' : self.club.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'applicants_list.html')
