@@ -42,10 +42,10 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertTemplateUsed(response, 'log_in.html')
         form = response.context['form']
         self.assertTrue(isinstance(form, LogInForm))
-        self.assertTrue(form.is_bound)
+        self.assertFalse(form.is_bound)
         self.assertFalse(self._is_logged_in())
         messages_list = list(response.context['messages'])
-        self.assertEqual(len(messages_list), 0)
+        self.assertEqual(len(messages_list), 1)
 
     def test_successful_user_log_in(self):
         """Test for successful log in with correct credentials."""
@@ -86,15 +86,6 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertTemplateUsed(response, 'change_password.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 1)
-
-    def test_post_log_in_with_incorrect_credentials_and_redirect(self):
-        """Test that the next url still exist when a user log in with incorrect credentials."""
-
-        redirect_url = reverse('change_password')
-        form_input = { 'email': 'bobsmith@example.org', 'password': 'WrongPassword123', 'next': redirect_url }
-        response = self.client.post(self.url, form_input)
-        next = response.context['next']
-        self.assertEqual(next, redirect_url)
 
     """ Unit tests to redirect when logged in """
 
