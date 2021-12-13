@@ -16,7 +16,7 @@ class NavbarTesterMixin(AssertHTMLMixin):
         reverse('delete_account'), reverse('log_out')
     ]
 
-    def assert_main_narbar(self, response):
+    def assert_main_navbar(self, response):
         for url in self.main_navbar_urls:
             with self.assertHTML(response, f'a[href="{url}"]'):
                 pass
