@@ -236,7 +236,6 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         club_applicant = Club_Member.objects.create(
             user=self.secondary_user, authorization='AP', club=self.club
         )
-
         club_officer = Club_Member.objects.create(
             user=self.user, authorization='OF', club=self.club
         )
@@ -256,6 +255,17 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
         self.assertRedirects(response, reverse('members_list', kwargs={'club_id' : self.club.id}), status_code=302, target_status_code=200)
+        #Owner transfers ownership from officer to owner
+        url_transfer = reverse('transfer_ownership', kwargs={'club_id': self.club.id, 'member_id': User.objects.get(email='bethsmith@example.org').id})
+        self.client.get(url_transfer)
+        #Original owner now deletes account
+        self.client.get(self.url)
+        after_count_user = User.objects.count()
+        after_count_club_member = Club_Member.objects.count()
+        after_count_club = Club.objects.count()
+        self.assertEqual(after_count_user, before_count_user-1)
+        self.assertEqual(after_count_club_member, before_count_club_member-1)
+        self.assertEqual(after_count_club, before_count_club)
 
     """4.4) Tests for owner who has applicant and member as users"""
     def test_owner_who_has_applicant_and_member_in_club_must_transfer_ownership(self):
@@ -288,6 +298,20 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
         self.assertRedirects(response, reverse('members_list', kwargs={'club_id' : self.club.id}), status_code=302, target_status_code=200)
+        #Owner promotes member to officer
+        url_transfer = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': User.objects.get(email='bethsmith@example.org').id})
+        self.client.get(url_transfer)
+        #Owner transfers ownership from officer to owner
+        url_transfer = reverse('transfer_ownership', kwargs={'club_id': self.club.id, 'member_id': User.objects.get(email='bethsmith@example.org').id})
+        self.client.get(url_transfer)
+        #Original owner now deletes account
+        self.client.get(self.url)
+        after_count_user = User.objects.count()
+        after_count_club_member = Club_Member.objects.count()
+        after_count_club = Club.objects.count()
+        self.assertEqual(after_count_user, before_count_user-1)
+        self.assertEqual(after_count_club_member, before_count_club_member-1)
+        self.assertEqual(after_count_club, before_count_club)
 
     """4.5) Tests for owner who has officer and member as users"""
     def test_owner_who_has_officer_and_member_in_club_must_transfer_ownership(self):
@@ -320,3 +344,14 @@ class DeleteAccountViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
         self.assertRedirects(response, reverse('members_list', kwargs={'club_id' : self.club.id}), status_code=302, target_status_code=200)
+        #Owner transfers ownership from officer to owner
+        url_transfer = reverse('transfer_ownership', kwargs={'club_id': self.club.id, 'member_id': User.objects.get(email='bethsmith@example.org').id})
+        self.client.get(url_transfer)
+        #Original owner now deletes account
+        self.client.get(self.url)
+        after_count_user = User.objects.count()
+        after_count_club_member = Club_Member.objects.count()
+        after_count_club = Club.objects.count()
+        self.assertEqual(after_count_user, before_count_user-1)
+        self.assertEqual(after_count_club_member, before_count_club_member-1)
+        self.assertEqual(after_count_club, before_count_club)
