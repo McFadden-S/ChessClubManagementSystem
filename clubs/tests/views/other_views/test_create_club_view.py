@@ -1,4 +1,4 @@
-"""Tests of the create club view."""
+"""Unit tests of the create club view."""
 from django.test import TestCase
 from clubs.models import User, Club_Member, Club
 from clubs.forms import CreateClubForm
@@ -8,7 +8,7 @@ from django.contrib import messages
 from with_asserts.mixin import AssertHTMLMixin
 
 class CreateClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin, AssertHTMLMixin):
-    """Tests of the create club view."""
+    """Unit tests of the create club view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -37,11 +37,11 @@ class CreateClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin, AssertHTM
         self.url = reverse('create_club')
 
     def test_create_club_url(self):
-        """Test for the create club url"""
+        """Unit tests for the create club url"""
         self.assertEqual(self.url,'/create_club/')
 
     def test_get_create_club_by_any_user_when_logged_ini(self):
-        """Test to create club with any user when logged in"""
+        """Unit tests to get create club form by logged in user"""
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assert_main_navbar(response)
@@ -59,7 +59,7 @@ class CreateClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin, AssertHTM
 
 
     def test_succesful_create_club(self):
-        #Test 1 - Save to db
+        """Unit tests for post successful create club form by any user"""
         self.client.login(email=self.user.email, password='Password123')
         before_count = Club.objects.count()
         before_count_clubmember = Club_Member.objects.count()
@@ -87,7 +87,7 @@ class CreateClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin, AssertHTM
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
 
 
-    """Since club model and form do not have validator """
+    """Unit tests to post unsuccessful create club form by any user"""
 
     def test_unsuccesful_create_club_via_bad_address(self):
          self.client.login(email=self.user.email, password='Password123')
@@ -149,7 +149,7 @@ class CreateClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin, AssertHTM
          self.assertEqual(response.status_code, 200)
          self.assertTemplateUsed(response, 'create_club.html')
 
-    """ Redirect tests"""
+    """Unit tests for redirecting user when not logged in"""
 
     def test_get_create_club_redirects_when_not_logged_in(self):
         redirect_url = reverse_with_next('log_in', self.url)
