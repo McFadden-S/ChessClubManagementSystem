@@ -1,13 +1,12 @@
-"""Unit tests of the log in view"""
-from django.contrib import messages
+"""Unit tests of the log in view."""
+from clubs.forms import LogInForm
+from clubs.models import Club, Club_Member, User
+from clubs.tests.helpers import LogInTester
 from django.urls import reverse
 from django.test import TestCase
-from clubs.forms import LogInForm
-from clubs.models import Club_Member, User, Club
-from clubs.tests.helpers import LogInTester
 
 class LogInViewTestCase(TestCase, LogInTester):
-    """Unit tests of the log in view"""
+    """Unit tests of the log in view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',

@@ -1,13 +1,13 @@
-"""Tests of the leave club view."""
+"""Unit tests for the leave club view."""
+from clubs.models import Club, Club_Member, User
+from clubs.tests.helpers import LogInTester, reverse_with_next
+from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from django.urls import reverse
-from clubs.models import User, Club_Member, Club
-from clubs.tests.helpers import LogInTester,reverse_with_next
-from django.core.exceptions import ObjectDoesNotExist
 
 
 class LeaveClubViewTestCase(TestCase, LogInTester):
-    """Tests of the leave club view."""
+    """Unit tests for the leave club view."""
 
     fixtures = [
         'clubs/tests/fixtures/default_user.json',

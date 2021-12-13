@@ -5,7 +5,7 @@ from django import forms
 from django.test import TestCase
 
 # Used this from clucker project with some modifications
-class updateUserFormTestCase(TestCase):
+class UpdateUserFormTestCase(TestCase):
     """Unit tests for the update user form."""
     def setUp(self):
         self.valid_form_input = {

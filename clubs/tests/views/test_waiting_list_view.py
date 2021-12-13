@@ -1,13 +1,11 @@
+"""Unit tests for the waiting list view."""
+from clubs.models import Club, Club_Member, User
 from django.test import TestCase
-from clubs.models import User, Club_Member, Club
 from django.urls import reverse
-from clubs.tests.helpers import reverse_with_next
-from django.contrib.auth.hashers import check_password
-from django.contrib import messages
-
 
 # Used this from clucker project with some modifications
-class ApplicantListViewTestCase(TestCase):
+class WaitingListViewTestCase(TestCase):
+    """Unit tests for the waiting list view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',

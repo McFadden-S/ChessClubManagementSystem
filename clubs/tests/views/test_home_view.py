@@ -1,11 +1,11 @@
-"""Unit tests for home view"""
-from clubs.models import User, Club, Club_Member
+"""Unit tests for home view."""
+from clubs.models import Club, Club_Member, User
 from clubs.tests.helpers import LogInTester
 from django.test import TestCase
 from django.urls import reverse
 
 class HomeViewTestCase(TestCase, LogInTester):
-    """Unit tests for home view"""
+    """Unit tests for home view."""
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/default_club.json'
