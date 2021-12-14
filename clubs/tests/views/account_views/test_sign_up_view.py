@@ -10,7 +10,6 @@ from with_asserts.mixin import AssertHTMLMixin
 
 class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
     """Unit tests for the sign up view."""
-
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/default_club.json',
@@ -48,11 +47,14 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         }
         self.url = reverse('sign_up')
 
-
     def test_sign_up_url(self):
+        """Test for the sign-up url."""
+
         self.assertEqual(self.url,'/sign_up/')
 
     def test_get_sign_up(self):
+        """Test for getting the sign up page"""
+
         response = self.client.get(self.url)
         form = response.context['form']
         self.assertTrue(isinstance(form,SignUpForm))
@@ -76,8 +78,9 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
             self.assertEqual(header.text, "Sign Up")
             self.assertEqual(log_in_text.text, "here")
 
-    """ 1) Successful and unsuccessful signups"""
-    def test_succesful_sign_up_by_applicant(self):
+    def test_succesful_sign_up(self):
+        """Test for user successfully signing up """
+
         before_count = User.objects.count()
         before_count_club = Club_Member.objects.count()
         response = self.client.post(self.url, self.valid_form_input, follow=True)
@@ -103,8 +106,9 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
 
+    def test_unsuccesful_sign_up(self):
+        """Test for user unsuccessfully signing up """
 
-    def test_unsuccesful_sign_up_using_email_by_applicant(self):
         self.valid_form_input['email'] = '@yahoo.com'
         before_count = User.objects.count()
         response = self.client.post(self.url, self.valid_form_input)
@@ -117,49 +121,45 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         self.assertTrue(form.is_bound)
         self.assertFalse(self._is_logged_in())
 
+    """Unit tests for different authorisations in a club trying to access sign-up"""
 
-    """ 2) Get sign-up redirect tests"""
     def test_get_sign_up_redirects_when_logged_in_as_applicant(self):
         self.client.login(email=self.applicant.email, password="Password123")
         self.assertTrue(self._is_logged_in())
-        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
+        self.client.get(reverse('members_list', kwargs={'club_id': self.club.id}))
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
         messages_list = list(response.context['messages'])
-        self.assertEqual(len(messages_list), 0)
-
-
+        self.assertEqual(len(messages_list), 1)
 
     def test_get_sign_up_redirects_when_logged_in_as_member(self):
         self.client.login(email=self.member.email, password="Password123")
         self.assertTrue(self._is_logged_in())
-        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
+        self.client.get(reverse('members_list', kwargs={'club_id': self.club.id}))
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
-
 
     def test_get_sign_up_redirects_when_logged_in_as_officer(self):
         self.client.login(email=self.officer.email, password="Password123")
         self.assertTrue(self._is_logged_in())
-        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
+        self.client.get(reverse('members_list', kwargs={'club_id': self.club.id}))
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'dashboard.html')
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
-
 
     def test_get_sign_up_redirects_when_logged_in_as_owner(self):
         self.client.login(email=self.owner.email, password="Password123")
         self.assertTrue(self._is_logged_in())
-        self.client.get(reverse('show_club', kwargs={'club_id': self.club.id}), follow=True)
+        self.client.get(reverse('members_list', kwargs={'club_id': self.club.id}))
         response = self.client.get(self.url, follow=True)
         redirect_url = reverse('dashboard')
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -167,9 +167,8 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
+    """Unit tests for different authorisations in a club trying to post sign-up form"""
 
-
-    """ 3) Post sign-up redirect tests"""
     def test_post_signup_redirects_when_logged_in_as_applicant(self):
         self.client.login(email=self.applicant.email, password="Password123")
         self.assertTrue(self._is_logged_in())
@@ -226,8 +225,8 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
+    """Unit tests for unsuccessful sign-up via password combinations"""
 
-    """ 4) Password combinations """
     def test_unsuccesful_sign_up_by_matching_invalid_passwords(self):
         self.valid_form_input['new_password'] = 'hello'
         self.valid_form_input['confirmation_password'] = 'hello'
@@ -270,8 +269,9 @@ class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
         self.assertTrue(form.is_bound)
         self.assertFalse(self._is_logged_in())
 
-    """ Tests for duplication """
-    def test_unsuccesful_sign_up_by_using_email_already_used(self):
+    def test_unsuccesful_sign_up_by_using_email_taken_by_another_user(self):
+        """ Test unsuccessful sign up via email already taken"""
+
         response1 = self.client.post(self.url, self.valid_form_input)
         after_count1 = User.objects.count()
         valid_form_input2 = {

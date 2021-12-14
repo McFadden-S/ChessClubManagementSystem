@@ -25,31 +25,34 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.url = reverse('delete_account')
 
     def test_delete_account_url(self):
-        """ Tests delete account url """
+        """Test delete account url """
+
         self.assertEqual(self.url,'/delete_account/')
 
     def test_get_delete_account_redirects_when_not_logged_in(self):
-        """ Tests for redirect when logged in """
+        """Test for redirecting user when not logged in."""
+
         redirect_url = reverse_with_next('log_in', self.url)
         response = self.client.get(self.url)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         self.assertFalse(self._is_logged_in())
 
     def test_any_user_without_club_can_delete_account(self):
-        """ Tests delete account for user without club """
+        """Test delete account for user without club"""
+
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count_user = User.objects.count()
         response = self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
         self.assertEqual(after_count_user, before_count_user-1)
         self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
 
-    """Unit tests for user in club can delete account"""
+    """Unit tests for users in club with different authorizations can delete account"""
 
     def test_applicant_in_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -63,8 +66,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         before_count_club_member = Club_Member.objects.count()
         before_count_club = Club.objects.count()
         response = self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
@@ -74,7 +77,6 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(after_count_club_member, before_count_club_member-1)
         self.assertEqual(after_count_club, before_count_club)
         self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
-
 
     def test_member_in_club_can_delete_account(self):
         self.client.login(email=self.user.email, password='Password123')
@@ -88,8 +90,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         before_count_club_member = Club_Member.objects.count()
         before_count_club = Club.objects.count()
         response = self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
@@ -112,8 +114,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         before_count_club_member = Club_Member.objects.count()
         before_count_club = Club.objects.count()
         response = self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
@@ -131,8 +133,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         before_count_club_member = Club_Member.objects.count()
         before_count_club = Club.objects.count()
         response = self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
@@ -144,7 +146,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertRedirects(response, reverse('home'), status_code=302, target_status_code=200)
 
     def test_owner_who_only_has_applicants_in_club_can_delete_account(self):
-        """ Tests owner with only applicant in club"""
+        """ Test for owner with only applicant in club"""
+
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         club_applicant = Club_Member.objects.create(
@@ -156,8 +159,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         before_count_club_member = Club_Member.objects.count()
         before_count_club = Club.objects.count()
         response = self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
@@ -189,8 +192,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(after_count_club_member, before_count_club_member)
         # Since club still has member the club still exists
         self.assertEqual(after_count_club, before_count_club)
-        response2 = self.client.get(reverse('members_list', kwargs={'club_id' : self.club.id}))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('members_list', kwargs={'club_id' : self.club.id}))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
         self.assertRedirects(response, reverse('members_list', kwargs={'club_id' : self.club.id}), status_code=302, target_status_code=200)
@@ -202,8 +205,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.get(url_transfer)
         #Original owner now deletes account
         self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
@@ -232,8 +235,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(after_count_club_member, before_count_club_member)
         # Since club still has member the club still exists
         self.assertEqual(after_count_club, before_count_club)
-        response2 = self.client.get(reverse('members_list', kwargs={'club_id' : self.club.id}))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('members_list', kwargs={'club_id' : self.club.id}))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
         self.assertRedirects(response, reverse('members_list', kwargs={'club_id' : self.club.id}), status_code=302, target_status_code=200)
@@ -242,8 +245,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.get(url_transfer)
         #Original owner now deletes account
         self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
@@ -252,7 +255,6 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(after_count_user, before_count_user-1)
         self.assertEqual(after_count_club_member, before_count_club_member-1)
         self.assertEqual(after_count_club, before_count_club)
-
 
     def test_owner_who_has_applicant_and_officer_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
@@ -275,8 +277,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(after_count_club_member, before_count_club_member)
         # Since club still has member the club still exists
         self.assertEqual(after_count_club, before_count_club)
-        response2 = self.client.get(reverse('members_list', kwargs={'club_id' : self.club.id}))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('members_list', kwargs={'club_id' : self.club.id}))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
         self.assertRedirects(response, reverse('members_list', kwargs={'club_id' : self.club.id}), status_code=302, target_status_code=200)
@@ -285,8 +287,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.get(url_transfer)
         #Original owner now deletes account
         self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
@@ -321,8 +323,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(after_count_club_member, before_count_club_member)
         # Since club still has member the club still exists
         self.assertEqual(after_count_club, before_count_club)
-        response2 = self.client.get(reverse('members_list', kwargs={'club_id' : self.club.id}))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('members_list', kwargs={'club_id' : self.club.id}))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
         self.assertRedirects(response, reverse('members_list', kwargs={'club_id' : self.club.id}), status_code=302, target_status_code=200)
@@ -334,8 +336,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.get(url_transfer)
         #Original owner now deletes account
         self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
@@ -370,8 +372,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(after_count_club_member, before_count_club_member)
         # Since club still has member the club still exists
         self.assertEqual(after_count_club, before_count_club)
-        response2 = self.client.get(reverse('members_list', kwargs={'club_id' : self.club.id}))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('members_list', kwargs={'club_id' : self.club.id}))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.ERROR)
         self.assertRedirects(response, reverse('members_list', kwargs={'club_id' : self.club.id}), status_code=302, target_status_code=200)
@@ -380,8 +382,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.get(url_transfer)
         #Original owner now deletes account
         self.client.get(self.url)
-        response2 = self.client.get(reverse('home'))
-        messages_list = list(response2.context['messages'])
+        response_message = self.client.get(reverse('home'))
+        messages_list = list(response_message.context['messages'])
         self.assertEqual(len(messages_list), 1)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
