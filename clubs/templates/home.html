@@ -1,9 +1,17 @@
 {% extends 'partials/base_partials/external_dark_card.html' %}
 {% block contents %}
-  <div class="card-header">
-    <h1 class="card-title">Orangutan's Chess Management</h1>
-    <p class="cover-subtitle mb-2 text-muted">The place to organize your chess club</p>
+<div class="card-header">
+  <div class="row">
+    <div class="col">
+      <h1 class="card-title">Orangutan's Chess Management</h1>
+    </div>
+    <div class="col-auto">
+      {% load static %}
+      <img src="{% static 'images/orangutan_logo.png' %}" alt="Orangutan logo" width="100" height="100" style="margin: 10px;">
+    </div>
   </div>
+  <p class="cover-subtitle mb-2 text-muted">The place to organize your chess club</p>
+</div>
   <div class="card-body">
     <p><a href='{% url 'sign_up' %}' class="btn btn-outline-light text-white">Sign Up</a></p>
     <p><a href='{% url 'log_in' %}' class="btn btn-outline-light text-white">Log in</a></p>
