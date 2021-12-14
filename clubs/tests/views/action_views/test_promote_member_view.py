@@ -4,6 +4,7 @@ from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
 
+
 class PromoteMemberViewTestCase(TestCase, LogInTester):
     """Unit tests for the promote member view."""
     fixtures = [
@@ -23,19 +24,19 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.club = Club.objects.get(name='Flying Orangutans')
 
         Club_Member.objects.create(user=self.owner, authorization='OW', club=self.club)
-        Club_Member.objects.create(user=self.officer, authorization='OF',club=self.club)
-        Club_Member.objects.create(user=self.another_officer, authorization='OF',club=self.club)
+        Club_Member.objects.create(user=self.officer, authorization='OF', club=self.club)
+        Club_Member.objects.create(user=self.another_officer, authorization='OF', club=self.club)
         Club_Member.objects.create(user=self.member, authorization='ME', club=self.club)
         Club_Member.objects.create(user=self.another_member, authorization='ME', club=self.club)
-        Club_Member.objects.create(user=self.applicant, authorization='AP',club=self.club)
-        Club_Member.objects.create(user=self.another_applicant, authorization='AP',club=self.club)
+        Club_Member.objects.create(user=self.applicant, authorization='AP', club=self.club)
+        Club_Member.objects.create(user=self.another_applicant, authorization='AP', club=self.club)
 
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
 
     def test_promote_member_url(self):
         """Test for the promote member url."""
 
-        self.assertEqual(self.url,f'/{self.club.id}/promote_member/{self.member.id}')
+        self.assertEqual(self.url, f'/{self.club.id}/promote_member/{self.member.id}')
 
     def test_get_promote_member_redirects_when_not_logged_in(self):
         """Test for redirecting user when not logged in."""

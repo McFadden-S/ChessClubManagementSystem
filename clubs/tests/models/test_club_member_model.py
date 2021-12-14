@@ -41,16 +41,14 @@ class ClubMemberTest(TestCase):
         with self.assertRaises(ValidationError):
             self.club_member.full_clean()
 
-    def test_authorization_must_be_valid_choice(self):
-        """Test that the authorization must be from the choices available."""
+    """Unit tests for authorization"""
 
+    def test_authorization_must_be_valid_choice(self):
         self.club_member.authorization = "XX"
         with self.assertRaises(ValidationError):
             self.club_member.full_clean()
 
     def test_authorization_must_not_be_blank(self):
-        """Test for the authorization that must not be blank."""
-
         self.club_member.authorization = ""
         with self.assertRaises(ValidationError):
             self.club_member.full_clean()

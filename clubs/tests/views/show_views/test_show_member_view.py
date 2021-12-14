@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.test import TestCase
 from django.urls import reverse
 
+
 class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for show member view."""
 
@@ -19,9 +20,9 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     def setUp(self):
         self.club = Club.objects.get(name='Flying Orangutans')
         self.applicant = User.objects.get(email='kellysmith@example.org')
-        self.club_applicant = Club_Member.objects.create(user=self.applicant,authorization="AP", club=self.club)
+        self.club_applicant = Club_Member.objects.create(user=self.applicant, authorization="AP", club=self.club)
         self.owner = User.objects.get(email='bobsmith@example.org')
-        self.club_owner = Club_Member.objects.create( user=self.owner, authorization='OW', club=self.club)
+        self.club_owner = Club_Member.objects.create(user=self.owner, authorization='OW', club=self.club)
         self.officer = User.objects.get(email='bethsmith@example.org')
         self.officer_club = Club_Member.objects.create(user=self.officer, authorization="OF", club=self.club)
         self.member = User.objects.get(email='jamessmith@example.org')
@@ -29,10 +30,11 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
 
         self.different_applicant = User.objects.get(email='bobjone@example.org')
         self.different_club = Club.objects.get(name='Flying Orangutans 2')
-        self.different_club_applicant = Club_Member.objects.create(user=self.different_applicant , authorization="AP", club=self.different_club)
+        self.different_club_applicant = Club_Member.objects.create(user=self.different_applicant, authorization="AP",
+                                                                   club=self.different_club)
 
         self.target_user = User.objects.get(email='jamessmith@example.org')
-        self.url = reverse('show_member', kwargs={'club_id' : self.club.id, 'member_id': self.target_user.id})
+        self.url = reverse('show_member', kwargs={'club_id': self.club.id, 'member_id': self.target_user.id})
 
     def test_show_member_url(self):
         """"Test for the show member url."""
@@ -90,7 +92,7 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         url1 = reverse('show_member', kwargs={'club_id': self.club.id, 'member_id': target_user1.id})
         response = self.client.get(url1, follow=True)
         self.assert_main_navbar(response)
-        response_url = reverse('waiting_list', kwargs={'club_id' : self.club.id})
+        response_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'waiting_list.html')
         messages_list = list(response.context['messages'])
@@ -177,9 +179,9 @@ class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     def test_get_show_member_with_invalid_id(self):
         self.client.login(username=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
-        url = reverse('show_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id+9999})
+        url = reverse('show_member', kwargs={'club_id': self.club.id, 'member_id': self.owner.id + 9999})
         response = self.client.get(url, follow=True)
         self.assert_main_navbar(response)
-        response_url = reverse('members_list', kwargs={'club_id' : self.club.id})
+        response_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, response_url, status_code=302, target_status_code=200)
         self.assertTemplateUsed(response, 'members_list.html')

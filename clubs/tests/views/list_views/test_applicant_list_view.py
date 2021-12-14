@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib import messages
 
+
 # Used this from clucker project with some modifications
 class ApplicantListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for the applicant list view."""

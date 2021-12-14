@@ -3,6 +3,7 @@ from clubs.models import Club
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
+
 class ClubModelTestCase(TestCase):
     """Unit tests for Club model."""
 
@@ -55,6 +56,7 @@ class ClubModelTestCase(TestCase):
         self.assert_club_is_valid()
 
     """ Unit tests for valid address """
+
     def test_address_must_not_be_blank(self):
         self.club.address = ''
         self.assert_club_is_invalid()
@@ -70,8 +72,6 @@ class ClubModelTestCase(TestCase):
     def test_address_can_have_100_chars(self):
         self.club.address = 'o' * 100
         self.assert_club_is_valid()
-
-
 
     """ Unit tests for city """
 
@@ -118,7 +118,6 @@ class ClubModelTestCase(TestCase):
     def test_country_need_not_be_unique(self):
         self.club.country = self.second_club.country
         self.assert_club_is_valid()
-
 
     def assert_club_is_valid(self):
         try:
