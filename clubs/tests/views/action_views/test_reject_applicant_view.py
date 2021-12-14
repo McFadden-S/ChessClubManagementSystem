@@ -4,6 +4,7 @@ from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib import messages
 
 class RejectApplicantViewTestCase(TestCase, LogInTester):
     """Unit tests for the reject applicant view."""
@@ -58,6 +59,10 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         before_count = Club_Member.objects.count()
         response = self.client.get(self.url)
         redirect_url = reverse('applicants_list', kwargs={'club_id': self.club.id})
+        response_message = self.client.get(redirect_url)
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if the applicant has been removed
@@ -73,6 +78,10 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         before_count = Club_Member.objects.count()
         response = self.client.get(self.url)
         redirect_url = reverse('applicants_list', kwargs={'club_id': self.club.id})
+        response_message = self.client.get(redirect_url)
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if the applicant has been removed
@@ -82,7 +91,7 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         with self.assertRaises(ObjectDoesNotExist):
             Club_Member.objects.get(user=self.applicant, club=self.club)
 
-        """Unit tests for user not being able to reject an applicant"""
+    """Unit tests for user not being able to reject an applicant"""
 
     def test_get_member_reject_applicant(self):
         self.client.login(email=self.member.email, password='Password123')
