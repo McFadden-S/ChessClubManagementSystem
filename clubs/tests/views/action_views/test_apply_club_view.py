@@ -3,7 +3,7 @@ from clubs.models import Club, Club_Member, User
 from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
-
+from django.contrib import messages
 
 class ApplyClubViewTestCase(TestCase, LogInTester):
     """Unit tests for the apply club view."""
@@ -47,6 +47,10 @@ class ApplyClubViewTestCase(TestCase, LogInTester):
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
+        response_message = self.client.get(reverse('dashboard'))
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         redirect_url = reverse('waiting_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         auth_after_applying = Club_Member.objects.get(user=self.user).authorization

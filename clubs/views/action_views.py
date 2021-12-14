@@ -26,12 +26,11 @@ class ApproveApplicantView(OfficersRequiredMixin, ActionView):
 
     def is_actionable(self, current_user, user, club):
         """Check if the user can be promoted."""
-
         return (is_officer(current_user, club) or is_owner(current_user, club)) and is_applicant(user, club)
 
     def action(self, current_user, user, club):
         """Change user's authorization from applicant to member"""
-
+        messages.success(self.request, f"You have approved applicant")
         set_authorization(user, club, "ME")
 
     def get(self, request, *args, **kwargs):
@@ -52,7 +51,7 @@ class RejectApplicantView(OfficersRequiredMixin, ActionView):
 
     def action(self, current_user, user, club):
         """Remove the applicant from the club."""
-
+        messages.success(self.request, f"You have rejected the applicant successfully")
         remove_user_from_club(user, club)
 
     def get(self, request, *args, **kwargs):
@@ -73,7 +72,7 @@ class PromoteMemberView(OwnersRequiredMixin, ActionView):
 
     def action(self, current_user, user, club):
         """Promote member to officer."""
-
+        messages.success(self.request, f"You have promoted the member successfully")
         set_authorization(user, club, "OF")
 
     def get(self, request, *args, **kwargs):
@@ -94,7 +93,7 @@ class DemoteOfficerView(OwnersRequiredMixin, ActionView):
 
     def action(self, current_user, user, club):
         """Demote the officer to member"""
-
+        messages.success(self.request, f"You have demoted the member successfully")
         set_authorization(user, club, "ME")
 
     def get(self, request, *args, **kwargs):
@@ -119,7 +118,7 @@ class RemoveUserView(OfficersRequiredMixin, ActionView):
 
     def action(self, current_user, user, club):
         """Remove user from the club"""
-
+        messages.success(self.request, f"You have removed the user successfully")
         remove_user_from_club(user, club)
 
     def get(self, request, *args, **kwargs):
@@ -140,7 +139,7 @@ class TransferOwnershipView(OwnersRequiredMixin, ActionView):
 
     def action(self, current_user, user, club):
         """Transfer ownership to officer and demote owner to officer."""
-
+        messages.success(self.request, f"You have transferred the ownership successfully")
         set_authorization(user, club, "OW")
         set_authorization(current_user, club, "OF")
 
@@ -161,7 +160,7 @@ class LeaveClubView(LoginRequiredMixin, ActionView):
 
     def action(self, current_user, club):
         """Remove the user from the club."""
-
+        messages.success(self.request, f"You have left the club")
         remove_user_from_club(current_user, club)
 
     def get(self, request, *args, **kwargs):
@@ -186,7 +185,7 @@ class ApplyClubView(LoginRequiredMixin, TemplateView):
 
     def action(self, current_user, user, club):
         """Set the user's authorization to an applicant for the club and redirect to waiting list."""
-
+        messages.success(self.request, f"You have applied to the club successfully")
         Club_Member.objects.create(user=current_user, club=club, authorization='AP')
         self.redirect_location = 'waiting_list'
 

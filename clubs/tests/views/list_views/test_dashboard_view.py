@@ -9,6 +9,7 @@ from django.urls import reverse
 # Used this from Clucker project with some modifications
 class DashboardViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for dashboard view"""
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -35,7 +36,7 @@ class DashboardViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         my_clubs = get_my_clubs(self.user)
         sorted_list = Club.objects.filter(id__in=my_clubs).order_by(order_by_var)
         return sorted_list
-    
+
     def create_other_clubs_ordered_list_by(self, order_by_var):
         other_clubs = get_other_clubs(self.user)
         sorted_list = Club.objects.filter(id__in=other_clubs).order_by(order_by_var)
@@ -43,10 +44,12 @@ class DashboardViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
 
     def test_dashboard_url(self):
         """Test for the show applicant url"""
+
         self.assertEqual(self.url, '/dashboard/')
 
     def test_get_clubs_list(self):
         """Test get list of clubs"""
+
         self.client.login(email=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
@@ -77,67 +80,9 @@ class DashboardViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
 
     def test_dashboard_navbar(self):
         """Test dashboard navbar contents"""
+
         self.client.login(email=self.user.email, password='Password123')
         response = self.client.get(self.url)
         self.assertContains(response, 'My Clubs')
         self.assertNotContains(response, 'Members')
         self.assertNotContains(response, 'Applicants')
-
-
-    # TODO Refactor tests to reflect javascript search/sort
-    # def test_search_bar_to_filter_list(self):
-    #     self.client.login(email=self.user.email, password='Password123')
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'dashboard.html')
-    #     self.assertContains(response, 'John Smith')
-    #     self.assertContains(response, 'Beth Smith')
-    #     search_bar = 'Beth'
-    #     response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'dashboard.html')
-    #     self.assertContains(response, 'Beth Smith')
-    #     self.assertNotContains(response, 'John Smith')
-    #
-    # def test_empty_search_bar(self):
-    #     self.client.login(email=self.user.email, password='Password123')
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'dashboard.html')
-    #     self.assertContains(response, 'John Smith')
-    #     self.assertContains(response, 'Beth Smith')
-    #     search_bar = ''
-    #     response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'dashboard.html')
-    #     self.assertContains(response, 'Beth Smith')
-    #     self.assertContains(response, 'John Smith')
-    #
-    # def test_sorted_list_club_name(self):
-    #     sort_table = 'first_name'
-    #     second_list = list(self.create_ordered_list_by(sort_table))
-    #     self.client.login(email=self.user.email, password='Password123')
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'dashboard.html')
-    #     #response = self.client.post(self.url, {'search_btn': True, 'searched_letters': search_bar})
-    #     response = self.client.post(self.url, {'sort_table': sort_table})
-    #     member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
-    #     members = list(User.objects.filter(id__in=member_list))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'dashboard.html')
-    #     self.assertListEqual(members, second_list)
-    #
-    # def test_sorted_list_city_name(self):
-    #     sort_table = 'last_name'
-    #     second_list = list(self.create_ordered_list_by(sort_table))
-    #     self.client.login(email=self.user.email, password='Password123')
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'dashboard.html')
-    #     response = self.client.post(self.url, {'sort_table': sort_table})
-    #     member_list = Club_Member.objects.filter(authorization='ME').values_list('user__id', flat=True)
-    #     members = list(User.objects.filter(id__in=member_list))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'dashboard.html')
-    #     self.assertListEqual(members, second_list)

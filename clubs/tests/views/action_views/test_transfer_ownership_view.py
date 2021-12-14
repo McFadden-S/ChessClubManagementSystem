@@ -4,6 +4,8 @@ from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib import messages
+
 
 class TransferOwnershipViewTestCase(TestCase, LogInTester):
     """Unit tests for the transfer ownership view."""
@@ -36,7 +38,7 @@ class TransferOwnershipViewTestCase(TestCase, LogInTester):
     def test_transfer_ownership_url(self):
         """Test for the transfer ownership url."""
 
-        self.assertEqual(self.url,f'/{self.club.id}/transfer_ownership/{self.officer.id}')
+        self.assertEqual(self.url, f'/{self.club.id}/transfer_ownership/{self.officer.id}')
 
     def test_get_transfer_ownership_redirects_when_not_logged_in(self):
         """Test for redirecting user when not logged in."""
@@ -53,6 +55,10 @@ class TransferOwnershipViewTestCase(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
+        response_message = self.client.get(redirect_url)
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         owner_auth_after_transfer = Club_Member.objects.get(user=self.owner).authorization
         self.assertEqual(owner_auth_after_transfer, 'OF')
@@ -88,7 +94,8 @@ class TransferOwnershipViewTestCase(TestCase, LogInTester):
     def test_get_owner_transfer_ownership_to_user_from_other_club(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
-        self.url = reverse('transfer_ownership', kwargs={'club_id': self.club.id, 'member_id': self.user_from_other_club.id})
+        self.url = reverse('transfer_ownership',
+                           kwargs={'club_id': self.club.id, 'member_id': self.user_from_other_club.id})
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)

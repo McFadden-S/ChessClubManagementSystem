@@ -3,6 +3,8 @@ from clubs.models import Club, Club_Member, User
 from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib import messages
+
 
 class PromoteMemberViewTestCase(TestCase, LogInTester):
     """Unit tests for the promote member view."""
@@ -23,19 +25,19 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.club = Club.objects.get(name='Flying Orangutans')
 
         Club_Member.objects.create(user=self.owner, authorization='OW', club=self.club)
-        Club_Member.objects.create(user=self.officer, authorization='OF',club=self.club)
-        Club_Member.objects.create(user=self.another_officer, authorization='OF',club=self.club)
+        Club_Member.objects.create(user=self.officer, authorization='OF', club=self.club)
+        Club_Member.objects.create(user=self.another_officer, authorization='OF', club=self.club)
         Club_Member.objects.create(user=self.member, authorization='ME', club=self.club)
         Club_Member.objects.create(user=self.another_member, authorization='ME', club=self.club)
-        Club_Member.objects.create(user=self.applicant, authorization='AP',club=self.club)
-        Club_Member.objects.create(user=self.another_applicant, authorization='AP',club=self.club)
+        Club_Member.objects.create(user=self.applicant, authorization='AP', club=self.club)
+        Club_Member.objects.create(user=self.another_applicant, authorization='AP', club=self.club)
 
         self.url = reverse('promote_member', kwargs={'club_id': self.club.id, 'member_id': self.member.id})
 
     def test_promote_member_url(self):
         """Test for the promote member url."""
 
-        self.assertEqual(self.url,f'/{self.club.id}/promote_member/{self.member.id}')
+        self.assertEqual(self.url, f'/{self.club.id}/promote_member/{self.member.id}')
 
     def test_get_promote_member_redirects_when_not_logged_in(self):
         """Test for redirecting user when not logged in."""
@@ -56,6 +58,10 @@ class PromoteMemberViewTestCase(TestCase, LogInTester):
         self.assertEqual(auth_before_promotion, 'ME')
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
+        response_message = self.client.get(redirect_url)
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         auth_after_promotion = Club_Member.objects.get(user=self.member).authorization
         self.assertEqual(auth_after_promotion, 'OF')

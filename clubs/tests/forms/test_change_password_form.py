@@ -1,22 +1,16 @@
 """Unit tests for the change password form."""
+from clubs.models import User
 from clubs.forms import UserChangePasswordForm
 from django.test import TestCase
 
 # Used this from clucker project with some modifications
 class UserChangePasswordFormTestCase(TestCase):
     """Unit tests for the change password form."""
-    def setUp(self):
-        self.valid_form_input = {
-            'email': 'bobsmith@example.org',
-            'first_name': 'Bob',
-            'last_name': 'Smith',
-            'bio': 'Hi',
-            'chess_experience': 'BG',
-            'personal_statement': 'I am Orangutan',
-            'new_password': 'Password123',
-            'password_confirmation': 'Password123'
-        }
 
+    fixtures = ['clubs/tests/fixtures/default_user.json']
+
+    def setUp(self):
+        self.user = User.objects.get(email='bobsmith@example.org')
         self.valid_password_form_input = {
             'password' : 'Password123',
             'new_password': 'Password12345',
@@ -24,14 +18,20 @@ class UserChangePasswordFormTestCase(TestCase):
         }
 
     def test_form_has_necessary_fields(self):
+        """Test if the change password form contains the necessary fields."""
+
         form = UserChangePasswordForm()
         self.assertIn('password', form.fields)
         self.assertIn('new_password', form.fields)
         self.assertIn('new_password_confirmation', form.fields)
 
     def test_valid_form(self):
+        """Test if the change password form accepts a valid input."""
+
         form = UserChangePasswordForm(data=self.valid_password_form_input)
         self.assertTrue(form.is_valid())
+
+    """ Unit tests for password requirements """
 
     def test_password_must_contain_uppercase_character(self):
         self.valid_password_form_input['new_password'] = 'password123'

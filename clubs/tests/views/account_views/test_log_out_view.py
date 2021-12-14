@@ -4,6 +4,7 @@ from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
 
+
 class LogOutViewTestCase(TestCase, LogInTester):
     """Unit tests for the log out view."""
     fixtures = ['clubs/tests/fixtures/default_user.json']
@@ -15,7 +16,7 @@ class LogOutViewTestCase(TestCase, LogInTester):
     def test_log_out_url(self):
         """Test for the log out url."""
 
-        self.assertEqual(self.url,'/log_out/')
+        self.assertEqual(self.url, '/log_out/')
 
     def test_get_log_out(self):
         """Test for the user successfully logging out."""

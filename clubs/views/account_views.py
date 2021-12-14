@@ -6,9 +6,10 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect, reverse,render
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, UpdateView
+
 
 
 class SignUpView(LoginProhibitedMixin, FormView):
@@ -44,7 +45,9 @@ class LogInView(LoginProhibitedMixin, FormView):
         user = authenticate(email=email, password=password)
 
         if user is None:
-            return super().form_invalid(form)
+            form = LogInForm()
+            messages.error(self.request, "Incorrect login")
+            return render(self.request, 'log_in.html',  {'form':form})
 
         login(self.request, user)
         messages.success(self.request, "Login Successful")
