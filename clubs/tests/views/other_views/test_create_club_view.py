@@ -9,6 +9,7 @@ from with_asserts.mixin import AssertHTMLMixin
 
 class CreateClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin, AssertHTMLMixin):
     """Unit tests of the create club view."""
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',

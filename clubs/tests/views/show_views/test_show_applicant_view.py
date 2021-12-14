@@ -7,6 +7,7 @@ from django.contrib import messages
 
 class ShowApplicantViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for show applicant view"""
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',

@@ -5,6 +5,7 @@ from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
 from django.contrib.auth.hashers import check_password
 from clubs.tests.helpers import LogInTester, NavbarTesterMixin
+from django.contrib import messages
 
 # Used this from clucker project with some modifications
 class MembersListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
@@ -27,7 +28,7 @@ class MembersListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
             user=self.owner, authorization='OW', club=self.club
         )
         Club_Member.objects.create(
-            user=self.applicant, authorization='OF', club=self.club
+            user=self.officer, authorization='OF', club=self.club
         )
         Club_Member.objects.create(
             user=self.member, authorization='ME', club=self.club

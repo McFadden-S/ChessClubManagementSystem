@@ -8,6 +8,7 @@ from django.test import TestCase
 
 class SignUpFormTestCase(TestCase):
     """Unit Tests for the sign up form."""
+
     def setUp(self):
         self.valid_form_input = {
             'email': 'bobsmith@example.com',

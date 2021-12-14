@@ -6,6 +6,7 @@ from django.test import TestCase
 
 class UserModelTestCase(TestCase):
     """Unit tests for user model."""
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json'
@@ -56,7 +57,7 @@ class UserModelTestCase(TestCase):
     def test_email_must_not_contain_more_than_one_at(self):
         self.user.email = 'johndoe@@example.org'
         self.assert_user_is_invalid()
-    
+
     def test_email_must_not_be_none(self):
         with self.assertRaises(TypeError):
             self.newuser = User.objects.create_user(
