@@ -100,3 +100,12 @@ def set_authorization(user, club, authorization):
             .update(authorization=authorization))
     except ObjectDoesNotExist:
         messages.add_message(request, messages.ERROR, "Cannot set authorization on a user that isnt apart of this club")
+
+def get_chess_experience_text(user):
+    """Get the full text of the chess experience of the given user."""
+
+    try:
+        chess_experience_text = (User.objects.get(id=user.id).get_chess_experience_display())
+    except ObjectDoesNotExist:
+        return None
+    return chess_experience_text

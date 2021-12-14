@@ -105,6 +105,7 @@ class ShowMemberView(MembersRequiredMixin, ShowClubUserView):
         club = get_club(kwargs['club_id'])
         user = get_user(kwargs[self.id_name])
         context['authorizationText'] = get_authorization_text(user, club)
+        context['chess_experience'] = get_chess_experience_text(user)
 
         return context
 
@@ -128,4 +129,7 @@ class ShowApplicantView(OfficersRequiredMixin, ShowClubUserView):
     def get_context_data(self, **kwargs):
         """Generate context data to be shown in the template."""
 
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        user = get_user(kwargs[self.id_name])
+        context['chess_experience'] = get_chess_experience_text(user)
+        return context
