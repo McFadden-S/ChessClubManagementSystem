@@ -9,7 +9,7 @@ class Command(BaseCommand):
     def __init__(self):
         super().__init__()
         self.faker = Faker('en_GB', 0)
-        self.CHESS_EXPERIENCE_CHOICES = ['Beginner', 'Intermediate', 'Advanced']
+        self.CHESS_EXPERIENCE_CHOICES = ['BG', 'IM', 'AV']
         self.AUTHORIZATION_CHOICES = ['AP', 'ME', 'OF']
         self.counter = 0
 
