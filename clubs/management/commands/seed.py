@@ -54,13 +54,15 @@ class Command(BaseCommand):
         return newClub
 
     def seed_test_users(self):
+        chess_experience= numpy.random.choice(self.CHESS_EXPERIENCE_CHOICES)
+
         jeb = User.objects.create_user(
             first_name='Jebediah',
             last_name='Kerman',
             email='jeb@example.org',
             bio='I am Test User 1',
             personal_statement='I Like Chess',
-            chess_experience= self.CHESS_EXPERIENCE_CHOICES[0],
+            chess_experience= chess_experience,
             password = 'Password123',
         )
 
@@ -70,7 +72,7 @@ class Command(BaseCommand):
             email='val@example.org',
             bio='I am Test User 2',
             personal_statement='I Like Chess',
-            chess_experience= self.CHESS_EXPERIENCE_CHOICES[0],
+            chess_experience= chess_experience,
             password = 'Password123',
         )
 
@@ -80,7 +82,7 @@ class Command(BaseCommand):
             email='billie@example.org',
             bio='I am Test User 3',
             personal_statement='I Like Chess',
-            chess_experience= self.CHESS_EXPERIENCE_CHOICES[0],
+            chess_experience= chess_experience,
             password = 'Password123',
         )
 
