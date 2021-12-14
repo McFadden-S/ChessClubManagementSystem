@@ -22,15 +22,21 @@ class SignUpFormTestCase(TestCase):
         }
 
     def test_valid_form(self):
+        """Test that the form is valid"""
+
         form = SignUpForm(data=self.valid_form_input)
         self.assertTrue(form.is_valid())
 
     def test_form_uses_user_model_validation(self):
+        """Test that the form uses user model validation"""
+
         self.valid_form_input['email'] = '@example.org'
         form = SignUpForm(data=self.valid_form_input)
         self.assertFalse(form.is_valid())
 
     def test_form_has_necessary_fields(self):
+        """Test that the form has necessary fields"""
+
         form = SignUpForm()
         self.assertIn('first_name', form.fields)
         self.assertIn('last_name', form.fields)
@@ -46,6 +52,8 @@ class SignUpFormTestCase(TestCase):
         self.assertIn('password_confirmation', form.fields)
         newPasswordConfirm = form.fields['password_confirmation'].widget
         self.assertTrue(isinstance(newPasswordConfirm, forms.PasswordInput))
+
+    """Unit tests for password"""
 
     def test_passwords_must_use_uppercase(self):
         self.valid_form_input['new_password'] = "password123"
@@ -71,6 +79,8 @@ class SignUpFormTestCase(TestCase):
         self.assertFalse(form.is_valid())
 
     def test_form_must_save_correctly(self):
+        """Test that the form saves correctly"""
+
         form = SignUpForm(data=self.valid_form_input)
         before_count = User.objects.count()
         form.save()
