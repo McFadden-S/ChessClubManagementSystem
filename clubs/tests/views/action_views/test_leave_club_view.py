@@ -4,6 +4,7 @@ from django.urls import reverse
 from clubs.models import User, Club_Member, Club
 from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 
 
 class LeaveClubViewTestCase(TestCase, LogInTester):
@@ -51,12 +52,15 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
         response = self.client.get(self.url)
+        response_message = self.client.get(reverse('dashboard'))
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         url = reverse('dashboard')
         self.assertRedirects(response, url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if the member has been removed
         self.assertEqual(before_count, after_count + 1)
-
         # Checks if the member does not exist in the Club
         with self.assertRaises(ObjectDoesNotExist):
             Club_Member.objects.get(user=self.member, club=self.club)
@@ -67,6 +71,10 @@ class LeaveClubViewTestCase(TestCase, LogInTester):
         self.url = reverse('leave_club', kwargs={'club_id': self.club.id, 'member_id': self.officer.id})
         before_count = Club_Member.objects.count()
         response = self.client.get(self.url)
+        response_message = self.client.get(reverse('dashboard'))
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         url = reverse('dashboard')
         self.assertRedirects(response, url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
