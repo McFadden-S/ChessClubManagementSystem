@@ -4,6 +4,7 @@ from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib import messages
 
 
 class TransferOwnershipViewTestCase(TestCase, LogInTester):
@@ -54,6 +55,10 @@ class TransferOwnershipViewTestCase(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
+        response_message = self.client.get(redirect_url)
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         owner_auth_after_transfer = Club_Member.objects.get(user=self.owner).authorization
         self.assertEqual(owner_auth_after_transfer, 'OF')

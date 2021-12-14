@@ -3,6 +3,7 @@ from clubs.models import Club, Club_Member, User
 from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib import messages
 
 
 class ApproveApplicantTestCase(TestCase, LogInTester):
@@ -58,10 +59,16 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         auth_before_approve = Club_Member.objects.get(user=self.applicant).authorization
         self.assertEqual(auth_before_approve, 'AP')
         response = self.client.get(self.url)
+        response_message = self.client.get(reverse('dashboard'))
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         redirect_url = reverse('applicants_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         auth_after_approve = Club_Member.objects.get(user=self.applicant).authorization
         self.assertEqual(auth_after_approve, 'ME')
+
+
 
     def test_approve_applicant_with_officer(self):
         self.client.login(email=self.officer.email, password='Password123')
@@ -69,6 +76,10 @@ class ApproveApplicantTestCase(TestCase, LogInTester):
         auth_before_approve = Club_Member.objects.get(user=self.applicant).authorization
         self.assertEqual(auth_before_approve, 'AP')
         response = self.client.get(self.url)
+        response_message = self.client.get(reverse('dashboard'))
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         redirect_url = reverse('applicants_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         auth_after_approve = Club_Member.objects.get(user=self.applicant).authorization

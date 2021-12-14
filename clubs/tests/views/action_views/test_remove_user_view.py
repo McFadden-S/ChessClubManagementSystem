@@ -4,6 +4,7 @@ from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib import messages
 
 
 class RemoveUserViewTestCase(TestCase, LogInTester):
@@ -43,15 +44,19 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
 
         self.assertEqual(self.remove_officer_url, f'/{self.club.id}/remove_user/{self.officer.id}')
 
-    """Unit tests for owner successfully removing a user"""
+    """ Unit tests for owner successfully removing a user """
 
     def test_get_owner_remove_member(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
         response = self.client.get(self.remove_member_url)
-        url = reverse('members_list', kwargs={'club_id': self.club.id})
-        self.assertRedirects(response, url, status_code=302, target_status_code=200)
+        redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
+        response_message = self.client.get(redirect_url)
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if the member has been removed
         self.assertEqual(before_count, after_count + 1)
@@ -65,8 +70,12 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
         response = self.client.get(self.remove_officer_url)
-        url = reverse('members_list', kwargs={'club_id': self.club.id})
-        self.assertRedirects(response, url, status_code=302, target_status_code=200)
+        redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
+        response_message = self.client.get(redirect_url)
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if the officer has been removed
         self.assertEqual(before_count, after_count + 1)
@@ -75,7 +84,7 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         with self.assertRaises(ObjectDoesNotExist):
             Club_Member.objects.get(user=self.officer, club=self.club)
 
-    """Unit tests for owner not being able to remove user"""
+    """ Unit tests for owner not being able to remove user """
 
     def test_get_owner_remove_applicant(self):
         self.client.login(email=self.owner.email, password='Password123')
@@ -120,8 +129,12 @@ class RemoveUserViewTestCase(TestCase, LogInTester):
         self.assertTrue(self._is_logged_in())
         before_count = Club_Member.objects.count()
         response = self.client.get(self.remove_member_url)
-        url = reverse('members_list', kwargs={'club_id': self.club.id})
-        self.assertRedirects(response, url, status_code=302, target_status_code=200)
+        redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
+        response_message = self.client.get(redirect_url)
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
+        self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if the member has been removed
         self.assertEqual(before_count, after_count + 1)

@@ -3,6 +3,7 @@ from clubs.models import Club, Club_Member, User
 from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib import messages
 
 
 class DemoteOfficerViewTestCase(TestCase, LogInTester):
@@ -58,6 +59,10 @@ class DemoteOfficerViewTestCase(TestCase, LogInTester):
         auth_before_demotion = Club_Member.objects.get(user=self.officer).authorization
         self.assertEqual(auth_before_demotion, 'OF')
         response = self.client.get(self.url)
+        response_message = self.client.get(reverse('members_list', kwargs={'club_id': self.club.id}))
+        messages_list = list(response_message.context['messages'])
+        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(messages_list[0].level, messages.SUCCESS)
         redirect_url = reverse('members_list', kwargs={'club_id': self.club.id})
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         auth_after_demotion = Club_Member.objects.get(user=self.officer).authorization
