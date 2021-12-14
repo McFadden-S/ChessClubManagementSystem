@@ -48,3 +48,5 @@ urlpatterns = [
     path('<int:club_id>/show_member/<int:member_id>', views.ShowMemberView.as_view(), name='show_member'),
     path('<int:club_id>/show_applicant/<int:applicant_id>', views.ShowApplicantView.as_view(), name='show_applicant'),
 ]
+
+handler404 = 'system.views.page_not_found_view'
