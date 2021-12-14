@@ -207,7 +207,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.get(self.url)
         response_message = self.client.get(reverse('home'))
         messages_list = list(response_message.context['messages'])
-        self.assertEqual(len(messages_list), 1)
+        # 3 messages for promoting, transferring and deleting account
+        self.assertEqual(len(messages_list), 3)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
         after_count_club_member = Club_Member.objects.count()
@@ -216,7 +217,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(after_count_club_member, before_count_club_member-1)
         self.assertEqual(after_count_club, before_count_club)
 
-    def test_owner_who_has_only_has_officer_in_club_must_transfer_ownership(self):
+    def test_owner_who_has_only_officer_in_club_must_transfer_ownership(self):
         self.client.login(email=self.owner.email, password='Password123')
         self.assertTrue(self._is_logged_in())
         club_officer = Club_Member.objects.create(
@@ -247,7 +248,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.get(self.url)
         response_message = self.client.get(reverse('home'))
         messages_list = list(response_message.context['messages'])
-        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(len(messages_list), 2)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
         after_count_club_member = Club_Member.objects.count()
@@ -289,7 +290,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.get(self.url)
         response_message = self.client.get(reverse('home'))
         messages_list = list(response_message.context['messages'])
-        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(len(messages_list), 2)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
         after_count_club_member = Club_Member.objects.count()
@@ -338,7 +339,8 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.get(self.url)
         response_message = self.client.get(reverse('home'))
         messages_list = list(response_message.context['messages'])
-        self.assertEqual(len(messages_list), 1)
+        # 3 messages for promoting, transferring and deleting account
+        self.assertEqual(len(messages_list), 3)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
         after_count_club_member = Club_Member.objects.count()
@@ -384,7 +386,7 @@ class DeleteAccountViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.client.get(self.url)
         response_message = self.client.get(reverse('home'))
         messages_list = list(response_message.context['messages'])
-        self.assertEqual(len(messages_list), 1)
+        self.assertEqual(len(messages_list), 2)
         self.assertEqual(messages_list[0].level, messages.SUCCESS)
         after_count_user = User.objects.count()
         after_count_club_member = Club_Member.objects.count()
