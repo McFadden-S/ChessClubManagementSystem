@@ -7,6 +7,7 @@ from django.urls import reverse
 
 class ShowMemberViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for show member view."""
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/default_club.json',

@@ -10,6 +10,7 @@ from with_asserts.mixin import AssertHTMLMixin
 
 class SignUpViewTestCase(TestCase, LogInTester, AssertHTMLMixin):
     """Unit tests for the sign up view."""
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/default_club.json',

@@ -5,6 +5,7 @@ from django.test import TestCase
 
 class CreateClubFormTestCase(TestCase):
     """Unit tests for the create club form."""
+
     def setUp(self):
         self.valid_form_input = {
             'name': 'Orangutan',

@@ -8,6 +8,7 @@ from django.contrib import messages
 
 class WaitingListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for the waiting list view."""
+    
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',
@@ -38,7 +39,7 @@ class WaitingListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
 
     def test_waiting_list_url(self):
         """"Test for the waiting list url."""
-        
+
         self.assertEqual(self.url, f'/{self.club.id}/waiting_list/')
 
     """Unit tests for different authorisations in a club trying to access waiting list"""
