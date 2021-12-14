@@ -2,13 +2,13 @@
 from django.test import TestCase
 from django.urls import reverse
 from clubs.models import User, Club_Member, Club
-from clubs.tests.helpers import LogInTester, NavbarTesterMixin,reverse_with_next
-from django.contrib.auth.hashers import check_password
+from clubs.tests.helpers import LogInTester, NavbarTesterMixin
 from django.contrib import messages
+
 
 class WaitingListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for the waiting list view."""
-    
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/other_users.json',

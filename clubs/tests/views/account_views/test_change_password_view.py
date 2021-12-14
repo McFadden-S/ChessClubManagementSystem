@@ -111,7 +111,3 @@ class UserChangePasswordViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertTrue(self._is_logged_in())
         response = self.client.get(self.url)
         self.assert_main_navbar(response)
-        #self.assert_no_club_navbar(response)
-        # self.assertContains(response, 'My Clubs')
-        # self.assertNotContains(response, 'Members')
-        # self.assertNotContains(response, 'Applicants')

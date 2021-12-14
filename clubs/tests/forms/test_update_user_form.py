@@ -1,8 +1,9 @@
 """Unit tests for the update user form."""
-from clubs.forms import SignUpForm, UpdateUserForm
+from clubs.forms import UpdateUserForm
 from clubs.models import User
 from django import forms
 from django.test import TestCase
+
 
 # Used this from clucker project with some modifications
 class UpdateUserFormTestCase(TestCase):

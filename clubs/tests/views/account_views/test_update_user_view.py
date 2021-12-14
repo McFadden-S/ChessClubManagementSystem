@@ -3,9 +3,9 @@ from django.test import TestCase
 from clubs.models import User
 from clubs.forms import UpdateUserForm
 from django.urls import reverse
-from clubs.tests.helpers import reverse_with_next,LogInTester, NavbarTesterMixin
-from django.contrib.auth.hashers import check_password
+from clubs.tests.helpers import reverse_with_next, LogInTester, NavbarTesterMixin
 from django.contrib import messages
+
 
 class UserUpdateViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for the user update view."""

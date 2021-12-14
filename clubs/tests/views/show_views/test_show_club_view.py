@@ -4,9 +4,10 @@ from clubs.tests.helpers import LogInTester, NavbarTesterMixin, reverse_with_nex
 from django.test import TestCase
 from django.urls import reverse
 
+
 class ShowClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     """Unit tests for show club view."""
-    
+
     fixtures = [
         'clubs/tests/fixtures/default_user.json',
         'clubs/tests/fixtures/default_club.json'
@@ -35,7 +36,6 @@ class ShowClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
         self.assertEqual(len(messages_list), 0)
         self.assertContains(response, "Club Info")
         self.assertContains(response, "Flying Orangutans")
-
 
     def test_get_show_club_redirects_when_not_logged_in(self):
         """Test get show club redirects to login when not logged in"""
@@ -67,7 +67,7 @@ class ShowClubViewTestCase(TestCase, LogInTester, NavbarTesterMixin):
     def test_get_show_club_with_invalid_id(self):
         self.client.login(username=self.user.email, password='Password123')
         self.assertTrue(self._is_logged_in())
-        url = reverse('show_club', kwargs={'club_id': self.club.id+9999})
+        url = reverse('show_club', kwargs={'club_id': self.club.id + 9999})
         response = self.client.get(url, follow=True)
         self.assert_main_navbar(response)
         response_url = reverse('dashboard')

@@ -3,9 +3,9 @@ from django.test import TestCase
 from clubs.models import User, Club_Member, Club
 from django.urls import reverse
 from clubs.tests.helpers import reverse_with_next
-from django.contrib.auth.hashers import check_password
 from clubs.tests.helpers import LogInTester, NavbarTesterMixin
 from django.contrib import messages
+
 
 # Used this from clucker project with some modifications
 class MembersListViewTestCase(TestCase, LogInTester, NavbarTesterMixin):

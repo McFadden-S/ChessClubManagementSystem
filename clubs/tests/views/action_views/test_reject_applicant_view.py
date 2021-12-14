@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.test import TestCase
 from django.urls import reverse
 
+
 class RejectApplicantViewTestCase(TestCase, LogInTester):
     """Unit tests for the reject applicant view."""
     fixtures = [
@@ -30,7 +31,7 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
     def test_reject_applicant_url(self):
         """Test for the reject applicant url."""
 
-        self.assertEqual(self.url,f'/{self.club.id}/reject_applicant/{self.applicant.id}')
+        self.assertEqual(self.url, f'/{self.club.id}/reject_applicant/{self.applicant.id}')
 
     def test_get_reject_applicant_redirects_when_not_logged_in(self):
         """Test that user is redirected to log in page if user is not logged in."""
@@ -61,7 +62,7 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if the applicant has been removed
-        self.assertEqual(before_count, after_count+1)
+        self.assertEqual(before_count, after_count + 1)
 
         # Checks if the applicant does not exist in the Club
         with self.assertRaises(ObjectDoesNotExist):
@@ -76,7 +77,7 @@ class RejectApplicantViewTestCase(TestCase, LogInTester):
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
         after_count = Club_Member.objects.count()
         # Checks if the applicant has been removed
-        self.assertEqual(before_count, after_count+1)
+        self.assertEqual(before_count, after_count + 1)
 
         # Checks if the applicant does not exist in the Club
         with self.assertRaises(ObjectDoesNotExist):

@@ -1,9 +1,10 @@
 """Unit tests of the log in view."""
 from clubs.forms import LogInForm
-from clubs.models import Club, Club_Member, User
+from clubs.models import User
 from clubs.tests.helpers import LogInTester, reverse_with_next
 from django.urls import reverse
 from django.test import TestCase
+
 
 class LogInViewTestCase(TestCase, LogInTester):
     """Unit tests of the log in view."""
@@ -31,7 +32,6 @@ class LogInViewTestCase(TestCase, LogInTester):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
         self.assertFalse(self._is_logged_in())
-
 
     def test_unsuccessful_log_in(self):
         """Test for unsuccessful log in with incorrect password."""
@@ -75,11 +75,11 @@ class LogInViewTestCase(TestCase, LogInTester):
         messages_list = list(response.context['messages'])
         self.assertEqual(len(messages_list), 0)
 
-    def test_succesful_log_in_with_redirect(self):
+    def test_successful_log_in_with_redirect(self):
         """Test that the user is redirected to the correct next page after successful log in."""
 
         redirect_url = reverse('change_password')
-        form_input = { 'email': 'bobsmith@example.org', 'password': 'Password123', 'next': redirect_url }
+        form_input = {'email': 'bobsmith@example.org', 'password': 'Password123', 'next': redirect_url}
         response = self.client.post(self.url, form_input, follow=True)
         self.assertTrue(self._is_logged_in())
         self.assertRedirects(response, redirect_url, status_code=302, target_status_code=200)
@@ -109,7 +109,7 @@ class LogInViewTestCase(TestCase, LogInTester):
     """ Unit tests to test for blank credentials """
 
     def test_log_in_with_blank_email(self):
-        form_input = { 'email': '', 'password': 'Password123' }
+        form_input = {'email': '', 'password': 'Password123'}
         response = self.client.post(self.url, form_input)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
@@ -121,7 +121,7 @@ class LogInViewTestCase(TestCase, LogInTester):
         self.assertEqual(len(messages_list), 0)
 
     def test_log_in_with_blank_password(self):
-        form_input = { 'email': 'bobsmith@example.org', 'password': '' }
+        form_input = {'email': 'bobsmith@example.org', 'password': ''}
         response = self.client.post(self.url, form_input)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'log_in.html')
