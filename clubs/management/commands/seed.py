@@ -1,6 +1,8 @@
 """The database seeder."""
 from clubs.models import Club, Club_Member, User
 from django.core.management.base import BaseCommand
+from django.db import IntegrityError
+
 from faker import Faker
 import numpy
 
@@ -88,14 +90,19 @@ class Command(BaseCommand):
         return [jeb, val, bil]
 
     def handle(self, *args, **options):
-        test_users = self.seed_test_users()
+        add_test_data = False
+        try:
+            test_users = self.seed_test_users()
+            add_test_data = True
+        except IntegrityError:
+            add_test_data = False
 
         for i in range(0, 5):
             owner = self.seed_random_user()
             newClub = self.seed_random_club()
 
             # if structure to ensure data is set up to non-functional requirement
-            if(i == 0):
+            if(i == 0 and add_test_data):
                 Club.objects.filter(id=newClub.id).update(name='Kerbal Chess Club')
                 Club_Member.objects.create(
                     user=test_users[0],
@@ -112,21 +119,20 @@ class Command(BaseCommand):
                     club=newClub,
                     authorization='ME',
                 )
-            elif(i==1):
+            elif(i==1 and add_test_data):
                 Club_Member.objects.create(
                     user=test_users[0],
                     club=newClub,
                     authorization='OF',
                 )
-            elif(i==2):
+            elif(i==2 and add_test_data):
                 owner = test_users[1]
-            elif(i==3):
+            elif(i==3 and add_test_data):
                 Club_Member.objects.create(
                     user=test_users[2],
                     club=newClub,
                     authorization='ME',
                 )
-
 
             Club_Member.objects.create(
                 user=owner,
