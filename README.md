@@ -12,7 +12,7 @@ The members of the team are:
 The project is called `system`.  It currently consists of a single app `clubs`.
 
 ## Deployed version of the application
-The deployed version of the application can be found at https://gentle-bayou-06800.herokuapp.com/
+The deployed version of the application can be found at https://gentle-bayou-06800.herokuapp.com/ and the admin interface can be found at https://gentle-bayou-06800.herokuapp.com/admin/
 
 ## Installation instructions
 To install the software and use it in your local development environment, you must first set up and activate a local development environment.  From the root of the project:
@@ -45,11 +45,11 @@ Run all tests with:
 $ python3 manage.py test
 ```
 
-*The above instructions should work in your version of the application.  If there are deviations, declare those here in bold.  Otherwise, remove this line.*
-
 ## Sources
 The packages used by this application are specified in `requirements.txt`
 
 *Declare are other sources here.*
 
 The idea of filter members with full name is from https://stackoverflow.com/questions/17932152/auth-filter-full-name
+
+Sort Idea from https://www.w3schools.com/howto/howto_js_sort_table.asp
