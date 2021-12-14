@@ -12,7 +12,7 @@ The members of the team are:
 The project is called `system`.  It currently consists of a single app `clubs`.
 
 ## Deployed version of the application
-The deployed version of the application can be found at [URL](URL).
+The deployed version of the application can be found at https://gentle-bayou-06800.herokuapp.com/
 
 ## Installation instructions
 To install the software and use it in your local development environment, you must first set up and activate a local development environment.  From the root of the project:
@@ -51,4 +51,5 @@ $ python3 manage.py test
 The packages used by this application are specified in `requirements.txt`
 
 *Declare are other sources here.*
-"""The idea of filter members with full name is from https://stackoverflow.com/questions/17932152/auth-filter-full-name"""
+
+The idea of filter members with full name is from https://stackoverflow.com/questions/17932152/auth-filter-full-name
