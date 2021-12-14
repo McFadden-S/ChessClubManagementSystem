@@ -60,7 +60,7 @@ class Command(BaseCommand):
             email='jeb@example.org',
             bio='I am Test User 1',
             personal_statement='I Like Chess',
-            chess_experience= 'Beginner',
+            chess_experience= self.CHESS_EXPERIENCE_CHOICES[0],
             password = 'Password123',
         )
 
@@ -70,7 +70,7 @@ class Command(BaseCommand):
             email='val@example.org',
             bio='I am Test User 2',
             personal_statement='I Like Chess',
-            chess_experience= 'Beginner',
+            chess_experience= self.CHESS_EXPERIENCE_CHOICES[0],
             password = 'Password123',
         )
 
@@ -80,7 +80,7 @@ class Command(BaseCommand):
             email='billie@example.org',
             bio='I am Test User 3',
             personal_statement='I Like Chess',
-            chess_experience= 'Beginner',
+            chess_experience= self.CHESS_EXPERIENCE_CHOICES[0],
             password = 'Password123',
         )
 
